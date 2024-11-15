@@ -33,8 +33,6 @@ public class ImageUploader : IImageUploader
         // File size validation (e.g., limit to 2MB)
         if (imageFile.Length > maxSizeInBytes)
         {
-            //throw new ArgumentException($"Image size cannot exceed {maxSizeInBytes / (1024 * 1024)} MB.");
-            
             throw ImageUploadException.ImageFileTooLarge(maxSizeInBytes);
         }
 

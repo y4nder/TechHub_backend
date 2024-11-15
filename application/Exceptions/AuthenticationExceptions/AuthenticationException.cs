@@ -32,7 +32,7 @@ public class AuthenticationException : HttpRequestException
     {
         return new AuthenticationException($"Email '{email}' already exists", null, HttpStatusCode.Conflict);
     }
-
+    
     public static AuthenticationException ValidationFailed(List<ValidationFailure> failures)
     {
         var errorMessages = ErrorUtility.TransformErrors(failures);

@@ -28,6 +28,7 @@ public static class InfrastructureConfigurations
         services.AddSingleton<IPasswordHasherService, PasswordHasherService>();
         services.AddSingleton<IJwtTokenProvider, JwtTokenProvider>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
+        services.AddScoped<IImageUploader, ImageUploader>();
         
         return services;
     }

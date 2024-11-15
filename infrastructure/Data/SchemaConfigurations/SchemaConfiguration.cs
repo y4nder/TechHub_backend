@@ -86,11 +86,13 @@ public static class SchemaConfiguration
 
             entity.HasOne(d => d.ClubCategory).WithMany(p => p.Clubs)
                 .HasForeignKey(d => d.ClubCategoryId)
-                .HasConstraintName("FK__Club__clubCatego__6383C8BA");
+                .HasConstraintName("FK__Club__clubCatego__6383C8BA")
+                .OnDelete(DeleteBehavior.Cascade);
 
             entity.HasOne(d => d.ClubCreator).WithMany(p => p.Clubs)
                 .HasForeignKey(d => d.ClubCreatorId)
-                .HasConstraintName("FK__Club__clubCreato__628FA481");
+                .HasConstraintName("FK__Club__clubCreato__628FA481")
+                .OnDelete(DeleteBehavior.Cascade);;
         });
 
         modelBuilder.Entity<ClubAdditionalInfo>(entity =>
@@ -262,7 +264,7 @@ public static class SchemaConfiguration
 
             entity.Property(e => e.UserId).HasColumnName("userId");
             entity.Property(e => e.Email)
-                .HasMaxLength(20)
+                .HasMaxLength(75)
                 .IsUnicode(false)
                 .HasColumnName("email");
             entity.Property(e => e.Password)

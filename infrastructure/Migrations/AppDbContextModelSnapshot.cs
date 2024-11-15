@@ -563,9 +563,9 @@ namespace infrastructure.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UserId"));
 
                     b.Property<string>("Email")
-                        .HasMaxLength(20)
+                        .HasMaxLength(75)
                         .IsUnicode(false)
-                        .HasColumnType("varchar(20)")
+                        .HasColumnType("varchar(75)")
                         .HasColumnName("email");
 
                     b.Property<string>("Password")

@@ -14,6 +14,9 @@ public static class RepositoryConfigurations
         
         services.AddScoped<ITagRepository, TagRepository>();
         services.AddScoped<IUserTagFollowRepository, UserTagFollowRepository>();
+
+        services.AddScoped<IClubCategoryRepository, ClubCategoryRepository>();
+        services.AddScoped<IClubRepository, ClubRepository>();
         
         return services;
     }
