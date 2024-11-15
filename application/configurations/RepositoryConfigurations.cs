@@ -20,6 +20,8 @@ public static class RepositoryConfigurations
         services.AddScoped<IClubAdditionalInfoRepository, ClubAdditionalInfoRepository>();
 
         services.AddScoped<IClubUserRepository, ClubUserRepository>();
+
+        services.AddScoped<IUserFollowRepository, UserFollowRepository>();
         
         return services;
     }

@@ -33,4 +33,9 @@ public class ClubUserRepository : IClubUserRepository
             }
         }
     }
+
+    public async Task<bool> ClubJoined(int clubId, int userId)
+    {
+        return await _context.ClubUsers.AsNoTracking().AnyAsync(c => c.ClubId == clubId && c.UserId == userId);
+    }
 }

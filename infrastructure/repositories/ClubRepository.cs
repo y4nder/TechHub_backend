@@ -22,4 +22,9 @@ public class ClubRepository : IClubRepository
     {
         _context.Clubs.Add(club);
     }
+
+    public async Task<bool> ClubIdExists(int clubId)
+    {
+        return await _context.Clubs.AsNoTracking().AnyAsync(c => c.ClubId == clubId);
+    }
 }

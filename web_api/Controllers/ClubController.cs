@@ -1,4 +1,5 @@
 ﻿using application.useCases.clubInteractions.CreateClub;
+using application.useCases.clubInteractions.JoinClub;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using web_api.utils;
@@ -16,6 +17,20 @@ public class ClubController : Controller
     
     [HttpPost("createClub")]
     public async Task<IActionResult> CreateClub(CreateClubCommand command)
+    {
+        try
+        {
+            var response = await _sender.Send(command);
+            return Ok(response);
+        }
+        catch (Exception e)
+        {
+            return ErrorFactory.CreateErrorResponse(e);
+        }
+    }
+    
+    [HttpPost("joinClub")]
+    public async Task<IActionResult> JoinClub(JoinClubCommand command)
     {
         try
         {
