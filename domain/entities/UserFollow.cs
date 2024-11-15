@@ -11,4 +11,14 @@ public partial class UserFollow
     public virtual User Follower { get; set; } = null!;
 
     public virtual User Following { get; set; } = null!;
+
+    public static UserFollow Create(int followerId, int followingId)
+    {
+        return new UserFollow
+        {
+            FollowerId = followerId,
+            FollowingId = followingId,
+            FollowedDate = DateTime.Now
+        };
+    } 
 }

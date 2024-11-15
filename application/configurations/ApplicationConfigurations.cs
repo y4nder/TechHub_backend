@@ -9,7 +9,9 @@ public static class ApplicationConfigurations
     {
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<ApplicationAssemblyMarker>());
         services.AddValidatorsFromAssemblyContaining<ApplicationAssemblyMarker>();
+        
         services.AddRepositoryConfigurations();
+        services.AddUtilityConfigurations();
         
         return services;    
     }

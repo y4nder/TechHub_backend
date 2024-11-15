@@ -86,18 +86,22 @@ public static class SchemaConfiguration
 
             entity.HasOne(d => d.ClubCategory).WithMany(p => p.Clubs)
                 .HasForeignKey(d => d.ClubCategoryId)
-                .HasConstraintName("FK__Club__clubCatego__6383C8BA");
+                .HasConstraintName("FK__Club__clubCatego__6383C8BA")
+                .OnDelete(DeleteBehavior.Cascade);
 
             entity.HasOne(d => d.ClubCreator).WithMany(p => p.Clubs)
                 .HasForeignKey(d => d.ClubCreatorId)
-                .HasConstraintName("FK__Club__clubCreato__628FA481");
+                .HasConstraintName("FK__Club__clubCreato__628FA481")
+                .OnDelete(DeleteBehavior.Cascade);;
         });
 
         modelBuilder.Entity<ClubAdditionalInfo>(entity =>
         {
             entity
-                .HasNoKey()
-                .ToTable("ClubAdditionalInfo");
+                .HasKey(e => e.ClubId)
+                .HasName("PK__ClubAdditionalInfo");
+            
+            entity.ToTable("ClubAdditionalInfo");
 
             entity.Property(e => e.ClubCreatedDate)
                 .HasColumnType("datetime")
@@ -128,7 +132,7 @@ public static class SchemaConfiguration
 
         modelBuilder.Entity<ClubUser>(entity =>
         {
-            entity.HasKey(e => new { e.ClubId, e.UserId }).HasName("PK__ClubUser__33F34B7D37E4E2E3");
+            entity.HasKey(e => new {e.ClubId, e.UserId, e.RoleId}).HasName("PK_ClubUserRole");
 
             entity.ToTable("ClubUser");
 
@@ -138,7 +142,7 @@ public static class SchemaConfiguration
 
             entity.HasOne(d => d.Club).WithMany(p => p.ClubUsers)
                 .HasForeignKey(d => d.ClubId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
+                .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("FK__ClubUser__clubId__6477ECF3");
 
             entity.HasOne(d => d.Role).WithMany(p => p.ClubUsers)
@@ -147,7 +151,7 @@ public static class SchemaConfiguration
 
             entity.HasOne(d => d.User).WithMany(p => p.ClubUsers)
                 .HasForeignKey(d => d.UserId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
+                .OnDelete(DeleteBehavior.NoAction)
                 .HasConstraintName("FK__ClubUser__userId__656C112C");
         });
 
@@ -262,7 +266,7 @@ public static class SchemaConfiguration
 
             entity.Property(e => e.UserId).HasColumnName("userId");
             entity.Property(e => e.Email)
-                .HasMaxLength(20)
+                .HasMaxLength(75)
                 .IsUnicode(false)
                 .HasColumnName("email");
             entity.Property(e => e.Password)

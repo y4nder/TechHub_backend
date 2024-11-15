@@ -16,6 +16,7 @@ public static class InfrastructureConfigurations
         //add db context
         services.AddDbContext<AppDbContext>(options 
             => options.UseSqlServer(configuration.GetConnectionString("connectionString"))
+                .EnableSensitiveDataLogging()
         );
         
         //add jwt settings
@@ -28,6 +29,7 @@ public static class InfrastructureConfigurations
         services.AddSingleton<IPasswordHasherService, PasswordHasherService>();
         services.AddSingleton<IJwtTokenProvider, JwtTokenProvider>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
+        services.AddScoped<IImageUploader, ImageUploader>();
         
         return services;
     }

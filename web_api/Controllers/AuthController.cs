@@ -36,7 +36,7 @@ public class AuthController : Controller
         try
         {
             var response = await _mediator.Send(command);
-            return Created("register", response);
+            return Created("login", response);
         }
         catch (Exception ex)
         {
