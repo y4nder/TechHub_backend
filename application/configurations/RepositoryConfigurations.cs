@@ -1,5 +1,4 @@
-﻿using domain.entities;
-using domain.interfaces;
+﻿using domain.interfaces;
 using infrastructure.repositories;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -17,6 +16,10 @@ public static class RepositoryConfigurations
 
         services.AddScoped<IClubCategoryRepository, ClubCategoryRepository>();
         services.AddScoped<IClubRepository, ClubRepository>();
+
+        services.AddScoped<IClubAdditionalInfoRepository, ClubAdditionalInfoRepository>();
+
+        services.AddScoped<IClubUserRepository, ClubUserRepository>();
         
         return services;
     }

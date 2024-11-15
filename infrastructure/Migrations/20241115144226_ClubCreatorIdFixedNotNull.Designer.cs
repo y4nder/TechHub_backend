@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using infrastructure;
 
@@ -11,9 +12,11 @@ using infrastructure;
 namespace infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241115144226_ClubCreatorIdFixedNotNull")]
+    partial class ClubCreatorIdFixedNotNull
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -165,10 +168,6 @@ namespace infrastructure.Migrations
 
             modelBuilder.Entity("domain.entities.ClubAdditionalInfo", b =>
                 {
-                    b.Property<int?>("ClubId")
-                        .HasColumnType("int")
-                        .HasColumnName("clubId");
-
                     b.Property<DateTime?>("ClubCreatedDate")
                         .HasColumnType("datetime")
                         .HasColumnName("clubCreatedDate");
@@ -179,8 +178,11 @@ namespace infrastructure.Migrations
                         .HasColumnType("varchar(500)")
                         .HasColumnName("clubDescription");
 
-                    b.HasKey("ClubId")
-                        .HasName("PK__ClubAdditionalInfo");
+                    b.Property<int?>("ClubId")
+                        .HasColumnType("int")
+                        .HasColumnName("clubId");
+
+                    b.HasIndex("ClubId");
 
                     b.ToTable("ClubAdditionalInfo", (string)null);
                 });
@@ -269,12 +271,12 @@ namespace infrastructure.Migrations
                         .HasColumnType("int")
                         .HasColumnName("userId");
 
-                    b.Property<int>("RoleId")
+                    b.Property<int?>("RoleId")
                         .HasColumnType("int")
                         .HasColumnName("roleId");
 
-                    b.HasKey("ClubId", "UserId", "RoleId")
-                        .HasName("PK_ClubUserRole");
+                    b.HasKey("ClubId", "UserId")
+                        .HasName("PK__ClubUser__33F34B7D37E4E2E3");
 
                     b.HasIndex("RoleId");
 
@@ -867,8 +869,6 @@ namespace infrastructure.Migrations
                     b.HasOne("domain.entities.Club", "Club")
                         .WithMany()
                         .HasForeignKey("ClubId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
                         .HasConstraintName("FK__ClubAddit__clubI__6754599E");
 
                     b.Navigation("Club");
@@ -879,21 +879,17 @@ namespace infrastructure.Migrations
                     b.HasOne("domain.entities.Club", "Club")
                         .WithMany("ClubUsers")
                         .HasForeignKey("ClubId")
-                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("FK__ClubUser__clubId__6477ECF3");
 
                     b.HasOne("domain.entities.ClubUserRole", "Role")
                         .WithMany("ClubUsers")
                         .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
                         .HasConstraintName("FK__ClubUser__roleId__66603565");
 
                     b.HasOne("domain.entities.User", "User")
                         .WithMany("ClubUsers")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired()
                         .HasConstraintName("FK__ClubUser__userId__656C112C");
 

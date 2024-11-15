@@ -1,4 +1,5 @@
-﻿using application.Exceptions.ClubExceptions;
+﻿using application.Events.ClubEvents;
+using application.Exceptions.ClubExceptions;
 using application.utilities.ImageUploads.Club;
 using domain.entities;
 using domain.interfaces;
@@ -16,13 +17,14 @@ public class CreateClubCommandHandler : IRequestHandler<CreateClubCommand, Creat
     private readonly IClubRepository _clubRepository;
     private readonly IClubImageService _clubImageService;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IMediator _mediator;
 
     public CreateClubCommandHandler(
         IValidator<CreateClubCommand> validator,
         IUserRepository userRepository,
         IClubCategoryRepository clubCategoryRepository,
         IClubRepository clubRepository,
-        IUnitOfWork unitOfWork, IClubImageService clubImageService)
+        IUnitOfWork unitOfWork, IClubImageService clubImageService, IMediator mediator)
     {
         _validator = validator;
         _userRepository = userRepository;
@@ -30,6 +32,7 @@ public class CreateClubCommandHandler : IRequestHandler<CreateClubCommand, Creat
         _clubRepository = clubRepository;
         _unitOfWork = unitOfWork;
         _clubImageService = clubImageService;
+        _mediator = mediator;
     }
 
     public async Task<CreateClubResponse> Handle(CreateClubCommand request, CancellationToken cancellationToken)
@@ -54,6 +57,8 @@ public class CreateClubCommandHandler : IRequestHandler<CreateClubCommand, Creat
         _clubRepository.AddNewClub(club);
         
         await _unitOfWork.CommitAsync(cancellationToken);
+
+        await _mediator.Publish(new ClubCreatedEvent(club), cancellationToken);
         
         return new CreateClubResponse { Message = "new Club created"};
     }   

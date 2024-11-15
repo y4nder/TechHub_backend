@@ -9,4 +9,13 @@ public partial class ClubAdditionalInfo
     public string? ClubDescription { get; set; }
 
     public virtual Club? Club { get; set; }
+
+    public static ClubAdditionalInfo CreateDefault(Club club)
+    {
+        return new ClubAdditionalInfo
+        {
+            ClubId = club.ClubId,
+            ClubCreatedDate = DateTime.Now
+        };
+    }
 }

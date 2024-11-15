@@ -4,7 +4,7 @@ public partial class Club
 {
     public int ClubId { get; set; }
 
-    public int? ClubCreatorId { get; set; }
+    public int ClubCreatorId { get; set; }
 
     public string? ClubImageUrl { get; set; }
 

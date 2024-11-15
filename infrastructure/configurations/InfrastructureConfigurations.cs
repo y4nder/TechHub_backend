@@ -16,6 +16,7 @@ public static class InfrastructureConfigurations
         //add db context
         services.AddDbContext<AppDbContext>(options 
             => options.UseSqlServer(configuration.GetConnectionString("connectionString"))
+                .EnableSensitiveDataLogging()
         );
         
         //add jwt settings

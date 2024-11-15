@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using infrastructure;
 
@@ -11,9 +12,11 @@ using infrastructure;
 namespace infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241115145818_fixed_additional_info_pk")]
+    partial class fixed_additional_info_pk
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -269,12 +272,12 @@ namespace infrastructure.Migrations
                         .HasColumnType("int")
                         .HasColumnName("userId");
 
-                    b.Property<int>("RoleId")
+                    b.Property<int?>("RoleId")
                         .HasColumnType("int")
                         .HasColumnName("roleId");
 
-                    b.HasKey("ClubId", "UserId", "RoleId")
-                        .HasName("PK_ClubUserRole");
+                    b.HasKey("ClubId", "UserId")
+                        .HasName("PK__ClubUser__33F34B7D37E4E2E3");
 
                     b.HasIndex("RoleId");
 
@@ -879,21 +882,17 @@ namespace infrastructure.Migrations
                     b.HasOne("domain.entities.Club", "Club")
                         .WithMany("ClubUsers")
                         .HasForeignKey("ClubId")
-                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("FK__ClubUser__clubId__6477ECF3");
 
                     b.HasOne("domain.entities.ClubUserRole", "Role")
                         .WithMany("ClubUsers")
                         .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
                         .HasConstraintName("FK__ClubUser__roleId__66603565");
 
                     b.HasOne("domain.entities.User", "User")
                         .WithMany("ClubUsers")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired()
                         .HasConstraintName("FK__ClubUser__userId__656C112C");
 
