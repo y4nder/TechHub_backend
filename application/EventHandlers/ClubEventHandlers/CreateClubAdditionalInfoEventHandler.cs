@@ -4,7 +4,7 @@ using domain.interfaces;
 using infrastructure.services.worker;
 using MediatR;
 
-namespace application.EventHandlers;
+namespace application.EventHandlers.ClubEventHandlers;
 
 public class CreateClubAdditionalInfoEventHandler : INotificationHandler<ClubCreatedEvent>
 {

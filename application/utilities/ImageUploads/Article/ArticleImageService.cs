@@ -5,8 +5,15 @@ namespace application.utilities.ImageUploads.Article;
 
 public class ArticleImageService : IArticleImageService
 {
-    public Task<ImageUploadResponse?> UploadImage(IFormFile file)
+    private readonly IImageUploader _imageUploader;
+    private const string FolderName = "article_images/thumbnails";
+    public ArticleImageService(IImageUploader imageUploader)
     {
-        throw new NotImplementedException();
+        _imageUploader = imageUploader;
+    }
+
+    public async Task<ImageUploadResponse?> UploadThumbnail(IFormFile file)
+    {
+        return await _imageUploader.UploadImageAsync(file, FolderName);
     }
 }

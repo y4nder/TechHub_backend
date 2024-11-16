@@ -5,5 +5,5 @@ namespace application.utilities.ImageUploads.Article;
 
 public interface IArticleImageService
 {
-    Task<ImageUploadResponse?> UploadImage(IFormFile file);
+    Task<ImageUploadResponse?> UploadThumbnail(IFormFile file);
 }

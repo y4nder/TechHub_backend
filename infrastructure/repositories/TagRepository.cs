@@ -1,4 +1,5 @@
-﻿using domain.interfaces;
+﻿using domain.entities;
+using domain.interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace infrastructure.repositories;
@@ -15,6 +16,7 @@ public class TagRepository : ITagRepository
     public async Task<bool> AreAllIdsValidAsync(List<int> tagIds)
     {
         var validTagIds = await _context.Tags
+            .AsNoTracking()
             .Where(e => tagIds.Contains(e.TagId))
             .Select(e => e.TagId)
             .ToListAsync();
@@ -24,6 +26,21 @@ public class TagRepository : ITagRepository
 
     public async Task<bool> TagIdExistsAsync(int tagId)
     {
-        return await _context.Tags.AsNoTracking().AnyAsync(e => e.TagId == tagId);
+        return await _context.Tags
+            .AsNoTracking()
+            .AnyAsync(e => e.TagId == tagId);
+    }
+
+    public async Task<List<Tag>> GetTagsManyAsync(List<int> requestTagIds)
+    {
+        return await _context.Tags.Where(e => requestTagIds.Contains(e.TagId)).ToListAsync();
+    }
+
+    public void BatchTagUpdate(ICollection<Tag> tags)
+    {
+        foreach (var tag in tags)
+        {
+            _context.Entry(tag).State = EntityState.Modified;
+        }
     }
 }

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using infrastructure;
 
@@ -11,9 +12,11 @@ using infrastructure;
 namespace infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241116012802_fixed article body nullables")]
+    partial class fixedarticlebodynullables
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -49,9 +52,6 @@ namespace infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ArticleId"));
 
-                    b.Property<bool>("Archived")
-                        .HasColumnType("bit");
-
                     b.Property<int>("ArticleAuthorId")
                         .HasColumnType("int")
                         .HasColumnName("article_author_id");
@@ -60,10 +60,6 @@ namespace infrastructure.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)")
                         .HasColumnName("articleThumbnailUrl");
-
-                    b.Property<string>("ArticleTitle")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("ClubId")
                         .HasColumnType("int")
@@ -102,17 +98,16 @@ namespace infrastructure.Migrations
 
             modelBuilder.Entity("domain.entities.ArticleBody", b =>
                 {
-                    b.Property<int>("ArticleId")
-                        .HasColumnType("int")
-                        .HasColumnName("articleId");
-
                     b.Property<string>("ArticleContent")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("articleContent");
 
-                    b.HasKey("ArticleId")
-                        .HasName("PK_ArticleBody");
+                    b.Property<int>("ArticleId")
+                        .HasColumnType("int")
+                        .HasColumnName("articleId");
+
+                    b.HasIndex("ArticleId");
 
                     b.ToTable("ArticleBody", (string)null);
                 });

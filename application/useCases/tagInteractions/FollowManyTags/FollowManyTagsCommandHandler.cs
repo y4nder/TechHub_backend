@@ -36,7 +36,12 @@ public class FollowManyTagsCommandHandler : IRequestHandler<FollowManyTagsComman
             throw TagException.ZeroFollowMany();
         }
 
-        if (!EnsureTagsUnique(ids))
+        if (ids is [0] && ids.Count == 1)
+        {
+            throw TagException.ZeroFollowMany();
+        }
+
+        if (!TagsUnique(ids))
         {
             throw TagException.DuplicateTags();
         }
@@ -58,20 +63,20 @@ public class FollowManyTagsCommandHandler : IRequestHandler<FollowManyTagsComman
         };
     }
 
-    private bool EnsureTagsUnique(List<int> tagIds)
+    private bool TagsUnique(List<int> tagIds)
     {
         HashSet<int> seedTagIds = new HashSet<int>();
-        bool hasDuplicates = false;
+        bool isUnique = true;
 
         foreach (var number in tagIds)
         {
             if (!seedTagIds.Add(number))
             {
-                hasDuplicates = true;
+                isUnique = false;
                 break;
             }
         }
-        return hasDuplicates;
+        return isUnique;
     }
 
     private async Task<bool> EnsureAllTagsExist(List<int> tagIds)
