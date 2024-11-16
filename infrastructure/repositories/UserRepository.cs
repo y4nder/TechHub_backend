@@ -18,7 +18,6 @@ public class UserRepository : IUserRepository
         return await _context.Users
             .AsNoTracking()
             .AnyAsync(u => u.Username == username);
-
     }
 
     public async Task<bool> CheckUserEmailExists(string emailAddress)

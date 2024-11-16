@@ -6,11 +6,11 @@ using web_api.utils;
 
 namespace web_api.Controllers;
 
-public class FollowController : Controller
+public class FollowUserController : Controller
 {
     private readonly ISender _sender;
 
-    public FollowController(ISender sender)
+    public FollowUserController(ISender sender)
     {
         _sender = sender;
     }

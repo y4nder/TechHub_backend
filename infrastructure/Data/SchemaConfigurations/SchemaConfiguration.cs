@@ -40,20 +40,22 @@ public static class SchemaConfiguration
 
             entity.HasOne(d => d.Club).WithMany(p => p.Articles)
                 .HasForeignKey(d => d.ClubId)
+                .OnDelete(DeleteBehavior.NoAction)
                 .HasConstraintName("FK__Article__clubId__6E01572D");
         });
 
         modelBuilder.Entity<ArticleBody>(entity =>
         {
-            entity
-                .HasNoKey()
-                .ToTable("ArticleBody");
+            entity.HasKey(e => e.ArticleId).HasName("PK_ArticleBody");
+            
+            entity.ToTable("ArticleBody");
 
             entity.Property(e => e.ArticleContent).HasColumnName("articleContent");
             entity.Property(e => e.ArticleId).HasColumnName("articleId");
 
             entity.HasOne(d => d.Article).WithMany()
                 .HasForeignKey(d => d.ArticleId)
+                .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("FK__ArticleBo__artic__6EF57B66");
         });
 
