@@ -1,5 +1,6 @@
 ﻿using domain.entities;
 using domain.interfaces;
+using domain.pagination;
 using Microsoft.EntityFrameworkCore;
 
 namespace infrastructure.repositories;
@@ -41,5 +42,40 @@ public class ArticleRepository : IArticleRepository
             .AsNoTracking()
             .Where(a => a.ArticleId == articleId)
             .FirstOrDefaultAsync(); 
+    }
+
+    public async Task<PaginatedResult<Article>> GetPaginatedArticlesByTagIdsAsync(List<int> tagIds, int pageNumber, int pageSize)
+    {
+        var query = _context.Articles
+            .AsNoTracking()
+            .Include(a => a.Club)
+            .Include(a => a.Tags)
+            .Where(a => a.Tags.Any(tag => tagIds.Contains(tag.TagId)) && !a.Archived)
+            .OrderBy(a => a.CreatedDateTime); 
+
+        var totalCount = await query.CountAsync(); 
+
+        var articles = await query
+            .Skip((pageNumber - 1) * pageSize) 
+            .Take(pageSize)                   
+            .ToListAsync();
+
+        return new PaginatedResult<Article>
+        {
+            Items = articles,
+            TotalCount = totalCount,
+            PageNumber = pageNumber,
+            PageSize = pageSize,
+            TotalPages = (int)Math.Ceiling(totalCount / (double)pageSize)
+        };
+    }
+
+    public async Task<Article?> QuerySingleArticleByIdAsync(int articleId)
+    {
+        return await _context.Articles
+            .AsNoTracking()
+            .Include(a => a.Tags)
+            .Include(a => a.ArticleAuthor)
+            .Where(a => a.ArticleId == articleId).FirstOrDefaultAsync();
     }
 }

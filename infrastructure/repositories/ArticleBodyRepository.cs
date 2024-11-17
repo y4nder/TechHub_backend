@@ -16,4 +16,10 @@ public class ArticleBodyRepository : IArticleBodyRepository
     {
         _context.ArticleBodies.Add(articleBody);
     }
+
+    public async Task<ArticleBody?> GetArticleBodyByIdAsync(int articleId)
+    {
+        return await _context.ArticleBodies
+            .FindAsync(articleId);
+    }
 }

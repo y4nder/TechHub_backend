@@ -37,4 +37,12 @@ public class UserTagFollowRepository : IUserTagFollowRepository
     {
         _context.UserTagFollows.Remove(userTagFollow);
     }
+
+    public async Task<List<UserTagFollow>?> GetFollowedTags(int userId)
+    {
+        return await _context.UserTagFollows
+            .AsNoTracking()
+            .Where(u => u.UserId == userId)
+            .ToListAsync();
+    }
 }

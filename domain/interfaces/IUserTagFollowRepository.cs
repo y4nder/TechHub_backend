@@ -12,4 +12,5 @@ public interface IUserTagFollowRepository
     public void AddUserFollow(UserTagFollow userTagFollow);
     
     public void RemoveUserFollow(UserTagFollow userTagFollow);
+    Task<List<UserTagFollow>?> GetFollowedTags(int userId);
 }

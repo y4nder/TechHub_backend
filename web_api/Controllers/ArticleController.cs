@@ -1,5 +1,7 @@
 ﻿using application.useCases.articleInteractions.ArchiveArticle;
 using application.useCases.articleInteractions.CreateArticle;
+using application.useCases.articleInteractions.QueryArticles.HomeArticles;
+using application.useCases.articleInteractions.QueryArticles.SingleArticle;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using web_api.utils;
@@ -35,6 +37,34 @@ public class ArticleController : Controller
         try
         {
             var response = await _mediator.Send(command);
+            return Ok(response);
+        }
+        catch (Exception ex)
+        {
+            return ErrorFactory.CreateErrorResponse(ex);
+        }
+    }
+
+    [HttpGet("getHomeArticles")]
+    public async Task<IActionResult> GetHomeArticles([FromQuery] GetHomeArticlesQuery query)
+    {
+        try
+        {
+            var response = await _mediator.Send(query);
+            return Ok(response);
+        }
+        catch (Exception ex)
+        {
+            return ErrorFactory.CreateErrorResponse(ex);
+        }
+    }
+    
+    [HttpGet("getSingleArticle")]
+    public async Task<IActionResult> GetSingleArticle([FromQuery] SingleArticleQuery query)
+    {
+        try
+        {
+            var response = await _mediator.Send(query);
             return Ok(response);
         }
         catch (Exception ex)
