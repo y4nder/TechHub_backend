@@ -14,4 +14,7 @@ public interface IUserRepository
     Task<bool> CheckIdExists(int userId);
     
     Task<User?> GetUserById(int userId);
+    Task<User?> GetUserWithRolesByIdNoTracking(int userId);
+    
+    
 }

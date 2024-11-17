@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using domain.entities;
+using MediatR;
 using Microsoft.AspNetCore.Http;
 
 namespace application.useCases.articleInteractions.CreateArticle;

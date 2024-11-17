@@ -27,4 +27,11 @@ public class ClubRepository : IClubRepository
     {
         return await _context.Clubs.AsNoTracking().AnyAsync(c => c.ClubId == clubId);
     }
+
+    public async Task<Club?> GetClubByIdNoTracking(int clubId)
+    {
+        return await _context.Clubs
+            .AsNoTracking()
+            .FirstOrDefaultAsync(c => c.ClubId == clubId);
+    }
 }

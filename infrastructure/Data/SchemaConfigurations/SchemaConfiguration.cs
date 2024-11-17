@@ -197,6 +197,7 @@ public static class SchemaConfiguration
 
             entity.HasOne(d => d.CommentCreator).WithMany(p => p.Comments)
                 .HasForeignKey(d => d.CommentCreatorId)
+                .OnDelete(DeleteBehavior.NoAction)
                 .HasConstraintName("FK__Comment__comment__68487DD7");
 
             entity.HasOne(d => d.ParentComment).WithMany(p => p.InverseParentComment)

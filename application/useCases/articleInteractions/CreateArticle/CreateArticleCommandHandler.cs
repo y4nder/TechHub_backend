@@ -52,16 +52,19 @@ public class CreateArticleCommandHandler : IRequestHandler<CreateArticleCommand,
         }
         
         // validate author id
-        if (!await _userRepository.CheckIdExists(request.AuthorId))
+        if(! await _userRepository.CheckIdExists(request.AuthorId))
             throw new KeyNotFoundException("User does not exist");
         
         // validate club id
-        if (! await _clubRepository.ClubIdExists(request.ClubId))
+        var club = await _clubRepository.GetClubByIdNoTracking(request.ClubId)??
             throw new KeyNotFoundException("Club does not exist");
         
         //check if joined
         if(! await _clubUserRepository.ClubJoined(request.ClubId, request.AuthorId))
             throw new UnauthorizedAccessException("You do not have permission to access this club");
+        
+        // resolve permissions 
+        await ValidateClubPermissions(club, request.AuthorId);
         
         // validate tags
         await ValidateTags(request.TagIds);
@@ -102,6 +105,19 @@ public class CreateArticleCommandHandler : IRequestHandler<CreateArticleCommand,
         {
             Message = "Article created",
         };
+    }
+
+    private async Task ValidateClubPermissions(Club club, int authorId)
+    {
+        var clubUserRecords = await _clubUserRepository.GetClubUserRecord(authorId);
+        var roles = clubUserRecords!.Select(x => x.Role).Distinct();
+
+        if (club.PostPermission == (short)PermissionType.Moderators)
+        {
+            bool allowed = roles.Any(r => r!.RoleId == (int)DefaultRoles.Moderator);
+            if(!allowed)
+                throw new UnauthorizedAccessException("You do not have permission to post an article in this club");
+        }
     }
 
     private async Task ValidateTags(List<int>? requestTagIds)

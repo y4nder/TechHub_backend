@@ -46,4 +46,12 @@ public class UserRepository : IUserRepository
     {
         return await _context.Users.FindAsync(userId);
     }
+
+    public async Task<User?> GetUserWithRolesByIdNoTracking(int userId)
+    {
+        return await _context.Users
+            .AsNoTracking()
+            .Include(u => u.ClubUsers)
+            .FirstOrDefaultAsync(u => u.UserId == userId);
+    }
 }
