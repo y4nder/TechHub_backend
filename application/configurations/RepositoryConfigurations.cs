@@ -25,6 +25,8 @@ public static class RepositoryConfigurations
 
         services.AddScoped<IArticleRepository, ArticleRepository>();
         services.AddScoped<IArticleBodyRepository, ArticleBodyRepository>();
+
+        services.AddScoped<ICommentRepository, CommentRepository>();
         
         return services;
     }

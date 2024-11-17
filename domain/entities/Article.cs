@@ -82,4 +82,5 @@ public static class ArticleStatusDefaults
 {
     public const string Draft = "Draft";
     public const string Published = "Published";
+    public const string Archived = "Archived";
 }

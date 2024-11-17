@@ -8,4 +8,6 @@ public interface IClubUserRepository
     Task AddClubUserRange(List<ClubUser> clubUsers);
 
     Task<bool> ClubJoined(int clubId, int userId);
+    
+    Task<List<ClubUser>?> GetClubUserRecord(int userId);
 }

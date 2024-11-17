@@ -1,4 +1,5 @@
-﻿using domain.interfaces;
+﻿using domain.entities;
+using domain.interfaces;
 using infrastructure.services.worker;
 using MediatR;
 
@@ -40,6 +41,7 @@ public class ArchiveArticleCommandHandler : IRequestHandler<ArchiveArticleComman
         
         // update article 
         article.Archived = true;
+        article.Status = ArticleStatusDefaults.Archived;
         
         // repo
         _articleRepository.Update(article);

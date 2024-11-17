@@ -27,4 +27,19 @@ public class ArticleRepository : IArticleRepository
     {
         _context.Entry(article).State = EntityState.Modified;
     }
+
+    public async Task<bool> ArticleExistsAsync(int articleId)
+    {
+        return await _context.Articles
+            .AsNoTracking()
+            .AnyAsync(a => a.ArticleId == articleId);
+    }
+
+    public async Task<Article?> GetArticleByIdNoTracking(int articleId)
+    {
+        return await  _context.Articles
+            .AsNoTracking()
+            .Where(a => a.ArticleId == articleId)
+            .FirstOrDefaultAsync(); 
+    }
 }

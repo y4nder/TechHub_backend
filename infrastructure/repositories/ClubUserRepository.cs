@@ -38,4 +38,13 @@ public class ClubUserRepository : IClubUserRepository
     {
         return await _context.ClubUsers.AsNoTracking().AnyAsync(c => c.ClubId == clubId && c.UserId == userId);
     }
+
+    public async Task<List<ClubUser>?> GetClubUserRecord(int userId)
+    {
+        return await _context.ClubUsers
+            .AsNoTracking()
+            .Where(c => c.UserId == userId)
+            .Include(c => c.Role)
+            .ToListAsync();
+    }
 }
