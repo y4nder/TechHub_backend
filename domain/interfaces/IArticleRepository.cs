@@ -1,4 +1,5 @@
 ﻿using domain.entities;
+using domain.pagination;
 
 namespace domain.interfaces;
 
@@ -12,4 +13,6 @@ public interface IArticleRepository
     Task<bool> ArticleExistsAsync(int articleId);
 
     Task<Article?> GetArticleByIdNoTracking(int articleId);
+    Task<PaginatedResult<Article>> GetPaginatedArticlesByTagIdsAsync(List<int> tagIds, int pageNumber, int pageSize);
+    Task<Article?> QuerySingleArticleByIdAsync(int articleId);
 }

@@ -46,3 +46,15 @@ public partial class User
         };
     }
 }
+
+public class UserMinimalDto
+{
+    public int UserId { get; set; }
+    public string Username { get; set; }
+
+    public UserMinimalDto(User user)
+    {
+        UserId = user.UserId;
+        Username = user.Username!;   
+    }
+}

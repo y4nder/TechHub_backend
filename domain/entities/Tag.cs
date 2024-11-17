@@ -12,3 +12,9 @@ public partial class Tag
 
     public virtual ICollection<Article> Articles { get; set; } = new List<Article>();
 }
+
+public class TagDto
+{
+    public int TagId { get; set; }
+    public string TagName { get; set; } = null!;
+}

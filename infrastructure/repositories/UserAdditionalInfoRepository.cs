@@ -16,4 +16,9 @@ public class UserAdditionalInfoRepository : IUserAdditionalInfoRepository
     {
         _context.UserAdditionalInfos.Add(userAdditionalInfo);
     }
+
+    public async Task<UserAdditionalInfo?> GetAdditionalInfoAsync(int userId)
+    {
+        return await _context.UserAdditionalInfos.FindAsync(userId);
+    }
 }
