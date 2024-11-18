@@ -9,18 +9,20 @@ public class SingleArticleQueryHandler : IRequestHandler<SingleArticleQuery, Sin
     private readonly IArticleRepository _articleRepository;
     private readonly IUserRepository _userRepository;
     private readonly IArticleBodyRepository _articleBodyRepository;
+    private readonly IUserArticleVoteRepository _userArticleVoteRepository;
     private readonly IMediator _mediator; 
 
     public SingleArticleQueryHandler(
         IArticleRepository articleRepository,
         IArticleBodyRepository articleBodyRepository,
         IUserRepository userRepository,
-        IMediator mediator)
+        IMediator mediator, IUserArticleVoteRepository userArticleVoteRepository)
     {
         _articleRepository = articleRepository;
         _articleBodyRepository = articleBodyRepository;
         _userRepository = userRepository;
         _mediator = mediator;
+        _userArticleVoteRepository = userArticleVoteRepository;
     }
 
     public async Task<SingleQueryDto> Handle(SingleArticleQuery request, CancellationToken cancellationToken)
@@ -36,8 +38,13 @@ public class SingleArticleQueryHandler : IRequestHandler<SingleArticleQuery, Sin
         
         var articleBody = await _articleBodyRepository.GetArticleBodyByIdAsync(request.ArticleId)??
                           throw new KeyNotFoundException("ArticleBody not found");
+        int articleVoteCount = await _userArticleVoteRepository.GetArticleVoteCount(request.ArticleId);
         
-        var singleQueryDto = new SingleQueryDto(request.UserId, article, articleBody);
+        var singleQueryDto = new SingleQueryDto(
+            request.UserId, 
+            article, 
+            articleBody,
+            articleVoteCount);
         
         await _mediator.Publish(new SingleArticleQueriedEvent(request.UserId, request.ArticleId), cancellationToken);
         

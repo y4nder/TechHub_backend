@@ -36,6 +36,13 @@ public class ArticleRepository : IArticleRepository
             .AnyAsync(a => a.ArticleId == articleId);
     }
 
+    public async Task<bool> ArticleExistsByIdIgnoreArchived(int articleId)
+    {
+        return await _context.Articles
+            .AsNoTracking()
+            .AnyAsync(a => a.ArticleId == articleId && a.Archived == false);
+    }
+
     public async Task<Article?> GetArticleByIdNoTracking(int articleId)
     {
         return await  _context.Articles
