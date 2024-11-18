@@ -38,6 +38,7 @@ public class SingleArticleQueryHandler : IRequestHandler<SingleArticleQuery, Sin
         
         var articleBody = await _articleBodyRepository.GetArticleBodyByIdAsync(request.ArticleId)??
                           throw new KeyNotFoundException("ArticleBody not found");
+        
         int articleVoteCount = await _userArticleVoteRepository.GetArticleVoteCount(request.ArticleId);
         
         var singleQueryDto = new SingleQueryDto(

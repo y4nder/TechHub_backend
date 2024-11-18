@@ -6,7 +6,7 @@ public partial class UserCommentVote
 
     public int CommentId { get; set; }
 
-    public short? VoteType { get; set; }
+    public short VoteType { get; set; }
 
     public virtual Comment Comment { get; set; } = null!;
 

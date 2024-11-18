@@ -47,3 +47,33 @@ public class CommentDto
     public int? ParentCommentId { get; set; }
     public string Content { get; set; } = null!;
 }
+
+public class ArticleCommentDto
+{
+    public int CommentId { get; set; }
+    public string UserProfileImageUrl { get; set; }
+    public UserMinimalDto UserInfo { get; set; }
+    public DateTime? CreatedDateTime { get; set; }
+    public DateTime? UpdatedDateTime { get; set; }
+    public string CommentBody { get; set; }
+    public List<ArticleCommentDto> Replies { get; set; }
+    public int VoteCount { get; set; }
+
+    public ArticleCommentDto(
+        Comment comment,
+        int voteCount)
+    {
+        CommentId = comment.CommentId;
+        UserProfileImageUrl = comment.CommentCreator
+            .UserAdditionalInfo!
+            .UserProfilePicUrl;
+        UserInfo = new UserMinimalDto(comment.CommentCreator);
+        CreatedDateTime = comment.CreatedDateTime;
+        UpdatedDateTime = comment.UpdateDateTime;
+        CommentBody = comment.Content;
+        Replies = comment.InverseParentComment?
+            .Select(reply => new ArticleCommentDto(reply, voteCount))
+            .ToList() ?? new List<ArticleCommentDto>(); // Handle null case
+        VoteCount = voteCount;
+    }
+}

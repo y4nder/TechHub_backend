@@ -43,6 +43,7 @@ public class GetHomeArticlesQueryHandler : IRequestHandler<GetHomeArticlesQuery,
         
         var paginatedArticles = await _articleRepository
             .GetPaginatedArticlesByTagIdsAsync(tagIds, request.PageNumber, request.PageSize);
+            
         
         var dtoPaginatedArticles = PaginatedResultMapper.Map<Article, HomeArticle>(paginatedArticles, 
             article => new HomeArticle

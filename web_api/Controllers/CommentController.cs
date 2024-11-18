@@ -1,4 +1,5 @@
 ﻿using application.useCases.commentInteractions.CreateAComment;
+using application.useCases.commentInteractions.QueryComments.QueryCommentsForSingleArticle;
 using application.useCases.commentInteractions.ReplyAComment;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -35,6 +36,20 @@ public class CommentController : Controller
         try
         {
             var response = await _mediator.Send(command);
+            return Ok(response);
+        }
+        catch (Exception ex)
+        {
+            return ErrorFactory.CreateErrorResponse(ex);
+        }
+    }
+
+    [HttpGet("getComments")]
+    public async Task<IActionResult> GetComments([FromQuery] GetArticleCommentsQuery query)
+    {
+        try
+        {
+            var response = await _mediator.Send(query);
             return Ok(response);
         }
         catch (Exception ex)
