@@ -64,9 +64,7 @@ public class ArticleCommentDto
         int voteCount)
     {
         CommentId = comment.CommentId;
-        UserProfileImageUrl = comment.CommentCreator
-            .UserAdditionalInfo!
-            .UserProfilePicUrl;
+        UserProfileImageUrl = comment.CommentCreator.UserProfilePicUrl;
         UserInfo = new UserMinimalDto(comment.CommentCreator);
         CreatedDateTime = comment.CreatedDateTime;
         UpdatedDateTime = comment.UpdateDateTime;

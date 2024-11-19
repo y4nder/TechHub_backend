@@ -15,6 +15,6 @@ public interface IArticleRepository
     Task<bool> ArticleExistsByIdIgnoreArchived(int articleId);
 
     Task<Article?> GetArticleByIdNoTracking(int articleId);
-    Task<PaginatedResult<Article>> GetPaginatedArticlesByTagIdsAsync(List<int> tagIds, int pageNumber, int pageSize);
+    Task<PaginatedResult<HomeArticle>> GetPaginatedHomeArticlesByTagIdsAsync(List<int> tagIds, int pageNumber, int pageSize);
     Task<Article?> QuerySingleArticleByIdAsync(int articleId);
 }

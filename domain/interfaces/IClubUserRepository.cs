@@ -9,5 +9,5 @@ public interface IClubUserRepository
 
     Task<bool> ClubJoined(int clubId, int userId);
     
-    Task<List<ClubUser>?> GetClubUserRecord(int userId);
+    Task<List<ClubUser>?> GetClubUserRecord(int clubId, int userId);
 }

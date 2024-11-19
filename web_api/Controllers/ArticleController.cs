@@ -34,7 +34,7 @@ public class ArticleController : Controller
     }
     
     [HttpPost("archiveArticle")]
-    public async Task<IActionResult> AddArticle(ArchiveArticleCommand command)
+    public async Task<IActionResult> AddArticle([FromBody] ArchiveArticleCommand command)
     {
         try
         {

@@ -85,4 +85,34 @@ public static class ArticleStatusDefaults
     public const string Archived = "Archived";
 }
 
+public class HomeArticle
+{
+    public int ArticleId { get; set; }
+    public string ClubImageUrl { get; set; } = null!;
+    public string UserImageUrl { get; set; } = null!;
+    public string ArticleTitle { get; set; } = null!;
+    public List<TagDto> Tags { get; set; } = null!;
+    public DateTime? CreatedDateTime { get; set; }
+    public string ArticleThumbnailUrl { get; set; } = null!;
+    
+    // TODO include article up votes and comment counts
+
+    public static HomeArticle Create(Article article)
+    {
+        return new HomeArticle
+        {
+            ArticleId = article.ArticleId,
+            ClubImageUrl = article.Club!.ClubImageUrl!,
+            ArticleTitle = article.ArticleTitle,
+            UserImageUrl = article.ArticleAuthor!.UserProfilePicUrl,
+            Tags = article.Tags.Select(t => new TagDto
+            {
+                TagId = t.TagId,
+                TagName = t.TagName
+            }).ToList(),
+            CreatedDateTime = article.CreatedDateTime,
+            ArticleThumbnailUrl = article.ArticleThumbnailUrl!
+        };
+    }
+}
 

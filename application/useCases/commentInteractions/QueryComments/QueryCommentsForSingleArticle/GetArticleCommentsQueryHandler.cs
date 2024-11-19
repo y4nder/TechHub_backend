@@ -1,8 +1,5 @@
-﻿using domain.entities;
-using domain.interfaces;
-using domain.pagination;
+﻿using domain.interfaces;
 using MediatR;
-using Microsoft.AspNetCore.WebUtilities;
 
 namespace application.useCases.commentInteractions.QueryComments.QueryCommentsForSingleArticle;
 

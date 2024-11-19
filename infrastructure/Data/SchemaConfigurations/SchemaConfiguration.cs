@@ -94,7 +94,7 @@ public static class SchemaConfiguration
             entity.HasOne(d => d.ClubCreator).WithMany(p => p.Clubs)
                 .HasForeignKey(d => d.ClubCreatorId)
                 .HasConstraintName("FK__Club__clubCreato__628FA481")
-                .OnDelete(DeleteBehavior.Cascade);;
+                .OnDelete(DeleteBehavior.Cascade);
         });
 
         modelBuilder.Entity<ClubAdditionalInfo>(entity =>
@@ -323,9 +323,9 @@ public static class SchemaConfiguration
             entity.Property(e => e.ThreadsLink)
                 .HasMaxLength(255)
                 .HasColumnName("threadsLink");
-            entity.Property(e => e.UserProfilePicUrl)
-                .HasMaxLength(255)
-                .HasColumnName("userProfilePicUrl");
+            // entity.Property(e => e.UserProfilePicUrl)
+            //     .HasMaxLength(255)
+            //     .HasColumnName("userProfilePicUrl");
             entity.Property(e => e.XLink)
                 .HasMaxLength(255)
                 .HasColumnName("xLink");

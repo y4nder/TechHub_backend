@@ -34,7 +34,7 @@ public class CommentRepository : ICommentRepository
             .AsNoTracking()
             .Include(c => c.CommentCreator.UserAdditionalInfo) // Eager load only needed relationships
             .Include(c => c.InverseParentComment)
-            .ThenInclude(r => r.CommentCreator.UserAdditionalInfo)
+                .ThenInclude(r => r.CommentCreator.UserAdditionalInfo)
             .Where(c => c.ArticleId == articleId && c.ParentCommentId == null)
             .OrderBy(c => c.CreatedDateTime);
         
@@ -62,4 +62,8 @@ public class CommentRepository : ICommentRepository
         };
     }
 
+    public async Task<bool> CheckCommentIdExists(int commentId)
+    {
+        return await _context.Comments.FindAsync(commentId) != null;
+    }
 }

@@ -4,7 +4,7 @@ public partial class UserAdditionalInfo
 {
     public int UserId { get; set; }
 
-    public string UserProfilePicUrl { get; set; } = string.Empty;
+    // public string UserProfilePicUrl { get; set; } = string.Empty;
 
     public int ReputationPoints { get; set; } = 0;
 

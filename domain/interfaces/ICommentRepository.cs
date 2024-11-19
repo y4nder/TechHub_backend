@@ -11,4 +11,6 @@ public interface ICommentRepository
     
     Task<PaginatedResult<ArticleCommentDto>> GetPaginatedCommentsByArticleId(int articleId, int pageNumber,
         int pageSize);
+    
+    Task<bool> CheckCommentIdExists(int commentId);
 }

@@ -51,25 +51,28 @@ public class ArticleRepository : IArticleRepository
             .FirstOrDefaultAsync(); 
     }
 
-    public async Task<PaginatedResult<Article>> GetPaginatedArticlesByTagIdsAsync(List<int> tagIds, int pageNumber, int pageSize)
+    public async Task<PaginatedResult<HomeArticle>> GetPaginatedHomeArticlesByTagIdsAsync(List<int> tagIds, int pageNumber,
+        int pageSize)
     {
         var query = _context.Articles
             .AsNoTracking()
             .Include(a => a.Club)
+            .Include(a => a.ArticleAuthor)
             .Include(a => a.Tags)
             .Where(a => a.Tags.Any(tag => tagIds.Contains(tag.TagId)) && !a.Archived)
             .OrderBy(a => a.CreatedDateTime); 
 
         var totalCount = await query.CountAsync(); 
 
-        var articles = await query
+        var homeArticles = await query
             .Skip((pageNumber - 1) * pageSize) 
             .Take(pageSize)                   
+            .Select(article => HomeArticle.Create(article))
             .ToListAsync();
 
-        return new PaginatedResult<Article>
+        return new PaginatedResult<HomeArticle>
         {
-            Items = articles,
+            Items = homeArticles,
             TotalCount = totalCount,
             PageNumber = pageNumber,
             PageSize = pageSize,
