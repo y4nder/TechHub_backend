@@ -19,7 +19,8 @@ public class CreateArticleBodyEventHandler : INotificationHandler<ArticleCreated
 
     public async Task Handle(ArticleCreatedEvent notification, CancellationToken cancellationToken)
     {
-        var articleBody = ArticleBody.Create(notification.Article.ArticleId, notification.ArticleContent);
+        var articleBody = ArticleBody
+            .Create(notification.Article.ArticleId, notification.ArticleContent);
         
         _articleBodyRepository.AddArticleBody(articleBody);
         

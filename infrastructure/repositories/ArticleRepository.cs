@@ -14,16 +14,12 @@ public class ArticleRepository : IArticleRepository
         _context = context;
     }
     
-    
-
     public void AddArticle(Article article)
     {
         var query = _context.Articles.AsQueryable();
         _context.Articles.Add(article);
     }
     
-    
-
     public async Task<Article?> GetArticleByIdAsync(int articleId)
     {
         return await _context.Articles.FindAsync(articleId);
@@ -56,46 +52,15 @@ public class ArticleRepository : IArticleRepository
             .FirstOrDefaultAsync(); 
     }
 
-    public async Task<PaginatedResult<HomeArticle>> GetPaginatedHomeArticlesByTagIdsAsync(List<int> tagIds, int pageNumber,
+    public async Task<PaginatedResult<ArticleResponseDto>> GetPaginatedHomeArticlesByTagIdsAsync(List<int> tagIds, int pageNumber,
         int pageSize)
     {
-        var query = _context.Articles
+        var baseQuery = _context.Articles
             .AsNoTracking()
-            .Include(a => a.Club)
-            .Include(a => a.ArticleAuthor)
-            .Include(a => a.Tags)
             .Where(a => a.Tags.Any(tag => tagIds.Contains(tag.TagId)) && !a.Archived)
             .OrderBy(a => a.CreatedDateTime); 
-
-        var totalCount = await query.CountAsync(); 
-
-        var homeArticles = await query
-            .Skip((pageNumber - 1) * pageSize) 
-            .Take(pageSize)                   
-            .Select(article => new HomeArticle
-            {
-                ArticleId = article.ArticleId,
-                ClubImageUrl = article.Club!.ClubImageUrl!,
-                UserImageUrl = article.ArticleAuthor!.UserProfilePicUrl,
-                ArticleTitle = article.ArticleTitle,
-                Tags = article.Tags.Select(tag => new TagDto
-                {
-                    TagId = tag.TagId,
-                    TagName = tag.TagName
-                }).ToList(),
-                CreatedDateTime = article.CreatedDateTime,
-                ArticleThumbnailUrl = article.ArticleThumbnailUrl!
-            })
-            .ToListAsync();
-
-        return new PaginatedResult<HomeArticle>
-        {
-            Items = homeArticles,
-            TotalCount = totalCount,
-            PageNumber = pageNumber,
-            PageSize = pageSize,
-            TotalPages = (int)Math.Ceiling(totalCount / (double)pageSize)
-        };
+        
+        return await GetPaginatedArticleCardExecutor(baseQuery, pageNumber, pageSize);
     }
 
     public async Task<Article?> QuerySingleArticleByIdAsync(int articleId)
@@ -107,56 +72,78 @@ public class ArticleRepository : IArticleRepository
             .Where(a => a.ArticleId == articleId).FirstOrDefaultAsync();
     }
 
-    public async Task<PaginatedResult<HomeArticle>> GetArticlesBySearchQueryAsync(string searchQuery, int pageNumber,
-        int pageSize)
+    
+    public async Task<PaginatedResult<ArticleResponseDto>> GetPaginatedArticlesBySearchQueryAsync(
+        string searchQuery, int pageNumber, int pageSize)
     {
         var normalizedQuery = searchQuery.ToUpper();
-        
-        var query = _context.Articles.AsQueryable();
-        
-        query = query
-            .Where(article => 
-                EF.Functions
-                    .Like(article.NormalizedArticleTitle, $"%{normalizedQuery}%"))
-            .OrderBy(article => article.CreatedDateTime);
-        
-        var totalCount = await query.CountAsync();
 
-        var dtoQuery = query
+        var baseQuery = _context.Articles
+            .Where(article => 
+                EF.Functions.Like(
+                    article.NormalizedArticleTitle, $"%{normalizedQuery}%"));
+
+        return await GetPaginatedArticleCardExecutor(baseQuery, pageNumber, pageSize);
+    }
+
+    public async Task<PaginatedResult<ArticleResponseDto>> GetPaginatedArticlesByClubIdAsync(
+        int clubId, int pageNumber, int pageSize)
+    {
+        var baseQuery = _context.Articles
+            .Where(article => article.ClubId == clubId);
+        
+        return await GetPaginatedArticleCardExecutor(baseQuery, pageNumber, pageSize);
+    }
+
+    public async Task<PaginatedResult<ArticleResponseDto>> GetPaginatedArticlesByUserId(
+        int authorId, int pageNumber, int pageSize)
+    {
+        var baseQuery = _context.Articles
+            .Where(article => article.ArticleAuthorId == authorId);
+        
+        return await GetPaginatedArticleCardExecutor(baseQuery, pageNumber, pageSize);
+    }
+    
+    private async Task<PaginatedResult<ArticleResponseDto>> GetPaginatedArticleCardExecutor(
+        IQueryable<Article> baseQuery, int pageNumber, int pageSize)
+    {
+        var projectedQuery = baseQuery
+            .OrderBy(article => article.CreatedDateTime)
             .Skip((pageNumber - 1) * pageSize)
             .Take(pageSize)
-            .Select(article => new HomeArticle
+            .Select(article => new ArticleResponseDto
             {
                 ArticleId = article.ArticleId,
-                ClubImageUrl = article.Club!.ClubImageUrl!,
-                UserImageUrl = article.ArticleAuthor!.UserProfilePicUrl,
-                ArticleTitle = article.ArticleTitle,
+                ClubImageUrl = article.Club != null ? article.Club.ClubImageUrl! : string.Empty,
+                UserImageUrl = article.ArticleAuthor != null ? article.ArticleAuthor.UserProfilePicUrl! : string.Empty,
+                ArticleTitle = article.ArticleTitle ?? "Untitled",
                 Tags = article.Tags.Select(tag => new TagDto
                 {
                     TagId = tag.TagId,
-                    TagName = tag.TagName
+                    TagName = tag.TagName ?? "Unknown Tag"
                 }).ToList(),
                 CreatedDateTime = article.CreatedDateTime,
-                ArticleThumbnailUrl = article.ArticleThumbnailUrl!
+                ArticleThumbnailUrl = article.ArticleThumbnailUrl ?? string.Empty,
+                VoteCount = _context.UserArticleVotes
+                    .Where(vote => vote.ArticleId == article.ArticleId)
+                    .Sum(vote => vote.VoteType),
+                CommentCount = _context.Comments.Count(comment => comment.ArticleId == article.ArticleId)
             });
 
-        var homeArticles = await dtoQuery.ToListAsync();
+        // Get paginated results and total count in parallel
+        var totalCountTask = baseQuery.CountAsync();
+        var articlesTask = projectedQuery.ToListAsync();
 
-        return new PaginatedResult<HomeArticle>
+        await Task.WhenAll(totalCountTask, articlesTask);
+
+        return new PaginatedResult<ArticleResponseDto>
         {
-            Items = homeArticles,
-            TotalCount = totalCount,
+            Items = articlesTask.Result,
+            TotalCount = totalCountTask.Result,
             PageNumber = pageNumber,
             PageSize = pageSize,
-            TotalPages = (int)Math.Ceiling(totalCount / (double)pageSize)
+            TotalPages = (int)Math.Ceiling(totalCountTask.Result / (double)pageSize)
         };
-
     }
-
-    public IQueryable<Article> GetArticleQueryable()
-    {
-        return _context.Articles.AsQueryable();
-    }
-    
     
 }

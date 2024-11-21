@@ -15,5 +15,5 @@ public class SearchArticlesResponse
 {
     public string Message { get; set; } = null!;
 
-    public PaginatedResult<HomeArticle> QueriedArticles { get; set; } = null!;
+    public PaginatedResult<ArticleResponseDto> QueriedArticles { get; set; } = null!;
 }

@@ -18,7 +18,7 @@ public class SearchArticlesQueryHandler : IRequestHandler<SearchArticlesQuery, S
             throw new InvalidOperationException("Query is empty");
         
         var homeArticles = await _articleRepository
-            .GetArticlesBySearchQueryAsync(
+            .GetPaginatedArticlesBySearchQueryAsync(
                 request.Query, 
                 request.PageNumber, 
                 request.PageSize);

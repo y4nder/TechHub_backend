@@ -89,7 +89,7 @@ public static class ArticleStatusDefaults
     public const string Archived = "Archived";
 }
 
-public class HomeArticle
+public class ArticleResponseDto
 {
     public int ArticleId { get; set; }
     public string ClubImageUrl { get; set; } = null!;
@@ -98,8 +98,10 @@ public class HomeArticle
     public List<TagDto> Tags { get; set; } = null!;
     public DateTime? CreatedDateTime { get; set; }
     public string ArticleThumbnailUrl { get; set; } = null!;
-    
-    // TODO include article up votes and comment counts
+
+    public int VoteCount { get; set; } = -1;
+
+    public int CommentCount { get; set; } = -1;
     
 }
 

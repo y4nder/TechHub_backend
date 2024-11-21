@@ -14,13 +14,6 @@ public class GetHomeArticlesQuery : IRequest<HomeArticleResponse>
 public class HomeArticleResponse
 {
     public string Message { get; set; } = null!;
-    public PaginatedResult<HomeArticle> HomeArticles { get; set; } = null!;
+    public PaginatedResult<ArticleResponseDto> HomeArticles { get; set; } = null!;
 }
 
-
-
-public class HomeArticleTag(int id, string name)
-{
-    public int TagId { get; private set; } = id;
-    public string TagName { get; private set; } = name;
-}

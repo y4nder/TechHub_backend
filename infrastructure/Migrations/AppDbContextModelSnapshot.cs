@@ -155,6 +155,12 @@ namespace infrastructure.Migrations
                         .HasColumnType("varchar(20)")
                         .HasColumnName("clubName");
 
+                    b.Property<int>("ClubViews")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("Featured")
+                        .HasColumnType("bit");
+
                     b.Property<short?>("InvitePermission")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("smallint")
@@ -884,11 +890,10 @@ namespace infrastructure.Migrations
             modelBuilder.Entity("domain.entities.ClubAdditionalInfo", b =>
                 {
                     b.HasOne("domain.entities.Club", "Club")
-                        .WithMany()
-                        .HasForeignKey("ClubId")
+                        .WithOne("ClubAdditionalInfo")
+                        .HasForeignKey("domain.entities.ClubAdditionalInfo", "ClubId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("FK__ClubAddit__clubI__6754599E");
+                        .IsRequired();
 
                     b.Navigation("Club");
                 });
@@ -1101,6 +1106,8 @@ namespace infrastructure.Migrations
             modelBuilder.Entity("domain.entities.Club", b =>
                 {
                     b.Navigation("Articles");
+
+                    b.Navigation("ClubAdditionalInfo");
 
                     b.Navigation("ClubUsers");
                 });

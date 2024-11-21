@@ -9,3 +9,9 @@ public partial class ClubCategory
     public virtual ICollection<Club> Clubs { get; set; } = new List<Club>();
     
 }
+
+public class ClubCategoryDto
+{
+    public int ClubCategoryId { get; set; }
+    public string ClubCategoryName { get; set; } = null!;
+}

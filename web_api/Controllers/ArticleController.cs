@@ -106,7 +106,7 @@ public class ArticleController : Controller
         }
     }
     
-    [HttpGet("getArticle")]
+    [HttpGet("searchArticles")]
     public async Task<IActionResult> GetArticles([FromQuery]SearchArticlesQuery searchArticleQuery)
     {
         var articles = await _mediator.Send(searchArticleQuery);

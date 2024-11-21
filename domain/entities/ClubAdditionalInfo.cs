@@ -8,7 +8,7 @@ public partial class ClubAdditionalInfo
 
     public string? ClubDescription { get; set; }
 
-    public virtual Club? Club { get; set; }
+    public virtual Club Club { get; set; } = null!;
 
     public static ClubAdditionalInfo CreateDefault(Club club)
     {

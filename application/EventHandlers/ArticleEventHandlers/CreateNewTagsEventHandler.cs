@@ -26,9 +26,9 @@ public class CreateNewTagsEventHandler : INotificationHandler<ArticleCreatedEven
         
         var newTags = newTagNotification.NewTags;
 
-        var createdTags = newTags!.Select(nt => new Tag
+        var createdTags = newTags!.Select(newTagName => new Tag
         {
-            TagName = nt,
+            TagName = newTagName,
             TagCount = 1
         }).ToList();
         

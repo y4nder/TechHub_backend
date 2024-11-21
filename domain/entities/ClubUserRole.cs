@@ -38,3 +38,10 @@ public enum DefaultRoles
 // new ClubUserRole { RoleId = 2, RoleName= "Club Creator"},
 // new ClubUserRole { RoleId = 3, RoleName= "Moderator"},
 // new ClubUserRole { RoleId = 4, RoleName= "Admin"}
+
+public class ClubUserRoleDto
+{
+    public int UserId { get; set; }
+    public string Username { get; set; } = null!;
+    public string RoleName { get; set; } = null!;
+}

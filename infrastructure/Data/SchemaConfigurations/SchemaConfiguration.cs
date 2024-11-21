@@ -95,6 +95,11 @@ public static class SchemaConfiguration
                 .HasForeignKey(d => d.ClubCreatorId)
                 .HasConstraintName("FK__Club__clubCreato__628FA481")
                 .OnDelete(DeleteBehavior.Cascade);
+            
+            entity.HasOne(c => c.ClubAdditionalInfo)
+                .WithOne(ca => ca.Club)
+                .HasForeignKey<ClubAdditionalInfo>(ca => ca.ClubId)
+                .OnDelete(DeleteBehavior.Cascade); // Optional: Configure delete behavior
         });
 
         modelBuilder.Entity<ClubAdditionalInfo>(entity =>
@@ -114,9 +119,11 @@ public static class SchemaConfiguration
                 .HasColumnName("clubDescription");
             entity.Property(e => e.ClubId).HasColumnName("clubId");
 
-            entity.HasOne(d => d.Club).WithMany()
-                .HasForeignKey(d => d.ClubId)
-                .HasConstraintName("FK__ClubAddit__clubI__6754599E");
+            entity.HasOne(ca => ca.Club)
+                .WithOne(c => c.ClubAdditionalInfo) // Specify the inverse navigation property
+                .HasForeignKey<ClubAdditionalInfo>(ca => ca.ClubId) // Ensure the key is in `ClubAdditionalInfo`
+                .OnDelete(DeleteBehavior.Cascade); // Optional: Configure delete behavior
+
         });
 
         modelBuilder.Entity<ClubCategory>(entity =>
