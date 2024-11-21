@@ -9,6 +9,8 @@ public partial class Article
     public int ClubId { get; set; }
 
     public string ArticleTitle { get; set; } = null!;
+    
+    public string NormalizedArticleTitle { get; set; } = null!;
 
     public string? ArticleThumbnailUrl { get; set; }
 
@@ -43,6 +45,7 @@ public partial class Article
             ArticleAuthorId = dto.AuthorId,
             ClubId = dto.ClubId,
             ArticleTitle = dto.ArticleTitle,
+            NormalizedArticleTitle = dto.ArticleTitle.ToUpper(),
             ArticleThumbnailUrl = dto.ArticleThumbnailUrl,
             CreatedDateTime = DateTime.Now,
             UpdateDateTime = DateTime.Now,
@@ -59,6 +62,7 @@ public partial class Article
             ArticleAuthorId = dto.AuthorId,
             ClubId = dto.ClubId,
             ArticleTitle = dto.ArticleTitle,
+            NormalizedArticleTitle = dto.ArticleTitle.ToUpper(),
             ArticleThumbnailUrl = dto.ArticleThumbnailUrl,
             CreatedDateTime = DateTime.Now,
             UpdateDateTime = DateTime.Now,
@@ -85,4 +89,19 @@ public static class ArticleStatusDefaults
     public const string Archived = "Archived";
 }
 
+public class ArticleResponseDto
+{
+    public int ArticleId { get; set; }
+    public string ClubImageUrl { get; set; } = null!;
+    public string UserImageUrl { get; set; } = null!;
+    public string ArticleTitle { get; set; } = null!;
+    public List<TagDto> Tags { get; set; } = null!;
+    public DateTime? CreatedDateTime { get; set; }
+    public string ArticleThumbnailUrl { get; set; } = null!;
+
+    public int VoteCount { get; set; } = -1;
+
+    public int CommentCount { get; set; } = -1;
+    
+}
 

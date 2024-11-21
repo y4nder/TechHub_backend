@@ -31,35 +31,20 @@ public class GetHomeArticlesQueryHandler : IRequestHandler<GetHomeArticlesQuery,
         if(! await _userRepository.CheckIdExists(request.UserId))
             throw new UnauthorizedAccessException("You do not have permission to access the resource");
         
-        var userAdditionalInfo = await _userAdditionalInfoRepository.GetAdditionalInfoAsync(request.UserId)??
-                                 throw new KeyNotFoundException("You do not have permission to access the resource");
-        
         var userTagFollowRecords = await _userTagFollowRepository.GetFollowedTags(request.UserId);
         
         if(userTagFollowRecords == null || userTagFollowRecords.Count == 0)
             throw new InvalidOperationException("user doesn't have followed tags");
-        
-        var tagIds = userTagFollowRecords.Select(t => t.TagId).ToList();
+
+        var tagIds = userTagFollowRecords.Select(t => t.TagId);
         
         var paginatedArticles = await _articleRepository
-            .GetPaginatedArticlesByTagIdsAsync(tagIds, request.PageNumber, request.PageSize);
-        
-        var dtoPaginatedArticles = PaginatedResultMapper.Map<Article, HomeArticle>(paginatedArticles, 
-            article => new HomeArticle
-            {
-                ArticleId = article.ArticleId,
-                ClubImageUrl = article.Club!.ClubImageUrl!,
-                UserImageUrl = userAdditionalInfo.UserProfilePicUrl,
-                ArticleTitle = article.ArticleTitle,
-                Tags = article.Tags.Select(t => new HomeArticleTag(t.TagId, t.TagName)).ToList(),
-                CreatedDateTime = article.CreatedDateTime,
-                ArticleThumbnailUrl = article.ArticleThumbnailUrl!
-            });
+            .GetPaginatedHomeArticlesByTagIdsAsync(tagIds.ToList(), request.PageNumber, request.PageSize);
         
         return new HomeArticleResponse
         {
             Message = "Home articles found",
-            HomeArticles = dtoPaginatedArticles
+            HomeArticles = paginatedArticles
         };
     }
 }

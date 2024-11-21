@@ -1,4 +1,6 @@
-﻿namespace domain.entities;
+﻿using System.Security.Principal;
+
+namespace domain.entities;
 
 public partial class Club
 {
@@ -17,6 +19,10 @@ public partial class Club
     public short? PostPermission { get; set; }
 
     public short? InvitePermission { get; set; }
+    
+    public int ClubViews { get; set; } = 0;
+
+    public bool Featured { get; set; } = false;
 
     public virtual ICollection<Article> Articles { get; set; } = new List<Article>();
 
@@ -24,6 +30,9 @@ public partial class Club
 
     public virtual User? ClubCreator { get; set; }
 
+    
+    public virtual ClubAdditionalInfo? ClubAdditionalInfo { get; set; }
+    
     public virtual ICollection<ClubUser> ClubUsers { get; set; } = new List<ClubUser>();
 
     public static Club CreateDefault(ClubDto dto)
@@ -87,3 +96,45 @@ public enum PermissionType
     AllMembers = 0,
     Moderators = 1,
 }
+
+public class ClubStandardResponseDto
+{
+    public int ClubId { get; set; }
+    public string ClubProfilePicUrl { get; set; } = null!;
+    public string ClubName { get; set; } = null!;
+    public string ClubDescription { get; set; } = null!;
+    public int ClubMembersCount { get; set; } 
+}
+public class ClubFeaturedResponseDto
+{
+    public int ClubId { get; set; }
+    public string ClubProfilePicUrl { get; set; } = null!;
+    public string ClubName { get; set; } = null!;
+    public string ClubDescription { get; set; } = null!;
+    public int ClubMembersCount { get; set; }   
+    public List<string> RecentMembersProfilePics { get; set; } = new List<string>();
+}
+
+public class ClubCategoryStandardResponseDto
+{
+    public int CategoryId { get; set; }
+    public string CategoryName { get; set; } = null!;
+    public List<ClubStandardResponseDto> Clubs { get; set; } = new List<ClubStandardResponseDto>();
+}
+
+public class SingleClubResponseDto
+{
+    public int ClubId { get; set; }
+    public string ClubName { get; set; } = null!;
+    public DateTime? ClubCreatedDateTime { get; set; }
+    public int PostCount { get; set; } = -1;
+    public int ClubViews { get; set; } = -1;
+    public int ClubUpVoteCount { get; set; } = -1;
+    public bool Featured { get; set; } = false;
+    public List<string> RecentMemberProfilePics { get; set; } = new List<string>();
+    public int MemberCount { get; set; } = -1;
+    public ClubUserRoleDto ClubCreator { get; set; } = null!;
+    public List<ClubUserRoleDto> Moderators { get; set; } = null!;
+}
+
+

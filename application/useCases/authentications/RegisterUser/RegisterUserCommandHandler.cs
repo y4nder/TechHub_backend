@@ -39,7 +39,7 @@ public class RegisterUserCommandHandler : IRequestHandler<RegisterUserCommand, R
         await EnsureUserNameAndEmailUnique(request.Username, request.Email);
         
         var hashedPassword = _passwordHasherService.HashPassword(request.Password);
-        var createdUser = User.Create(request.Username, request.Email, hashedPassword);
+        var createdUser = User.Create(request.Username, request.Email, hashedPassword, null);
         
         _userRepository.AddUser(createdUser);
         

@@ -79,6 +79,10 @@ namespace infrastructure.Migrations
                         .HasDefaultValue(true)
                         .HasColumnName("isDrafted");
 
+                    b.Property<string>("NormalizedArticleTitle")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Status")
                         .IsRequired()
                         .HasMaxLength(10)
@@ -150,6 +154,12 @@ namespace infrastructure.Migrations
                         .IsUnicode(false)
                         .HasColumnType("varchar(20)")
                         .HasColumnName("clubName");
+
+                    b.Property<int>("ClubViews")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("Featured")
+                        .HasColumnType("bit");
 
                     b.Property<short?>("InvitePermission")
                         .ValueGeneratedOnAdd()
@@ -585,6 +595,10 @@ namespace infrastructure.Migrations
                         .HasColumnType("nvarchar(255)")
                         .HasColumnName("password");
 
+                    b.Property<string>("UserProfilePicUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Username")
                         .HasMaxLength(10)
                         .IsUnicode(false)
@@ -657,12 +671,6 @@ namespace infrastructure.Migrations
                         .HasColumnType("nvarchar(255)")
                         .HasColumnName("threadsLink");
 
-                    b.Property<string>("UserProfilePicUrl")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)")
-                        .HasColumnName("userProfilePicUrl");
-
                     b.Property<string>("XLink")
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)")
@@ -733,7 +741,7 @@ namespace infrastructure.Migrations
                         .HasColumnType("int")
                         .HasColumnName("articleId");
 
-                    b.Property<short?>("VoteType")
+                    b.Property<short>("VoteType")
                         .HasColumnType("smallint")
                         .HasColumnName("voteType");
 
@@ -755,7 +763,7 @@ namespace infrastructure.Migrations
                         .HasColumnType("int")
                         .HasColumnName("commentId");
 
-                    b.Property<short?>("VoteType")
+                    b.Property<short>("VoteType")
                         .HasColumnType("smallint")
                         .HasColumnName("vote_type");
 
@@ -882,11 +890,10 @@ namespace infrastructure.Migrations
             modelBuilder.Entity("domain.entities.ClubAdditionalInfo", b =>
                 {
                     b.HasOne("domain.entities.Club", "Club")
-                        .WithMany()
-                        .HasForeignKey("ClubId")
+                        .WithOne("ClubAdditionalInfo")
+                        .HasForeignKey("domain.entities.ClubAdditionalInfo", "ClubId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("FK__ClubAddit__clubI__6754599E");
+                        .IsRequired();
 
                     b.Navigation("Club");
                 });
@@ -1099,6 +1106,8 @@ namespace infrastructure.Migrations
             modelBuilder.Entity("domain.entities.Club", b =>
                 {
                     b.Navigation("Articles");
+
+                    b.Navigation("ClubAdditionalInfo");
 
                     b.Navigation("ClubUsers");
                 });

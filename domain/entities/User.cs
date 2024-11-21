@@ -9,6 +9,8 @@ public partial class User
     public string? Email { get; set; }
 
     public string? Password { get; set; }
+    
+    public string UserProfilePicUrl { get; set; } = string.Empty;
 
     public virtual ICollection<Article> Articles { get; set; } = new List<Article>();
 
@@ -36,13 +38,14 @@ public partial class User
 
     public virtual ICollection<UserTagFollow> UserTagFollows { get; set; } = new List<UserTagFollow>();
 
-    public static User Create(string username, string email, string password)
+    public static User Create(string username, string email, string password, string? userProfilePicUrl)
     {
         return new User
         {
             Username = username,
             Email = email,
-            Password = password
+            Password = password,
+            UserProfilePicUrl = userProfilePicUrl ?? UserDefaults.DefaultProfilePictureUrl,
         };
     }
 }
@@ -57,4 +60,9 @@ public class UserMinimalDto
         UserId = user.UserId;
         Username = user.Username!;   
     }
+}
+
+public static class UserDefaults
+{
+    public const string DefaultProfilePictureUrl = "NoProfilePic";
 }

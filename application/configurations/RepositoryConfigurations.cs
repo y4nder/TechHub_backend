@@ -28,6 +28,12 @@ public static class RepositoryConfigurations
 
         services.AddScoped<ICommentRepository, CommentRepository>();
         services.AddScoped<IUserArticleReadRepository, UserArticleReadRepository>();
+
+        services.AddScoped<IUserArticleVoteRepository, UserArticleVoteRepository>();
+
+        services.AddScoped<IUserCommentVoteRepository, UserCommentVoteRepository>();
+
+        services.AddScoped<IArticleBookmarkRepository, ArticleBookmarkRepository>();
         
         return services;
     }

@@ -9,4 +9,8 @@ public interface IClubRepository
     Task<bool> ClubIdExists(int clubId);
     
     Task<Club?> GetClubByIdNoTracking(int clubId);
+
+    Task<List<ClubCategoryStandardResponseDto>> GetAllCategorizedClubs();
+    Task<List<ClubFeaturedResponseDto>> GetFeaturedClubsAsync();
+    Task<SingleClubResponseDto?> GetSingleClubByIdAsync(int clubId);
 }

@@ -18,11 +18,16 @@ public class SingleQueryDto
     public DateTime? CreatedDateTime { get; set; }
     public DateTime? UpdatedDateTime { get; set; }
     public UserMinimalDto Author { get; set; } 
-    public string ArticleContent { get; set; } 
+    public string ArticleContent { get; set; }
+    public int VoteCount { get; set; }
     
-    // todo add upvote count and comment count
+    // todo add comment count
 
-    public SingleQueryDto(int userId, Article article, ArticleBody articleBody)
+    public SingleQueryDto(
+        int userId, 
+        Article article, 
+        ArticleBody articleBody,
+        int voteCount)
     {
         UserId = userId;
         ArticleId = article.ArticleId;
@@ -36,5 +41,6 @@ public class SingleQueryDto
         UpdatedDateTime = article.UpdateDateTime;
         Author = new UserMinimalDto(article.ArticleAuthor!);
         ArticleContent = articleBody.ArticleContent;
+        VoteCount = voteCount;
     }
 }

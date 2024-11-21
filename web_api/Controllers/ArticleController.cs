@@ -1,7 +1,10 @@
 ﻿using application.useCases.articleInteractions.ArchiveArticle;
 using application.useCases.articleInteractions.CreateArticle;
+using application.useCases.articleInteractions.DownVoteArticle;
 using application.useCases.articleInteractions.QueryArticles.HomeArticles;
+using application.useCases.articleInteractions.QueryArticles.SearchedArticles;
 using application.useCases.articleInteractions.QueryArticles.SingleArticle;
+using application.useCases.articleInteractions.UpvoteArticle;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using web_api.utils;
@@ -18,7 +21,9 @@ public class ArticleController : Controller
     }
 
     [HttpPost("addArticle")]
-    public async Task<IActionResult> AddArticle(CreateArticleCommand command)
+    public async Task<IActionResult> AddArticle(
+        [FromForm]CreateArticleCommand command
+        )
     {
         try
         {
@@ -32,7 +37,7 @@ public class ArticleController : Controller
     }
     
     [HttpPost("archiveArticle")]
-    public async Task<IActionResult> AddArticle(ArchiveArticleCommand command)
+    public async Task<IActionResult> AddArticle([FromBody] ArchiveArticleCommand command)
     {
         try
         {
@@ -71,5 +76,40 @@ public class ArticleController : Controller
         {
             return ErrorFactory.CreateErrorResponse(ex);
         }
+    }
+
+    [HttpPost("upvoteArticle")]
+    public async Task<IActionResult> UpVoteArticle(UpVoteArticleCommand command)
+    {
+        try
+        {
+            var response = await _mediator.Send(command);
+            return Ok(response);
+        }
+        catch (Exception ex)
+        {
+            return ErrorFactory.CreateErrorResponse(ex);
+        }
+    }
+    
+    [HttpPost("downVoteArticle")]
+    public async Task<IActionResult> DownVoteArticle(DownVoteArticleCommand command)
+    {
+        try
+        {
+            var response = await _mediator.Send(command);
+            return Ok(response);
+        }
+        catch (Exception ex)
+        {
+            return ErrorFactory.CreateErrorResponse(ex);
+        }
+    }
+    
+    [HttpGet("searchArticles")]
+    public async Task<IActionResult> GetArticles([FromQuery]SearchArticlesQuery searchArticleQuery)
+    {
+        var articles = await _mediator.Send(searchArticleQuery);
+        return Ok(articles);
     }
 }

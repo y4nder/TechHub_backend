@@ -25,11 +25,11 @@ public class CreateArticleCommandHandler : IRequestHandler<CreateArticleCommand,
         IValidator<CreateArticleCommand> validator,
         IUserRepository userRepository,
         IUnitOfWork unitOfWork,
-        IClubRepository clubRepository, 
-        IArticleImageService articleImageService, 
-        ITagRepository tagRepository, 
-        IArticleRepository articleRepository, 
-        IMediator mediator, 
+        IClubRepository clubRepository,
+        IArticleImageService articleImageService,
+        ITagRepository tagRepository,
+        IArticleRepository articleRepository,
+        IMediator mediator,
         IClubUserRepository clubUserRepository)
     {
         _validator = validator;
@@ -50,29 +50,33 @@ public class CreateArticleCommandHandler : IRequestHandler<CreateArticleCommand,
         {
             throw new ValidationException(validationResult.Errors);
         }
-        
+
         // validate author id
-        if(! await _userRepository.CheckIdExists(request.AuthorId))
+        if (!await _userRepository.CheckIdExists(request.AuthorId))
             throw new KeyNotFoundException("User does not exist");
-        
+
         // validate club id
-        var club = await _clubRepository.GetClubByIdNoTracking(request.ClubId)??
-            throw new KeyNotFoundException("Club does not exist");
-        
+        var club = await _clubRepository.GetClubByIdNoTracking(request.ClubId) ??
+                   throw new KeyNotFoundException("Club does not exist");
+
         //check if joined
-        if(! await _clubUserRepository.ClubJoined(request.ClubId, request.AuthorId))
+        if (!await _clubUserRepository.ClubJoined(request.ClubId, request.AuthorId))
             throw new UnauthorizedAccessException("You do not have permission to access this club");
-        
+
         // resolve permissions 
         await ValidateClubPermissions(club, request.AuthorId);
-        
+
         // validate tags
         await ValidateTags(request.TagIds);
+
+        if (request.NewTags != null)
+            await EnsureNewTagsAreUnique(request.NewTags);
         
+
         // upload article thumbnail
-        var articleUploadResponse = await _articleImageService.UploadThumbnail(request.ArticleThumbnail!)??
+        var articleUploadResponse = await _articleImageService.UploadThumbnail(request.ArticleThumbnail!) ??
                                     throw new Exception("Thumbnail upload failed");
-        
+
         // get list of tags
         var tags = await _tagRepository.GetTagsManyAsync(request.TagIds!);
 
@@ -85,21 +89,28 @@ public class CreateArticleCommandHandler : IRequestHandler<CreateArticleCommand,
             ArticleThumbnailUrl = articleUploadResponse.ImageSecureUrl,
             Tags = tags
         };
-        
+
         // create article object
-        var article = request.IsDrafted ? 
-            Article.CreateDraft(articleDto) : 
-            Article.CreatePublished(articleDto);
-        
+        var article = request.IsDrafted ? Article.CreateDraft(articleDto) : Article.CreatePublished(articleDto);
+
         // add article
         _articleRepository.AddArticle(article);
-        
+
         // save unit of work
         await _unitOfWork.CommitAsync(cancellationToken);
-        
+
         // create event article event created
-        await _mediator.Publish(new ArticleCreatedEvent(article, request.ArticleContent), cancellationToken);
+        var articleEvent = new ArticleCreatedEvent
+        {
+            Article = article,
+            ArticleContent = request.ArticleContent,
+            NewTagNotification = request.NewTags != null 
+                ? NewTagNotification.CreateHasNewTags(request.NewTags) 
+                : NewTagNotification.CreateHasNoNewTags(),
+        };
         
+        await _mediator.Publish(articleEvent, cancellationToken);
+
         // return response
         return new CreateArticleResponse
         {
@@ -109,27 +120,27 @@ public class CreateArticleCommandHandler : IRequestHandler<CreateArticleCommand,
 
     private async Task ValidateClubPermissions(Club club, int authorId)
     {
-        var clubUserRecords = await _clubUserRepository.GetClubUserRecord(authorId);
+        var clubUserRecords = await _clubUserRepository.GetClubUserRecord(club.ClubId, authorId);
         var roles = clubUserRecords!.Select(x => x.Role).Distinct();
 
         if (club.PostPermission == (short)PermissionType.Moderators)
         {
             bool allowed = roles.Any(r => r!.RoleId == (int)DefaultRoles.Moderator);
-            if(!allowed)
+            if (!allowed)
                 throw new UnauthorizedAccessException("You do not have permission to post an article in this club");
         }
     }
 
     private async Task ValidateTags(List<int>? requestTagIds)
     {
-        if(requestTagIds == null || requestTagIds.Count == 0)
+        if (requestTagIds == null || requestTagIds.Count == 0)
             throw new ArgumentException("No tags provided");
-        
+
         if (requestTagIds is [0] && requestTagIds.Count == 1)
         {
             throw new ArgumentException("No tags provided");
         }
-        
+
         if (!TagsUnique(requestTagIds))
         {
             throw TagException.DuplicateTags();
@@ -139,9 +150,9 @@ public class CreateArticleCommandHandler : IRequestHandler<CreateArticleCommand,
         {
             throw TagException.InvalidTagIds();
         }
-        
+
     }
-    
+
     private bool TagsUnique(List<int> tagIds)
     {
         HashSet<int> seedTagIds = new HashSet<int>();
@@ -155,11 +166,21 @@ public class CreateArticleCommandHandler : IRequestHandler<CreateArticleCommand,
                 break;
             }
         }
+
         return isUnique;
     }
 
-    private async Task<bool> EnsureAllTagsExist(List<int> tagIds)
+    private async Task<bool> EnsureAllTagsExist(List<int> tagIds) 
+        => await _tagRepository.AreAllIdsValidAsync(tagIds);
+
+    private async Task EnsureNewTagsAreUnique(List<string>? newTags)
     {
-        return await _tagRepository.AreAllIdsValidAsync(tagIds);
+        if (newTags == null) 
+            throw new ArgumentException("No new tags provided");
+        if (newTags.Count == 0)
+            throw new ArgumentException("No tags provided");
+        
+        if(! await _tagRepository.AreNewTagsUniqueAsync(newTags))
+            throw new InvalidOperationException("New Tags already exists");
     }
 }

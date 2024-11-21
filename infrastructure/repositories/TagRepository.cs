@@ -43,4 +43,40 @@ public class TagRepository : ITagRepository
             _context.Entry(tag).State = EntityState.Modified;
         }
     }
+
+    public async Task<List<TagDto>> GetTagsByQueryAsync(string tagSearchQuery)
+    {
+        var query = _context.Tags.AsQueryable();
+
+        var tagQuery = query
+            .AsNoTracking()
+            .Where(tag =>
+                EF.Functions.Like(tag.TagName, $"{tagSearchQuery}%"))
+            .OrderByDescending(tag => tag.TagCount)
+            .Take(10)
+            .Select(tag => new TagDto
+            {
+                TagId = tag.TagId,
+                TagName = tag.TagName
+            });
+
+        var tags = await tagQuery.ToListAsync();
+
+        return tags;
+    }
+
+    public async Task<bool> AreNewTagsUniqueAsync(List<string> newTags)
+    {
+        var existingTags = await _context.Tags
+            .Where(t => newTags.Contains(t.TagName))
+            .Select(t => t.TagName)
+            .ToListAsync();
+        
+        return !existingTags.Any();
+    }
+
+    public void BatchAddTags(List<Tag> tags)
+    {
+        _context.Tags.AddRange(tags);
+    }
 }

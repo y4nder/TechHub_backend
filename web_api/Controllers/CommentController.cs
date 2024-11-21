@@ -1,5 +1,8 @@
 ﻿using application.useCases.commentInteractions.CreateAComment;
+using application.useCases.commentInteractions.DownVoteComment;
+using application.useCases.commentInteractions.QueryComments.QueryCommentsForSingleArticle;
 using application.useCases.commentInteractions.ReplyAComment;
+using application.useCases.commentInteractions.UpvoteComment;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using web_api.utils;
@@ -31,6 +34,48 @@ public class CommentController : Controller
     
     [HttpPost("replyComment")]
     public async Task<IActionResult> ReplyComment([FromBody] ReplyCommentCommand command)
+    {
+        try
+        {
+            var response = await _mediator.Send(command);
+            return Ok(response);
+        }
+        catch (Exception ex)
+        {
+            return ErrorFactory.CreateErrorResponse(ex);
+        }
+    }
+
+    [HttpGet("getComments")]
+    public async Task<IActionResult> GetComments([FromQuery] GetArticleCommentsQuery query)
+    {
+        try
+        {
+            var response = await _mediator.Send(query);
+            return Ok(response);
+        }
+        catch (Exception ex)
+        {
+            return ErrorFactory.CreateErrorResponse(ex);
+        }
+    }
+
+    [HttpPost("upvoteComment")]
+    public async Task<IActionResult> UpvoteComment([FromBody] UpvoteCommentCommand command)
+    {
+        try
+        {
+            var response = await _mediator.Send(command);
+            return Ok(response);
+        }
+        catch (Exception ex)
+        {
+            return ErrorFactory.CreateErrorResponse(ex);
+        }
+    }
+    
+    [HttpPost("downVoteComment")]
+    public async Task<IActionResult> DownVoteComment([FromBody] DownVoteCommentCommand command)
     {
         try
         {
