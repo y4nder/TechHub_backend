@@ -17,4 +17,10 @@ public interface IArticleRepository
     Task<Article?> GetArticleByIdNoTracking(int articleId);
     Task<PaginatedResult<HomeArticle>> GetPaginatedHomeArticlesByTagIdsAsync(List<int> tagIds, int pageNumber, int pageSize);
     Task<Article?> QuerySingleArticleByIdAsync(int articleId);
+
+    Task<PaginatedResult<HomeArticle>> GetArticlesBySearchQueryAsync(string searchQuery, int pageNumber, int pageSize);
+
+    IQueryable<Article> GetArticleQueryable();
+    
+    
 }

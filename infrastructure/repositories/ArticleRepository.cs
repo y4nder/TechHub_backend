@@ -13,11 +13,16 @@ public class ArticleRepository : IArticleRepository
     {
         _context = context;
     }
+    
+    
 
     public void AddArticle(Article article)
     {
+        var query = _context.Articles.AsQueryable();
         _context.Articles.Add(article);
     }
+    
+    
 
     public async Task<Article?> GetArticleByIdAsync(int articleId)
     {
@@ -67,7 +72,20 @@ public class ArticleRepository : IArticleRepository
         var homeArticles = await query
             .Skip((pageNumber - 1) * pageSize) 
             .Take(pageSize)                   
-            .Select(article => HomeArticle.Create(article))
+            .Select(article => new HomeArticle
+            {
+                ArticleId = article.ArticleId,
+                ClubImageUrl = article.Club!.ClubImageUrl!,
+                UserImageUrl = article.ArticleAuthor!.UserProfilePicUrl,
+                ArticleTitle = article.ArticleTitle,
+                Tags = article.Tags.Select(tag => new TagDto
+                {
+                    TagId = tag.TagId,
+                    TagName = tag.TagName
+                }).ToList(),
+                CreatedDateTime = article.CreatedDateTime,
+                ArticleThumbnailUrl = article.ArticleThumbnailUrl!
+            })
             .ToListAsync();
 
         return new PaginatedResult<HomeArticle>
@@ -88,4 +106,57 @@ public class ArticleRepository : IArticleRepository
             .Include(a => a.ArticleAuthor)
             .Where(a => a.ArticleId == articleId).FirstOrDefaultAsync();
     }
+
+    public async Task<PaginatedResult<HomeArticle>> GetArticlesBySearchQueryAsync(string searchQuery, int pageNumber,
+        int pageSize)
+    {
+        var normalizedQuery = searchQuery.ToUpper();
+        
+        var query = _context.Articles.AsQueryable();
+        
+        query = query
+            .Where(article => 
+                EF.Functions
+                    .Like(article.NormalizedArticleTitle, $"%{normalizedQuery}%"))
+            .OrderBy(article => article.CreatedDateTime);
+        
+        var totalCount = await query.CountAsync();
+
+        var dtoQuery = query
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
+            .Select(article => new HomeArticle
+            {
+                ArticleId = article.ArticleId,
+                ClubImageUrl = article.Club!.ClubImageUrl!,
+                UserImageUrl = article.ArticleAuthor!.UserProfilePicUrl,
+                ArticleTitle = article.ArticleTitle,
+                Tags = article.Tags.Select(tag => new TagDto
+                {
+                    TagId = tag.TagId,
+                    TagName = tag.TagName
+                }).ToList(),
+                CreatedDateTime = article.CreatedDateTime,
+                ArticleThumbnailUrl = article.ArticleThumbnailUrl!
+            });
+
+        var homeArticles = await dtoQuery.ToListAsync();
+
+        return new PaginatedResult<HomeArticle>
+        {
+            Items = homeArticles,
+            TotalCount = totalCount,
+            PageNumber = pageNumber,
+            PageSize = pageSize,
+            TotalPages = (int)Math.Ceiling(totalCount / (double)pageSize)
+        };
+
+    }
+
+    public IQueryable<Article> GetArticleQueryable()
+    {
+        return _context.Articles.AsQueryable();
+    }
+    
+    
 }

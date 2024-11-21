@@ -9,6 +9,8 @@ public partial class Article
     public int ClubId { get; set; }
 
     public string ArticleTitle { get; set; } = null!;
+    
+    public string NormalizedArticleTitle { get; set; } = null!;
 
     public string? ArticleThumbnailUrl { get; set; }
 
@@ -43,6 +45,7 @@ public partial class Article
             ArticleAuthorId = dto.AuthorId,
             ClubId = dto.ClubId,
             ArticleTitle = dto.ArticleTitle,
+            NormalizedArticleTitle = dto.ArticleTitle.ToUpper(),
             ArticleThumbnailUrl = dto.ArticleThumbnailUrl,
             CreatedDateTime = DateTime.Now,
             UpdateDateTime = DateTime.Now,
@@ -59,6 +62,7 @@ public partial class Article
             ArticleAuthorId = dto.AuthorId,
             ClubId = dto.ClubId,
             ArticleTitle = dto.ArticleTitle,
+            NormalizedArticleTitle = dto.ArticleTitle.ToUpper(),
             ArticleThumbnailUrl = dto.ArticleThumbnailUrl,
             CreatedDateTime = DateTime.Now,
             UpdateDateTime = DateTime.Now,
@@ -96,23 +100,6 @@ public class HomeArticle
     public string ArticleThumbnailUrl { get; set; } = null!;
     
     // TODO include article up votes and comment counts
-
-    public static HomeArticle Create(Article article)
-    {
-        return new HomeArticle
-        {
-            ArticleId = article.ArticleId,
-            ClubImageUrl = article.Club!.ClubImageUrl!,
-            ArticleTitle = article.ArticleTitle,
-            UserImageUrl = article.ArticleAuthor!.UserProfilePicUrl,
-            Tags = article.Tags.Select(t => new TagDto
-            {
-                TagId = t.TagId,
-                TagName = t.TagName
-            }).ToList(),
-            CreatedDateTime = article.CreatedDateTime,
-            ArticleThumbnailUrl = article.ArticleThumbnailUrl!
-        };
-    }
+    
 }
 

@@ -19,6 +19,8 @@ public static class InfrastructureConfigurations
                 .EnableSensitiveDataLogging()
         );
         
+        
+        
         //add jwt settings
         services.AddJwtConfigurations(configuration);
         

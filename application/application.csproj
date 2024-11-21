@@ -19,7 +19,6 @@
 
     <ItemGroup>
       <Folder Include="useCases\articleInteractions\QueryArticles\ClubArticles\" />
-      <Folder Include="useCases\articleInteractions\QueryArticles\SearchedArticles\" />
       <Folder Include="useCases\articleInteractions\QueryArticles\UserArticles\" />
     </ItemGroup>
 

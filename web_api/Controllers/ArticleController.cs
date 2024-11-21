@@ -2,6 +2,7 @@
 using application.useCases.articleInteractions.CreateArticle;
 using application.useCases.articleInteractions.DownVoteArticle;
 using application.useCases.articleInteractions.QueryArticles.HomeArticles;
+using application.useCases.articleInteractions.QueryArticles.SearchedArticles;
 using application.useCases.articleInteractions.QueryArticles.SingleArticle;
 using application.useCases.articleInteractions.UpvoteArticle;
 using MediatR;
@@ -20,7 +21,9 @@ public class ArticleController : Controller
     }
 
     [HttpPost("addArticle")]
-    public async Task<IActionResult> AddArticle(CreateArticleCommand command)
+    public async Task<IActionResult> AddArticle(
+        [FromForm]CreateArticleCommand command
+        )
     {
         try
         {
@@ -101,5 +104,12 @@ public class ArticleController : Controller
         {
             return ErrorFactory.CreateErrorResponse(ex);
         }
+    }
+    
+    [HttpGet("getArticle")]
+    public async Task<IActionResult> GetArticles([FromQuery]SearchArticlesQuery searchArticleQuery)
+    {
+        var articles = await _mediator.Send(searchArticleQuery);
+        return Ok(articles);
     }
 }

@@ -62,4 +62,18 @@ public partial class AppDbContext : DbContext
     }
 
     partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
+    
+    public void EnsureFullTextCatalog()
+    {
+        using (var command = this.Database.GetDbConnection().CreateCommand())
+        {
+            command.CommandText = @"
+                IF NOT EXISTS (SELECT * FROM sys.fulltext_catalogs WHERE name = 'ftCatalog')
+                BEGIN
+                    CREATE FULLTEXT CATALOG ftCatalog AS DEFAULT;
+                END;";
+            this.Database.OpenConnection();
+            command.ExecuteNonQuery();
+        }
+    }
 }
