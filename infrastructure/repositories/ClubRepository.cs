@@ -157,4 +157,14 @@ public class ClubRepository : IClubRepository
         
         return result;
     }
+
+    public async Task<Club?> GetClubByIdNo(int clubId)
+    {
+        return await _context.Clubs.FindAsync(clubId);
+    }
+
+    public void UpdateClub(Club club)
+    {
+        _context.Clubs.Update(club);
+    }
 }
