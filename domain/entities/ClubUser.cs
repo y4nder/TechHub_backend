@@ -23,4 +23,34 @@ public partial class ClubUser
             RoleId = roleId
         };
     }
+
+    public static ClubUser CreateClubModerator(int clubId, int userId)
+    {
+        return new ClubUser
+        {
+            ClubId = clubId,
+            UserId = userId,
+            RoleId = ClubUserRole.CreateDefaultRole(DefaultRoles.Moderator).RoleId
+        };
+    }
+    
+    public static ClubUser CreateClubCreator(int clubId, int userId)
+    {
+        return new ClubUser
+        {
+            ClubId = clubId,
+            UserId = userId,
+            RoleId = ClubUserRole.CreateDefaultRole(DefaultRoles.ClubCreator).RoleId
+        };
+    }
+    
+    public static ClubUser CreateClubRegularUser(int clubId, int userId)
+    {
+        return new ClubUser
+        {
+            ClubId = clubId,
+            UserId = userId,
+            RoleId = ClubUserRole.CreateDefaultRole(DefaultRoles.RegularUser).RoleId
+        };
+    }
 }

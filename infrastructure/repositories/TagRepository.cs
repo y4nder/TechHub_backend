@@ -31,9 +31,11 @@ public class TagRepository : ITagRepository
             .AnyAsync(e => e.TagId == tagId);
     }
 
-    public async Task<List<Tag>> GetTagsManyAsync(List<int> requestTagIds)
+    public async Task<List<Tag>> GetTagsManyAsync(List<int> tagIds)
     {
-        return await _context.Tags.Where(e => requestTagIds.Contains(e.TagId)).ToListAsync();
+        return await _context.Tags
+            .Where(e => tagIds.Contains(e.TagId))
+            .ToListAsync();
     }
 
     public void BatchTagUpdate(ICollection<Tag> tags)
@@ -78,5 +80,16 @@ public class TagRepository : ITagRepository
     public void BatchAddTags(List<Tag> tags)
     {
         _context.Tags.AddRange(tags);
+    }
+
+    public async Task<List<TagDto>> GetAllTagsAsync()
+    {
+        return await _context.Tags
+            .AsNoTracking()
+            .Select(tag => new TagDto
+            {
+                TagId = tag.TagId,
+                TagName = tag.TagName
+            }).ToListAsync();
     }
 }

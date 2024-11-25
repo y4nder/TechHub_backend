@@ -3,6 +3,7 @@ using application.Exceptions.AuthenticationExceptions;
 using domain.entities;
 using domain.interfaces;
 using FluentValidation;
+using infrastructure.services.jwt;
 using infrastructure.services.passwordService;
 using infrastructure.services.worker;
 using MediatR;
@@ -15,16 +16,18 @@ public class RegisterUserCommandHandler : IRequestHandler<RegisterUserCommand, R
     private readonly IUserRepository _userRepository;
     private readonly IPasswordHasherService _passwordHasherService;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IJwtTokenProvider _jwtTokenProvider;
     private readonly IMediator _mediator;
 
     public RegisterUserCommandHandler(IValidator<RegisterUserCommand> validator, IUserRepository userRepository,
-        IPasswordHasherService passwordHasherService, IUnitOfWork unitOfWork, IMediator mediator)
+        IPasswordHasherService passwordHasherService, IUnitOfWork unitOfWork, IMediator mediator, IJwtTokenProvider jwtTokenProvider)
     {
         _validator = validator;
         _userRepository = userRepository;
         _passwordHasherService = passwordHasherService;
         _unitOfWork = unitOfWork;
         _mediator = mediator;
+        _jwtTokenProvider = jwtTokenProvider;
     }
 
     public async Task<RegisterUserResponse> Handle(RegisterUserCommand request, CancellationToken cancellationToken)
@@ -45,12 +48,15 @@ public class RegisterUserCommandHandler : IRequestHandler<RegisterUserCommand, R
         
         await _unitOfWork.CommitAsync(cancellationToken);
         
+        var token = _jwtTokenProvider.GenerateJwtToken(createdUser);
         // publish notification
         await _mediator.Publish(new UserCreatedEvent(createdUser), cancellationToken);
 
         return new RegisterUserResponse
         {
             Message = "User created",
+            CreatedUser = new UserMinimalDto(createdUser),
+            Token = token
         };
     }
 

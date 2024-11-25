@@ -31,7 +31,7 @@ public class LoginUserCommandHandler : IRequestHandler<LoginUserCommand, LoginUs
         if (!validationResult.IsValid)
             throw AuthenticationException.ValidationFailed(validationResult.Errors);
         
-        var user = await _userRepository.GetUserByEmail(request.Email)??
+        var user = await _userRepository.GetUserByEmail(request.Email) ??
                    throw AuthenticationException.InvalidCredentials();
 
         if (!_passwordHasherService.VerifyHashedPassword(user.Password!, request.Password))

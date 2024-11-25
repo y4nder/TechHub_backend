@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using domain.entities;
 using MediatR;
 
 namespace application.useCases.authentications.RegisterUser;
@@ -12,5 +13,7 @@ public class RegisterUserCommand : IRequest<RegisterUserResponse>
 
 public class RegisterUserResponse
 {
-    public String Message { get; set; } = String.Empty; 
+    public String Message { get; set; } = String.Empty;
+    public UserMinimalDto CreatedUser { get; set; } = null!;
+    public string Token { get; set; } = null!;
 }

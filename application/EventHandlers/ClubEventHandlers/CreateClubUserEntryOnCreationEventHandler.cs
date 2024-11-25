@@ -21,19 +21,8 @@ public class CreateClubUserEntryOnCreationEventHandler : INotificationHandler<Cl
     {
         var createdClub = notification.CreatedClub;
 
-        var clubModerator = new ClubUser
-        {
-            ClubId = createdClub.ClubId,
-            UserId = createdClub.ClubCreatorId,
-            RoleId = ClubUserRole.CreateDefaultRole(DefaultRoles.Moderator).RoleId
-        };
-
-        var clubCreator = new ClubUser
-        {
-            ClubId = createdClub.ClubId,
-            UserId = createdClub.ClubCreatorId,
-            RoleId = ClubUserRole.CreateDefaultRole(DefaultRoles.ClubCreator).RoleId
-        };
+        var clubModerator = ClubUser.CreateClubModerator(createdClub.ClubId, createdClub.ClubCreatorId);
+        var clubCreator = ClubUser.CreateClubCreator(createdClub.ClubId, createdClub.ClubCreatorId);
         
         await _clubUserRepository.AddClubUserRange([clubModerator, clubCreator]);
         

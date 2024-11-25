@@ -1,5 +1,6 @@
 ﻿using application.useCases.tagInteractions.FollowManyTags;
-using application.useCases.tagInteractions.QueryTags;
+using application.useCases.tagInteractions.QueryTags.QueryAllTags;
+using application.useCases.tagInteractions.QueryTags.SearchTags;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using web_api.utils;
@@ -14,7 +15,7 @@ public class TagController : Controller
     {
         _sender = sender;
     }
-
+    
     [HttpPost("followManyTags")]
     public async Task<IActionResult> FollowManyTags([FromBody] FollowManyTagsCommand command)
     {
@@ -41,5 +42,19 @@ public class TagController : Controller
         {
             return ErrorFactory.CreateErrorResponse(ex);
         }
+    }
+
+    [HttpGet("allTags")]
+    public async Task<IActionResult> GetAllTags()
+    {
+        try
+        {
+            var response = await _sender.Send(new GetAllTagsQuery());
+            return Ok(response);
+        }
+        catch (Exception ex)
+        {
+            return ErrorFactory.CreateErrorResponse(ex);
+        }   
     }
 }

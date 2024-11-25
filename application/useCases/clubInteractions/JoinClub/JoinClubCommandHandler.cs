@@ -35,7 +35,8 @@ public class JoinClubCommandHandler : IRequestHandler<JoinClubCommand, JoinClubR
             throw new InvalidOperationException("User is already joined");
         
         
-        var clubUser = ClubUser.Create(request.ClubId, request.UserId, (int)DefaultRoles.RegularUser);
+        // var clubUser = ClubUser.Create(request.ClubId, request.UserId, (int)DefaultRoles.RegularUser);
+        var clubUser = ClubUser.CreateClubRegularUser(request.ClubId, request.UserId);
         
         _clubUserRepository.AddClubUser(clubUser);
         
