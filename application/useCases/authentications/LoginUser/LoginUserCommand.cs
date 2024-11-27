@@ -12,4 +12,7 @@ public class LoginUserResponse
 {
     public string Token { get; set; } = null!;
     public string Message { get; set; } = null!;
+
+    public string UserProfilePicUrl { get; set; } = null!;
+    public int ReputationPoints { get; set; }
 }

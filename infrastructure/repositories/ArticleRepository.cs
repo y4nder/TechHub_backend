@@ -52,12 +52,13 @@ public class ArticleRepository : IArticleRepository
             .FirstOrDefaultAsync(); 
     }
 
-    public async Task<PaginatedResult<ArticleResponseDto>> GetPaginatedHomeArticlesByTagIdsAsync(List<int> tagIds, int pageNumber,
+    public async Task<PaginatedResult<ArticleResponseDto>> GetPaginatedHomeArticlesByTagIdsAsync(int userId,
+        List<int> tagIds, int pageNumber,
         int pageSize)
     {
         var baseQuery = _context.Articles
             .AsNoTracking()
-            .Where(a => a.Tags.Any(tag => tagIds.Contains(tag.TagId)) && !a.Archived)
+            .Where(a => a.Tags.Any(tag => tagIds.Contains(tag.TagId)) && !a.Archived && a.ArticleAuthorId != userId)
             .OrderBy(a => a.CreatedDateTime); 
         
         return await GetPaginatedArticleCardExecutor(baseQuery, pageNumber, pageSize);
@@ -104,46 +105,86 @@ public class ArticleRepository : IArticleRepository
         return await GetPaginatedArticleCardExecutor(baseQuery, pageNumber, pageSize);
     }
     
+    // private async Task<PaginatedResult<ArticleResponseDto>> GetPaginatedArticleCardExecutor(
+    //     IQueryable<Article> baseQuery, int pageNumber, int pageSize)
+    // {
+    //     var projectedQuery = baseQuery
+    //         .OrderBy(article => article.CreatedDateTime)
+    //         .Skip((pageNumber - 1) * pageSize)
+    //         .Take(pageSize)
+    //         .Select(article => new ArticleResponseDto
+    //         {
+    //             ArticleId = article.ArticleId,
+    //             ClubImageUrl = article.Club != null ? article.Club.ClubImageUrl! : string.Empty,
+    //             UserImageUrl = article.ArticleAuthor != null ? article.ArticleAuthor.UserProfilePicUrl! : string.Empty,
+    //             ArticleTitle = article.ArticleTitle ?? "Untitled",
+    //             Tags = article.Tags.Select(tag => new TagDto
+    //             {
+    //                 TagId = tag.TagId,
+    //                 TagName = tag.TagName ?? "Unknown Tag"
+    //             }).ToList(),
+    //             CreatedDateTime = article.CreatedDateTime,
+    //             ArticleThumbnailUrl = article.ArticleThumbnailUrl ?? string.Empty,
+    //             VoteCount = _context.UserArticleVotes
+    //                 .Where(vote => vote.ArticleId == article.ArticleId)
+    //                 .Sum(vote => vote.VoteType),
+    //             CommentCount = _context.Comments.Count(comment => comment.ArticleId == article.ArticleId)
+    //         });
+    //
+    //     // Get paginated results and total count in parallel
+    //     var totalCountTask = baseQuery.CountAsync();
+    //     var articlesTask = projectedQuery.ToListAsync();
+    //
+    //     await Task.WhenAll(totalCountTask, articlesTask);
+    //
+    //     return new PaginatedResult<ArticleResponseDto>
+    //     {
+    //         Items = articlesTask.Result,
+    //         TotalCount = totalCountTask.Result,
+    //         PageNumber = pageNumber,
+    //         PageSize = pageSize,
+    //         TotalPages = (int)Math.Ceiling(totalCountTask.Result / (double)pageSize)
+    //     };
+    // }
     private async Task<PaginatedResult<ArticleResponseDto>> GetPaginatedArticleCardExecutor(
         IQueryable<Article> baseQuery, int pageNumber, int pageSize)
     {
-        var projectedQuery = baseQuery
-            .OrderBy(article => article.CreatedDateTime)
+        // Calculate the total count for pagination
+        var totalCount = await baseQuery.CountAsync();
+
+        // Project and paginate the base query
+        var articles = await baseQuery
+            .OrderByDescending(article => article.CreatedDateTime)
             .Skip((pageNumber - 1) * pageSize)
             .Take(pageSize)
             .Select(article => new ArticleResponseDto
             {
                 ArticleId = article.ArticleId,
-                ClubImageUrl = article.Club != null ? article.Club.ClubImageUrl! : string.Empty,
-                UserImageUrl = article.ArticleAuthor != null ? article.ArticleAuthor.UserProfilePicUrl! : string.Empty,
+                ClubImageUrl = article.Club!.ClubImageUrl ?? string.Empty,
+                UserImageUrl = article.ArticleAuthor!.UserProfilePicUrl ?? string.Empty,
                 ArticleTitle = article.ArticleTitle ?? "Untitled",
-                Tags = article.Tags.Select(tag => new TagDto
-                {
-                    TagId = tag.TagId,
-                    TagName = tag.TagName ?? "Unknown Tag"
-                }).ToList(),
+                Tags = article.Tags
+                    .Select(tag => new TagDto
+                    {
+                        TagId = tag.TagId,
+                        TagName = tag.TagName ?? "Unknown Tag"
+                    })
+                    .ToList(),
                 CreatedDateTime = article.CreatedDateTime,
                 ArticleThumbnailUrl = article.ArticleThumbnailUrl ?? string.Empty,
-                VoteCount = _context.UserArticleVotes
-                    .Where(vote => vote.ArticleId == article.ArticleId)
-                    .Sum(vote => vote.VoteType),
-                CommentCount = _context.Comments.Count(comment => comment.ArticleId == article.ArticleId)
-            });
+                VoteCount = article.UserArticleVotes.Sum(vote => vote.VoteType),
+                CommentCount = article.Comments.Count()
+            })
+            .ToListAsync();
 
-        // Get paginated results and total count in parallel
-        var totalCountTask = baseQuery.CountAsync();
-        var articlesTask = projectedQuery.ToListAsync();
-
-        await Task.WhenAll(totalCountTask, articlesTask);
-
+        // Return the paginated result
         return new PaginatedResult<ArticleResponseDto>
         {
-            Items = articlesTask.Result,
-            TotalCount = totalCountTask.Result,
+            Items = articles,
+            TotalCount = totalCount,
             PageNumber = pageNumber,
             PageSize = pageSize,
-            TotalPages = (int)Math.Ceiling(totalCountTask.Result / (double)pageSize)
+            TotalPages = (int)Math.Ceiling(totalCount / (double)pageSize)
         };
     }
-    
 }

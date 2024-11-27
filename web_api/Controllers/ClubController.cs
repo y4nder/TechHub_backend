@@ -2,6 +2,7 @@
 using application.useCases.clubInteractions.JoinClub;
 using application.useCases.clubInteractions.QueryClub.CategorizedClubsQuery;
 using application.useCases.clubInteractions.QueryClub.FeaturedClubsQuery;
+using application.useCases.clubInteractions.QueryClub.JoinedClubsQuery;
 using application.useCases.clubInteractions.QueryClub.SingleClubQuery;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -76,6 +77,20 @@ public class ClubController : Controller
     
     [HttpGet("GetSingleClub")]
     public async Task<IActionResult> GetSingleClub([FromQuery] SingleClubQuery query)
+    {
+        try
+        {
+            var response = await _sender.Send(query);
+            return Ok(response);
+        }
+        catch (Exception e)
+        {
+            return ErrorFactory.CreateErrorResponse(e);
+        }
+    }
+
+    [HttpGet("GetJoinedClubs")]
+    public async Task<IActionResult> GetJoinedClubs([FromQuery] JoinedClubsQuery query)
     {
         try
         {

@@ -33,7 +33,15 @@ public partial class UserArticleVote
             VoteType = VoteTypes.DownVote
         };
     }
-    
+
+    public static UserArticleVote CreateForRemovalRecord(int userId, int articleId)
+    {
+        return new UserArticleVote
+        {
+            UserId = userId,
+            ArticleId = articleId,
+        };
+    }
     
 }
 

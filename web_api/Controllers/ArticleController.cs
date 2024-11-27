@@ -4,6 +4,7 @@ using application.useCases.articleInteractions.DownVoteArticle;
 using application.useCases.articleInteractions.QueryArticles.HomeArticles;
 using application.useCases.articleInteractions.QueryArticles.SearchedArticles;
 using application.useCases.articleInteractions.QueryArticles.SingleArticle;
+using application.useCases.articleInteractions.RemoveArticleVote;
 using application.useCases.articleInteractions.UpvoteArticle;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -111,5 +112,19 @@ public class ArticleController : Controller
     {
         var articles = await _mediator.Send(searchArticleQuery);
         return Ok(articles);
+    }
+
+    [HttpDelete("removeArticleVote")]
+    public async Task<IActionResult> RemoveArticleVote(RemoveArticleVoteCommand command)
+    {
+        try
+        {
+            var response = await _mediator.Send(command);
+            return Ok(response);
+        }
+        catch (Exception ex)
+        {
+            return ErrorFactory.CreateErrorResponse(ex);
+        }
     }
 }

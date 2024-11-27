@@ -16,4 +16,6 @@ public interface IClubRepository
     Task<Club?> GetClubByIdNo(int clubId);
     
     void UpdateClub(Club club);
+    
+    Task<List<ClubMinimalDto>?> GetJoinedClubsByIdAsync(int userId);  
 }

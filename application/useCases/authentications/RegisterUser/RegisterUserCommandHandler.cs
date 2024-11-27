@@ -19,8 +19,13 @@ public class RegisterUserCommandHandler : IRequestHandler<RegisterUserCommand, R
     private readonly IJwtTokenProvider _jwtTokenProvider;
     private readonly IMediator _mediator;
 
-    public RegisterUserCommandHandler(IValidator<RegisterUserCommand> validator, IUserRepository userRepository,
-        IPasswordHasherService passwordHasherService, IUnitOfWork unitOfWork, IMediator mediator, IJwtTokenProvider jwtTokenProvider)
+    public RegisterUserCommandHandler(
+        IValidator<RegisterUserCommand> validator, 
+        IUserRepository userRepository,
+        IPasswordHasherService passwordHasherService, 
+        IUnitOfWork unitOfWork, 
+        IMediator mediator, 
+        IJwtTokenProvider jwtTokenProvider)
     {
         _validator = validator;
         _userRepository = userRepository;

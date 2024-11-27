@@ -167,4 +167,9 @@ public class ClubRepository : IClubRepository
     {
         _context.Clubs.Update(club);
     }
+
+    public Task<List<ClubMinimalDto>?> GetJoinedClubsByIdAsync(int userId)
+    {
+        throw new NotImplementedException();
+    }
 }
