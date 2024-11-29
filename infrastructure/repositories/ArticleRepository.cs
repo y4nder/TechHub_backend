@@ -70,10 +70,22 @@ public class ArticleRepository : IArticleRepository
             .AsNoTracking()
             .Include(a => a.Tags)
             .Include(a => a.ArticleAuthor)
+            .ThenInclude(a => a.UserAdditionalInfo)
             .Where(a => a.ArticleId == articleId).FirstOrDefaultAsync();
     }
 
-    
+    public async Task<PaginatedResult<ArticleResponseDto>> GetPaginatedDiscoverArticlesAsync(int pageNumber,
+        int pageSize)
+    {
+        var baseQuery = _context.Articles
+            .AsNoTracking()
+            .Where(a => a.Archived == false)
+            .OrderBy(a => a.CreatedDateTime);
+        
+        return await GetPaginatedArticleCardExecutor(baseQuery, pageNumber, pageSize);
+    }
+
+
     public async Task<PaginatedResult<ArticleResponseDto>> GetPaginatedArticlesBySearchQueryAsync(
         string searchQuery, int pageNumber, int pageSize)
     {

@@ -20,14 +20,30 @@ public class SingleQueryDto
     public UserMinimalDto Author { get; set; } 
     public string ArticleContent { get; set; }
     public int VoteCount { get; set; }
+    public int CommentCount { get; set; }
+    public int VoteType { get; set; }
+    public bool Bookmarked { get; set; }
     
-    // todo add comment count
-
+    // public static SingleQueryDto Create(int requestId, Article article, ArticleBody articleBody, int voteCount, int commentCount)
+    // {
+    //     return new SingleQueryDto(requestId, article, articleBody, voteCount);
+    // }
+    
+    public static SingleQueryDto Create(int requestId, Article article, ArticleBody articleBody, 
+        int voteCount, int commentCount, int voteType, bool bookmarked)
+    {
+        return new SingleQueryDto(requestId, article, articleBody, voteCount, commentCount, voteType, bookmarked);
+    }
+    
     public SingleQueryDto(
         int userId, 
         Article article, 
         ArticleBody articleBody,
-        int voteCount)
+        int voteCount,
+        int commentCount,
+        int voteType,
+        bool bookmarked
+    )
     {
         UserId = userId;
         ArticleId = article.ArticleId;
@@ -42,5 +58,15 @@ public class SingleQueryDto
         Author = new UserMinimalDto(article.ArticleAuthor!);
         ArticleContent = articleBody.ArticleContent;
         VoteCount = voteCount;
+        CommentCount = commentCount;
+        VoteType = voteType;
+        Bookmarked = bookmarked;
     }
+}
+
+public class VoteTypeConstants
+{
+    public const int DownVoted = -1;
+    public const int NotVoted = 0;
+    public const int UpVoted = 1;
 }

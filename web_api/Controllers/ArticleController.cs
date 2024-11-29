@@ -1,6 +1,7 @@
 ﻿using application.useCases.articleInteractions.ArchiveArticle;
 using application.useCases.articleInteractions.CreateArticle;
 using application.useCases.articleInteractions.DownVoteArticle;
+using application.useCases.articleInteractions.QueryArticles.DiscoverArticles;
 using application.useCases.articleInteractions.QueryArticles.HomeArticles;
 using application.useCases.articleInteractions.QueryArticles.SearchedArticles;
 using application.useCases.articleInteractions.QueryArticles.SingleArticle;
@@ -120,6 +121,20 @@ public class ArticleController : Controller
         try
         {
             var response = await _mediator.Send(command);
+            return Ok(response);
+        }
+        catch (Exception ex)
+        {
+            return ErrorFactory.CreateErrorResponse(ex);
+        }
+    }
+    
+    [HttpGet("discoverArticles")]
+    public async Task<IActionResult> RemoveArticleVote(DiscoverArticleQuery query)
+    {
+        try
+        {
+            var response = await _mediator.Send(query);
             return Ok(response);
         }
         catch (Exception ex)

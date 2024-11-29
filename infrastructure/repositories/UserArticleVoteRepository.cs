@@ -37,7 +37,9 @@ public class UserArticleVoteRepository : IUserArticleVoteRepository
 
     public async Task<int> GetArticleVoteCount(int articleId)
     {
-        return await _context.UserArticleVotes.SumAsync(v => v.VoteType);
+        return await _context.UserArticleVotes
+            .Where(a => a.ArticleId == articleId)
+            .SumAsync(v => v.VoteType);
     }
 
     public async Task RemoveUserArticleVote(UserArticleVote userArticleVote)
@@ -51,5 +53,15 @@ public class UserArticleVoteRepository : IUserArticleVoteRepository
             throw new Exception("UserArticleVote not found");
                      
         _context.UserArticleVotes.Remove(userArticleVote);
+    }
+
+    public Task<short> GetArticleVoteType(int articleId)
+    {
+        var voteType = _context.UserArticleVotes
+            .AsNoTracking()
+            .Where(v => v.ArticleId == articleId)
+            .Select(v => v.VoteType).FirstOrDefaultAsync();
+        
+        return voteType;
     }
 }

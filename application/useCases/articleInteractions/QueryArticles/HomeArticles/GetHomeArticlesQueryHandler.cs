@@ -44,7 +44,7 @@ public class GetHomeArticlesQueryHandler : IRequestHandler<GetHomeArticlesQuery,
         return new HomeArticleResponse
         {
             Message = "Home articles found",
-            HomeArticles = paginatedArticles
+            Articles = paginatedArticles
         };
     }
 }

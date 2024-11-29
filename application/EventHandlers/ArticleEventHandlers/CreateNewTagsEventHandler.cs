@@ -20,6 +20,7 @@ public class CreateNewTagsEventHandler : INotificationHandler<ArticleCreatedEven
     public async Task Handle(ArticleCreatedEvent notification, CancellationToken cancellationToken)
     {
         var newTagNotification = notification.NewTagNotification;
+        var article = notification.Article;
 
         if (newTagNotification.HasNewTags == false)
             return;
@@ -31,6 +32,11 @@ public class CreateNewTagsEventHandler : INotificationHandler<ArticleCreatedEven
             TagName = newTagName,
             TagCount = 1
         }).ToList();
+
+        foreach (var createdTag in createdTags)
+        {
+            article.Tags.Add(createdTag);
+        }
         
         _tagRepository.BatchAddTags(createdTags);
         

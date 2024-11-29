@@ -62,6 +62,11 @@ public class CommentRepository : ICommentRepository
         };
     }
 
+    public async Task<int> GetTotalCommentsByArticleId(int articleId)
+    {
+        return await _context.Comments.Where(c => c.ArticleId == articleId).CountAsync();
+    }
+
     public async Task<bool> CheckCommentIdExists(int commentId)
     {
         return await _context.Comments.FindAsync(commentId) != null;
