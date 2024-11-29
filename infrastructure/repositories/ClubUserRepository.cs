@@ -47,4 +47,24 @@ public class ClubUserRepository : IClubUserRepository
             .Include(c => c.Role)
             .ToListAsync();
     }
+
+    public async Task<List<ClubMinimalDto>?> GetJoinedClubsByIdAsync(int userId)
+    {
+        var clubs = await _context.ClubUsers
+            .FromSqlInterpolated($@"
+                SELECT DISTINCT 
+                    cu.userId, cu.clubId, c.clubImageUrl, c.clubName
+                FROM ClubUser cu
+                JOIN Club c on c.clubId = cu.clubId
+                WHERE cu.userId = {userId}
+            ")
+            .Select(cu => new ClubMinimalDto
+            {
+                ClubId = cu.ClubId,
+                ClubProfilePicUrl = cu.Club.ClubImageUrl!,
+                ClubName = cu.Club.ClubName!
+            }).ToListAsync();
+        
+        return clubs;
+    }
 }

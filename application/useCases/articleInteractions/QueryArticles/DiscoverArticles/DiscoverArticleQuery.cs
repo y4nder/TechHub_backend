@@ -2,18 +2,16 @@
 using domain.pagination;
 using MediatR;
 
-namespace application.useCases.articleInteractions.QueryArticles.HomeArticles;
+namespace application.useCases.articleInteractions.QueryArticles.DiscoverArticles;
 
-public class GetHomeArticlesQuery : IRequest<HomeArticleResponse>
+public class DiscoverArticleQuery : IRequest<DiscoverArticleResponse>
 {
-    public int UserId { get; set; }
     public int PageNumber { get; set; }
     public int PageSize { get; set; }
 }
 
-public class HomeArticleResponse
+public class DiscoverArticleResponse
 {
     public string Message { get; set; } = null!;
     public PaginatedResult<ArticleResponseDto> Articles { get; set; } = null!;
 }
-

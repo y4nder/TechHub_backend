@@ -13,4 +13,9 @@ public interface IClubRepository
     Task<List<ClubCategoryStandardResponseDto>> GetAllCategorizedClubs();
     Task<List<ClubFeaturedResponseDto>> GetFeaturedClubsAsync();
     Task<SingleClubResponseDto?> GetSingleClubByIdAsync(int clubId);
+    Task<Club?> GetClubByIdNo(int clubId);
+    
+    void UpdateClub(Club club);
+    
+    Task<List<ClubMinimalDto>?> GetJoinedClubsByIdAsync(int userId);  
 }

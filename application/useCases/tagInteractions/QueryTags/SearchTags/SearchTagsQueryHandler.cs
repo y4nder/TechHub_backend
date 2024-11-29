@@ -1,7 +1,7 @@
 ﻿using domain.interfaces;
 using MediatR;
 
-namespace application.useCases.tagInteractions.QueryTags;
+namespace application.useCases.tagInteractions.QueryTags.SearchTags;
 
 public class SearchTagsQueryHandler : IRequestHandler<SearchTagsQuery, SearchTagsResponse>
 {

@@ -1,4 +1,5 @@
 ﻿using application.Events.ArticleEvents;
+using domain.entities;
 using domain.interfaces;
 using MediatR;
 
@@ -10,19 +11,23 @@ public class SingleArticleQueryHandler : IRequestHandler<SingleArticleQuery, Sin
     private readonly IUserRepository _userRepository;
     private readonly IArticleBodyRepository _articleBodyRepository;
     private readonly IUserArticleVoteRepository _userArticleVoteRepository;
+    private readonly ICommentRepository _commentRepository;
+    private readonly IArticleBookmarkRepository _articleBookmarkRepository;
     private readonly IMediator _mediator; 
 
     public SingleArticleQueryHandler(
         IArticleRepository articleRepository,
         IArticleBodyRepository articleBodyRepository,
         IUserRepository userRepository,
-        IMediator mediator, IUserArticleVoteRepository userArticleVoteRepository)
+        IMediator mediator, IUserArticleVoteRepository userArticleVoteRepository, ICommentRepository commentRepository, IArticleBookmarkRepository articleBookmarkRepository)
     {
         _articleRepository = articleRepository;
         _articleBodyRepository = articleBodyRepository;
         _userRepository = userRepository;
         _mediator = mediator;
         _userArticleVoteRepository = userArticleVoteRepository;
+        _commentRepository = commentRepository;
+        _articleBookmarkRepository = articleBookmarkRepository;
     }
 
     public async Task<SingleQueryDto> Handle(SingleArticleQuery request, CancellationToken cancellationToken)
@@ -40,15 +45,25 @@ public class SingleArticleQueryHandler : IRequestHandler<SingleArticleQuery, Sin
                           throw new KeyNotFoundException("ArticleBody not found");
         
         int articleVoteCount = await _userArticleVoteRepository.GetArticleVoteCount(request.ArticleId);
+
+        int commentCount = await _commentRepository.GetTotalCommentsByArticleId(request.ArticleId);
+
+        int voteType = await _userArticleVoteRepository.GetArticleVoteType(request.ArticleId);
+
+        bool bookMarked = await _articleBookmarkRepository
+            .BookmarkExist(UserArticleBookmark.Create(request.UserId, request.ArticleId));
         
-        var singleQueryDto = new SingleQueryDto(
-            request.UserId, 
+        var singleQueryDto = SingleQueryDto.Create(request.UserId, 
             article, 
-            articleBody,
-            articleVoteCount);
+            articleBody, 
+            articleVoteCount,
+            commentCount,
+            voteType,
+            bookMarked
+        );
         
         await _mediator.Publish(new SingleArticleQueriedEvent(request.UserId, request.ArticleId), cancellationToken);
-        
+            
         return singleQueryDto;
     }
 }

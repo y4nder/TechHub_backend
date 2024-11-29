@@ -6,23 +6,13 @@ namespace application.Exceptions.AuthenticationExceptions;
 
 public class AuthenticationException : HttpRequestException
 {
-    private AuthenticationException(string? message, Exception? inner, HttpStatusCode? statusCode) : base(message, inner, statusCode)
-    {
-    }
-
-    private AuthenticationException()
-    {
-    }
-
-    private AuthenticationException(string? message) : base(message)
-    {
-    }
-
-    private AuthenticationException(string? message, Exception? inner) : base(message, inner)
-    {
-    }
+    private AuthenticationException(
+        string? message, 
+        Exception? inner, 
+        HttpStatusCode? statusCode) 
+        : base(message, inner, statusCode)
+    { }
     
-
     public static AuthenticationException UsernameExists(string username)
     {
         return new AuthenticationException($"Username '{username}' already exists", null, HttpStatusCode.Conflict);

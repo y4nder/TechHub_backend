@@ -15,6 +15,7 @@ public interface IUserRepository
     
     Task<User?> GetUserById(int userId);
     Task<User?> GetUserWithRolesByIdNoTracking(int userId);
-    
-    
+
+
+    Task<UserMinimalDto?> GetMinimalUserByIdAsync(int requestUserId);
 }

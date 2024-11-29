@@ -11,4 +11,8 @@ public interface IUserArticleVoteRepository
     Task<UserArticleVote?> GetUserArticleVoteByRecord(UserArticleVote userArticleVote);
     
     Task<int> GetArticleVoteCount(int articleId);
+    
+    Task RemoveUserArticleVote(UserArticleVote userArticleVote);
+
+    Task<short> GetArticleVoteType(int articleId);
 }

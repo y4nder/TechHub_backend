@@ -1,6 +1,4 @@
-﻿using System.Security.Principal;
-
-namespace domain.entities;
+﻿namespace domain.entities;
 
 public partial class Club
 {
@@ -89,6 +87,13 @@ public class ClubDto
     public string ClubName { get; set; } = null!;
     public string? ClubIntroduction { get; set; }
     public int ClubCategoryId { get; set; }
+}
+
+public class ClubMinimalDto
+{
+    public int ClubId { get; set; }
+    public string ClubProfilePicUrl { get; set; } = null!;
+    public string ClubName { get; set; } = null!;
 }
 
 public enum PermissionType

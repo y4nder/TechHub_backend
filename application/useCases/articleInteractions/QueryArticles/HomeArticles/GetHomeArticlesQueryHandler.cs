@@ -39,12 +39,12 @@ public class GetHomeArticlesQueryHandler : IRequestHandler<GetHomeArticlesQuery,
         var tagIds = userTagFollowRecords.Select(t => t.TagId);
         
         var paginatedArticles = await _articleRepository
-            .GetPaginatedHomeArticlesByTagIdsAsync(tagIds.ToList(), request.PageNumber, request.PageSize);
+            .GetPaginatedHomeArticlesByTagIdsAsync(request.UserId, tagIds.ToList(), request.PageNumber, request.PageSize);
         
         return new HomeArticleResponse
         {
             Message = "Home articles found",
-            HomeArticles = paginatedArticles
+            Articles = paginatedArticles
         };
     }
 }

@@ -54,4 +54,15 @@ public class UserRepository : IUserRepository
             .Include(u => u.ClubUsers)
             .FirstOrDefaultAsync(u => u.UserId == userId);
     }
+
+    public async Task<UserMinimalDto?> GetMinimalUserByIdAsync(int requestUserId)
+    {
+        return await _context.Users
+            .AsNoTracking()
+            .Include(u => u.UserAdditionalInfo) 
+            .Where(u => u.UserId == requestUserId) 
+            .Select(u => new UserMinimalDto(u))
+            .FirstOrDefaultAsync();
+    }
+
 }

@@ -1,8 +1,7 @@
-﻿using System.Security.Principal;
-using domain.entities;
+﻿using domain.entities;
 using MediatR;
 
-namespace application.useCases.tagInteractions.QueryTags;
+namespace application.useCases.tagInteractions.QueryTags.SearchTags;
 
 public class SearchTagsQuery : IRequest<SearchTagsResponse>
 {

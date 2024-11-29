@@ -92,7 +92,7 @@ public class CreateArticleCommandHandler : IRequestHandler<CreateArticleCommand,
 
         // create article object
         var article = request.IsDrafted ? Article.CreateDraft(articleDto) : Article.CreatePublished(articleDto);
-
+        
         // add article
         _articleRepository.AddArticle(article);
 
