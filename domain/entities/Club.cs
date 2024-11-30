@@ -127,16 +127,25 @@ public class ClubCategoryStandardResponseDto
     public List<ClubStandardResponseDto> Clubs { get; set; } = new List<ClubStandardResponseDto>();
 }
 
+public class SingleCategoryClubStandardResponseDto
+{
+    public int? CategoryId { get; set; }
+    public string CategoryName { get; set; } = null!;
+    public List<ClubStandardResponseDto> Clubs { get; set; } = new();
+}
+
 public class SingleClubResponseDto
 {
     public int ClubId { get; set; }
     public string ClubName { get; set; } = null!;
+    public string ClubProfilePicUrl { get; set; } = null!;
     public DateTime? ClubCreatedDateTime { get; set; }
     public int PostCount { get; set; } = -1;
     public int ClubViews { get; set; } = -1;
     public int ClubUpVoteCount { get; set; } = -1;
     public bool Featured { get; set; } = false;
     public List<string> RecentMemberProfilePics { get; set; } = new List<string>();
+    public string ClubIntroduction { get; set; } = null!;
     public int MemberCount { get; set; } = -1;
     public ClubUserRoleDto ClubCreator { get; set; } = null!;
     public List<ClubUserRoleDto> Moderators { get; set; } = null!;

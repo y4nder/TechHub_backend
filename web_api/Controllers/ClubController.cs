@@ -1,8 +1,10 @@
 ﻿using application.useCases.clubInteractions.CreateClub;
 using application.useCases.clubInteractions.JoinClub;
 using application.useCases.clubInteractions.QueryClub.CategorizedClubsQuery;
+using application.useCases.clubInteractions.QueryClub.CategoryQuery;
 using application.useCases.clubInteractions.QueryClub.FeaturedClubsQuery;
 using application.useCases.clubInteractions.QueryClub.JoinedClubsQuery;
+using application.useCases.clubInteractions.QueryClub.SingleCategoryClubsQuery;
 using application.useCases.clubInteractions.QueryClub.SingleClubQuery;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -91,6 +93,34 @@ public class ClubController : Controller
 
     [HttpGet("GetJoinedClubs")]
     public async Task<IActionResult> GetJoinedClubs([FromQuery] JoinedClubsQuery query)
+    {
+        try
+        {
+            var response = await _sender.Send(query);
+            return Ok(response);
+        }
+        catch (Exception e)
+        {
+            return ErrorFactory.CreateErrorResponse(e);
+        }
+    }
+
+    [HttpGet("GetAllClubCategories")]
+    public async Task<IActionResult> GetAllClubCategories()
+    {
+        try
+        {
+            var response = await _sender.Send(new ClubCategoryQuery());
+            return Ok(response);
+        }
+        catch (Exception e)
+        {
+            return ErrorFactory.CreateErrorResponse(e);
+        }
+    }
+    
+    [HttpGet("GetSingleCategoryClubs")]
+    public async Task<IActionResult> GetSingleCategoryClubs([FromQuery] SingleCategoryClubsQuery query)
     {
         try
         {

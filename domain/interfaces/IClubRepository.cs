@@ -18,4 +18,6 @@ public interface IClubRepository
     void UpdateClub(Club club);
     
     Task<List<ClubMinimalDto>?> GetJoinedClubsByIdAsync(int userId);  
+    
+    Task<SingleCategoryClubStandardResponseDto?> GetSingleCategoryClubByIdAsync(int clubCategoryId);
 }

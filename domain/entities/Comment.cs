@@ -59,19 +59,18 @@ public class ArticleCommentDto
     public List<ArticleCommentDto> Replies { get; set; }
     public int VoteCount { get; set; }
 
-    public ArticleCommentDto(
-        Comment comment,
-        int voteCount)
-    {
-        CommentId = comment.CommentId;
-        UserProfileImageUrl = comment.CommentCreator.UserProfilePicUrl;
-        UserInfo = new UserMinimalDto(comment.CommentCreator);
-        CreatedDateTime = comment.CreatedDateTime;
-        UpdatedDateTime = comment.UpdateDateTime;
-        CommentBody = comment.Content;
-        Replies = comment.InverseParentComment?
-            .Select(reply => new ArticleCommentDto(reply, voteCount))
-            .ToList() ?? new List<ArticleCommentDto>(); // Handle null case
-        VoteCount = voteCount;
-    }
+   public ArticleCommentDto(
+    Comment comment, 
+    int voteCount, 
+    List<ArticleCommentDto> replies = null)
+{
+    CommentId = comment.CommentId;
+    UserProfileImageUrl = comment.CommentCreator.UserProfilePicUrl;
+    UserInfo = new UserMinimalDto(comment.CommentCreator);
+    CreatedDateTime = comment.CreatedDateTime;
+    UpdatedDateTime = comment.UpdateDateTime;
+    CommentBody = comment.Content;
+    Replies = replies ?? new (); 
+    VoteCount = voteCount;
+}
 }
