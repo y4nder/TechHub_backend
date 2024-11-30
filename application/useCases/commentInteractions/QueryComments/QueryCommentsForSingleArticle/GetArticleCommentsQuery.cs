@@ -6,6 +6,7 @@ namespace application.useCases.commentInteractions.QueryComments.QueryCommentsFo
 
 public class GetArticleCommentsQuery : IRequest<ArticleCommentsResponse> 
 {
+    public int UserId { get; set; }
     public int ArticleId { get; set; }
     public int PageNumber { get; set; }
     public int PageSize { get; set; }

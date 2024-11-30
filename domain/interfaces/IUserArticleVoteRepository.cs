@@ -14,5 +14,5 @@ public interface IUserArticleVoteRepository
     
     Task RemoveUserArticleVote(UserArticleVote userArticleVote);
 
-    Task<short> GetArticleVoteType(int articleId);
+    Task<short> GetArticleVoteType(int articleId, int userId);
 }

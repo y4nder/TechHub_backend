@@ -48,7 +48,7 @@ public class SingleArticleQueryHandler : IRequestHandler<SingleArticleQuery, Sin
 
         int commentCount = await _commentRepository.GetTotalCommentsByArticleId(request.ArticleId);
 
-        int voteType = await _userArticleVoteRepository.GetArticleVoteType(request.ArticleId);
+        int voteType = await _userArticleVoteRepository.GetArticleVoteType(request.ArticleId, request.UserId);
 
         bool bookMarked = await _articleBookmarkRepository
             .BookmarkExist(UserArticleBookmark.Create(request.UserId, request.ArticleId));

@@ -19,11 +19,14 @@ public interface IArticleRepository
         int pageNumber, int pageSize);
     Task<Article?> QuerySingleArticleByIdAsync(int articleId);
     
-    Task<PaginatedResult<ArticleResponseDto>> GetPaginatedDiscoverArticlesAsync(int pageNumber, int pageSize);
+    Task<PaginatedResult<ArticleResponseDto>> GetPaginatedDiscoverArticlesAsync(int userId, int pageNumber,
+        int pageSize);
 
-    Task<PaginatedResult<ArticleResponseDto>> GetPaginatedArticlesBySearchQueryAsync(string searchQuery, int pageNumber, int pageSize);
+    Task<PaginatedResult<ArticleResponseDto>> GetPaginatedArticlesBySearchQueryAsync(string searchQuery, int userId,
+        int pageNumber, int pageSize);
 
-    Task<PaginatedResult<ArticleResponseDto>> GetPaginatedArticlesByClubIdAsync(int clubId, int pageNumber, int pageSize);
+    Task<PaginatedResult<ArticleResponseDto>> GetPaginatedArticlesByClubIdAsync(int clubId, int pageNumber,
+        int pageSize, int userId);
     
     Task<PaginatedResult<ArticleResponseDto>> GetPaginatedArticlesByUserId(int authorId, int pageNumber, int pageSize);
     

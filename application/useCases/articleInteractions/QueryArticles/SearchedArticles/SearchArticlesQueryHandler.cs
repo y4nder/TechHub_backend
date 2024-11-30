@@ -19,7 +19,8 @@ public class SearchArticlesQueryHandler : IRequestHandler<SearchArticlesQuery, S
         
         var homeArticles = await _articleRepository
             .GetPaginatedArticlesBySearchQueryAsync(
-                request.Query, 
+                request.Query,
+                request.UserId, 
                 request.PageNumber, 
                 request.PageSize);
         

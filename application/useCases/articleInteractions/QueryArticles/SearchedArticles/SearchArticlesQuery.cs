@@ -7,6 +7,7 @@ namespace application.useCases.articleInteractions.QueryArticles.SearchedArticle
 public class SearchArticlesQuery : IRequest<SearchArticlesResponse>
 {
     public string Query { get; set; } = null!;
+    public int UserId { get; set; }
     public int PageNumber { get; set; }
     public int PageSize { get; set; }
 }

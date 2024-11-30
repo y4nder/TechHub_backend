@@ -1,6 +1,7 @@
 ﻿using application.useCases.commentInteractions.CreateAComment;
 using application.useCases.commentInteractions.DownVoteComment;
 using application.useCases.commentInteractions.QueryComments.QueryCommentsForSingleArticle;
+using application.useCases.commentInteractions.RemoveVoteComment;
 using application.useCases.commentInteractions.ReplyAComment;
 using application.useCases.commentInteractions.UpvoteComment;
 using MediatR;
@@ -76,6 +77,20 @@ public class CommentController : Controller
     
     [HttpPost("downVoteComment")]
     public async Task<IActionResult> DownVoteComment([FromBody] DownVoteCommentCommand command)
+    {
+        try
+        {
+            var response = await _mediator.Send(command);
+            return Ok(response);
+        }
+        catch (Exception ex)
+        {
+            return ErrorFactory.CreateErrorResponse(ex);
+        }
+    }
+    
+    [HttpDelete("removeCommentVote")]
+    public async Task<IActionResult> RemoveCommentVote([FromBody] RemoveVoteCommentCommand command)
     {
         try
         {

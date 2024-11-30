@@ -91,7 +91,6 @@ public static class ArticleStatusDefaults
 
 public class ArticleResponseDto
 {
-    
     public int ArticleId { get; set; }
     public string ClubImageUrl { get; set; } = null!;
     public string UserImageUrl { get; set; } = null!;
@@ -101,6 +100,8 @@ public class ArticleResponseDto
     public string ArticleThumbnailUrl { get; set; } = null!;
     public int VoteCount { get; set; } = -1;
     public int CommentCount { get; set; } = -1;
+    public int VoteType { get; set; }
+    public bool Bookmarked { get; set; }
     
 }
 

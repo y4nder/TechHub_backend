@@ -24,4 +24,19 @@ public class UserCommentVoteRepository : IUserCommentVoteRepository
             c.UserId == userCommentVote.UserId &&
             c.CommentId == userCommentVote.CommentId);
     }
+
+    public async Task RemoveUserCommentVote(UserCommentVote userCommentVote)
+    {
+        var record = await _context.UserCommentVotes
+            .AsNoTracking()
+            .Where(cv => cv.CommentId == userCommentVote.CommentId && cv.UserId == userCommentVote.UserId)
+            .FirstOrDefaultAsync();
+
+        if (record == null)
+        {
+            throw new KeyNotFoundException("UserCommentVote not found");
+        }
+        
+        _context.UserCommentVotes.Remove(record);
+    }
 }

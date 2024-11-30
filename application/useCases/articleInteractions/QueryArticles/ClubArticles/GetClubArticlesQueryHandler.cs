@@ -25,7 +25,7 @@ public class GetClubArticlesQueryHandler : IRequestHandler<GetClubArticlesQuery,
             throw new KeyNotFoundException("Club not found");
         
         var articles = await _articleRepository
-            .GetPaginatedArticlesByClubIdAsync(request.ClubId, request.PageNumber, request.PageSize);
+            .GetPaginatedArticlesByClubIdAsync(request.ClubId, request.PageNumber, request.PageSize, request.UserId);
 
         return new GetClubArticlesResponse
         {

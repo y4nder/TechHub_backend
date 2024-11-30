@@ -1,4 +1,5 @@
 ﻿using application.useCases.articleInteractions.ArchiveArticle;
+using application.useCases.articleInteractions.BookmarkArticle;
 using application.useCases.articleInteractions.CreateArticle;
 using application.useCases.articleInteractions.DownVoteArticle;
 using application.useCases.articleInteractions.QueryArticles.ClubArticles;
@@ -7,6 +8,7 @@ using application.useCases.articleInteractions.QueryArticles.HomeArticles;
 using application.useCases.articleInteractions.QueryArticles.SearchedArticles;
 using application.useCases.articleInteractions.QueryArticles.SingleArticle;
 using application.useCases.articleInteractions.RemoveArticleVote;
+using application.useCases.articleInteractions.UnBookmarkArticle;
 using application.useCases.articleInteractions.UpvoteArticle;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -82,7 +84,7 @@ public class ArticleController : Controller
     }
 
     [HttpPost("upvoteArticle")]
-    public async Task<IActionResult> UpVoteArticle(UpVoteArticleCommand command)
+    public async Task<IActionResult> UpVoteArticle([FromBody] UpVoteArticleCommand command)
     {
         try
         {
@@ -96,7 +98,7 @@ public class ArticleController : Controller
     }
     
     [HttpPost("downVoteArticle")]
-    public async Task<IActionResult> DownVoteArticle(DownVoteArticleCommand command)
+    public async Task<IActionResult> DownVoteArticle([FromBody] DownVoteArticleCommand command)
     {
         try
         {
@@ -117,7 +119,7 @@ public class ArticleController : Controller
     }
 
     [HttpDelete("removeArticleVote")]
-    public async Task<IActionResult> RemoveArticleVote(RemoveArticleVoteCommand command)
+    public async Task<IActionResult> RemoveArticleVote([FromBody] RemoveArticleVoteCommand command)
     {
         try
         {
@@ -150,6 +152,34 @@ public class ArticleController : Controller
         try
         {
             var response = await _mediator.Send(query);
+            return Ok(response);
+        }
+        catch (Exception ex)
+        {
+            return ErrorFactory.CreateErrorResponse(ex);
+        }
+    }
+    
+    [HttpPost("bookmarkArticle")]
+    public async Task<IActionResult> BookmarkArticle([FromBody] BookmarkArticleCommand command)
+    {
+        try
+        {
+            var response = await _mediator.Send(command);
+            return Ok(response);
+        }
+        catch (Exception ex)
+        {
+            return ErrorFactory.CreateErrorResponse(ex);
+        }
+    }
+    
+    [HttpPost("unBookmarkArticle")]
+    public async Task<IActionResult> UnBookmarkArticle([FromBody] UnBookmarkArticleCommand command)
+    {
+        try
+        {
+            var response = await _mediator.Send(command);
             return Ok(response);
         }
         catch (Exception ex)

@@ -9,7 +9,7 @@ public interface ICommentRepository
     
     Task<bool> ParentCommentIdExists(int parentCommentId);
     
-    Task<PaginatedResult<ArticleCommentDto>> GetPaginatedCommentsByArticleId(int articleId, int pageNumber,
+    Task<PaginatedResult<ArticleCommentDto>> GetPaginatedCommentsByArticleId(int userId, int articleId, int pageNumber,
         int pageSize);
     
     Task<int> GetTotalCommentsByArticleId(int articleId);

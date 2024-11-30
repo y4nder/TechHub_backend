@@ -64,8 +64,8 @@ public class CommentRepository : ICommentRepository
     //     };
     // }
     
-   public async Task<PaginatedResult<ArticleCommentDto>> GetPaginatedCommentsByArticleId(
-    int articleId, int pageNumber, int pageSize)
+    public async Task<PaginatedResult<ArticleCommentDto>> GetPaginatedCommentsByArticleId(int userId, int articleId,
+        int pageNumber, int pageSize)
     {
         // Load all comments and replies into memory
         var commentsQuery = _context.Comments
@@ -96,17 +96,35 @@ public class CommentRepository : ICommentRepository
             .Select(g => new { CommentId = g.Key, VoteSum = g.Sum(v => v.VoteType) })
             .ToListAsync();
 
+        // Fetch vote types for each comment for the user
+        var voteTypes = await _context.UserCommentVotes
+            .Where(v => v.UserId == userId && parentComments.Select(c => c.CommentId).Contains(v.CommentId))
+            .ToListAsync();
+
         // Create the result with vote counts for each comment and reply
-        var comments = parentComments.Select(c => new ArticleCommentDto(
-            c,
-            voteSums.FirstOrDefault(v => v.CommentId == c.CommentId)?.VoteSum ?? 0,
-            commentRepliesDict.ContainsKey(c.CommentId)
-                ? commentRepliesDict[c.CommentId].Select(reply => new ArticleCommentDto(
-                    reply,
-                    voteSums.FirstOrDefault(v => v.CommentId == reply.CommentId)?.VoteSum ?? 0
-                )).ToList()
-                : new List<ArticleCommentDto>()
-        )).ToList();
+        var comments = parentComments.Select(c =>
+        {
+            var voteType = voteTypes.FirstOrDefault(v => v.CommentId == c.CommentId)?.VoteType ?? 0;
+
+            var replies = commentRepliesDict.ContainsKey(c.CommentId)
+                ? commentRepliesDict[c.CommentId].Select(reply =>
+                {
+                    var replyVoteType = voteTypes.FirstOrDefault(v => v.CommentId == reply.CommentId)?.VoteType ?? 0;
+                    return new ArticleCommentDto(
+                        reply,
+                        voteSums.FirstOrDefault(v => v.CommentId == reply.CommentId)?.VoteSum ?? 0,
+                        replyVoteType
+                    );
+                }).ToList()
+                : new List<ArticleCommentDto>();
+
+            return new ArticleCommentDto(
+                c,
+                voteSums.FirstOrDefault(v => v.CommentId == c.CommentId)?.VoteSum ?? 0,
+                voteType,
+                replies
+            );
+        }).ToList();
 
         // Pagination
         var totalCount = comments.Count;
@@ -124,6 +142,21 @@ public class CommentRepository : ICommentRepository
     }
 
 
+    // Method to get the VoteType (1, 0, -1) for a specific user and comment
+    private async Task<int> GetVoteTypeForComment(int userId, int commentId)
+    {
+        var vote = await _context.UserCommentVotes
+            .Where(v => v.UserId == userId && v.CommentId == commentId)
+            .FirstOrDefaultAsync();
+
+        if (vote == null)
+        {
+            return 0; // No vote
+        }
+
+        return vote.VoteType; // Return the vote type: 1 (upvote), -1 (downvote), or 0 (no vote)
+    }
+    
     public async Task<int> GetTotalCommentsByArticleId(int articleId)
     {
         return await _context.Comments.Where(c => c.ArticleId == articleId).CountAsync();
