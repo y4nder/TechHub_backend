@@ -15,4 +15,6 @@ public interface ICommentRepository
     Task<int> GetTotalCommentsByArticleId(int articleId);
     
     Task<bool> CheckCommentIdExists(int commentId);
+    
+    Task<PaginatedResult<UserReplyDto>> GetUserReplies(int userId, int pageNumber, int pageSize);
 }

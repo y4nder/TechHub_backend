@@ -56,12 +56,14 @@ public class UserMinimalDto
     public string Username { get; set; }
     public string UserProfilePicUrl { get; set; }
     public int ReputationPoints { get; set; }
+    public string Email { get; set; }
     public UserMinimalDto(User user)
     {
         UserId = user.UserId;
         Username = user.Username!;   
         UserProfilePicUrl = user.UserProfilePicUrl!;
         ReputationPoints = user.UserAdditionalInfo!.ReputationPoints;
+        Email = user.Email!;
     }
 }
 

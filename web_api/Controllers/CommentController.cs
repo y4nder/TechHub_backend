@@ -1,6 +1,7 @@
 ﻿using application.useCases.commentInteractions.CreateAComment;
 using application.useCases.commentInteractions.DownVoteComment;
 using application.useCases.commentInteractions.QueryComments.QueryCommentsForSingleArticle;
+using application.useCases.commentInteractions.QueryComments.QueryUserReplies;
 using application.useCases.commentInteractions.RemoveVoteComment;
 using application.useCases.commentInteractions.ReplyAComment;
 using application.useCases.commentInteractions.UpvoteComment;
@@ -95,6 +96,20 @@ public class CommentController : Controller
         try
         {
             var response = await _mediator.Send(command);
+            return Ok(response);
+        }
+        catch (Exception ex)
+        {
+            return ErrorFactory.CreateErrorResponse(ex);
+        }
+    }
+    
+    [HttpGet("getUserReplies")]
+    public async Task<IActionResult> GetComments([FromQuery] UserRepliesQuery query)
+    {
+        try
+        {
+            var response = await _mediator.Send(query);
             return Ok(response);
         }
         catch (Exception ex)

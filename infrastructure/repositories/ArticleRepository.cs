@@ -99,8 +99,8 @@ public class ArticleRepository : IArticleRepository
         return await GetPaginatedArticleCardExecutor(baseQuery, userId, pageNumber, pageSize);
     }
 
-    public async Task<PaginatedResult<ArticleResponseDto>> GetPaginatedArticlesByClubIdAsync(int clubId, int userId, int pageNumber,
-        int pageSize)
+    public async Task<PaginatedResult<ArticleResponseDto>> GetPaginatedArticlesByClubIdAsync(int clubId, int pageNumber,
+        int pageSize, int userId)
     {
         var baseQuery = _context.Articles
             .Where(article => article.ClubId == clubId && !article.Archived);
