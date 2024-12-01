@@ -65,4 +65,15 @@ public class UserRepository : IUserRepository
             .FirstOrDefaultAsync();
     }
 
+    public async Task<UserProfileDto?> GetUserProfileByIdAsync(int userId)
+    {
+        return await _context.Users
+            .AsNoTracking()
+            .Where(u => u.UserId == userId)
+            .Select(u => new UserProfileDto
+            {
+                Username = u.Username!,
+                UserProfilePicUrl = u.UserProfilePicUrl
+            }).FirstOrDefaultAsync();
+    }
 }

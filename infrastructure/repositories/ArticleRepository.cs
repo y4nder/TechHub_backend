@@ -112,7 +112,7 @@ public class ArticleRepository : IArticleRepository
         int authorId, int pageNumber, int pageSize)
     {
         var baseQuery = _context.Articles
-            .Where(article => article.ArticleAuthorId == authorId);
+            .Where(article => article.ArticleAuthorId == authorId && !article.Archived);
         
         return await GetPaginatedArticleCardExecutor(baseQuery, authorId, pageNumber, pageSize);
     }

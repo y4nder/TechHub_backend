@@ -18,4 +18,6 @@ public interface IUserRepository
 
 
     Task<UserMinimalDto?> GetMinimalUserByIdAsync(int requestUserId);
+    
+    Task<UserProfileDto?> GetUserProfileByIdAsync(int userId);
 }

@@ -69,3 +69,9 @@ public static class UserDefaults
 {
     public const string DefaultProfilePictureUrl = "NoProfilePic";
 }
+
+public class UserProfileDto
+{
+    public string Username { get; set; } = null!;
+    public string UserProfilePicUrl { get; set; } = null!;
+}

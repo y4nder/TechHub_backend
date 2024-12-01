@@ -18,7 +18,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="useCases\articleInteractions\QueryArticles\UserArticles\" />
+      <Folder Include="useCases\userInteractions\updateUserInfo\" />
     </ItemGroup>
 
 </Project>

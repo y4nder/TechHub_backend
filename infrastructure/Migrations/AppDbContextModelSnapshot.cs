@@ -617,6 +617,10 @@ namespace infrastructure.Migrations
                         .HasColumnType("int")
                         .HasColumnName("userId");
 
+                    b.Property<string>("Bio")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Company")
                         .HasMaxLength(50)
                         .IsUnicode(false)

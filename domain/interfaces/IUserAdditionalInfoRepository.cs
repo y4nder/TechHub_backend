@@ -6,5 +6,5 @@ public interface IUserAdditionalInfoRepository
 {
     void AddAdditionalInfoAsync(UserAdditionalInfo userAdditionalInfo);
 
-    Task<UserAdditionalInfo?> GetAdditionalInfoAsync(int userId);
+    Task<UserAdditionalInfoDto?> GetAdditionalInfoAsync(int userId);
 }
