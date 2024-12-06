@@ -30,5 +30,9 @@ public interface IArticleRepository
     
     Task<PaginatedResult<ArticleResponseDto>> GetPaginatedArticlesByUserId(int authorId, int pageNumber, int pageSize);
     
+    Task<PaginatedResult<ArticleResponseDto>> GetPaginatedUpVotedArticles(int userId, int pageNumber, int pageSize);
     
+    Task<PaginatedResult<ArticleResponseDto>> GetPaginatedBookmarkedArticles(int userId, int pageNumber, int pageSize);
+    
+    Task<PaginatedResult<ArticleResponseDto>> GetPaginatedReadArticles(int userId, int pageNumber, int pageSize);
 }

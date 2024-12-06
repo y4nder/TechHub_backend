@@ -94,6 +94,7 @@ public class ArticleResponseDto
     public int ArticleId { get; set; }
     public string ClubImageUrl { get; set; } = null!;
     public string UserImageUrl { get; set; } = null!;
+    public string ClubName { get; set; } = null!;
     public string ArticleTitle { get; set; } = null!;
     public List<TagDto> Tags { get; set; } = null!;
     public DateTime? CreatedDateTime { get; set; }

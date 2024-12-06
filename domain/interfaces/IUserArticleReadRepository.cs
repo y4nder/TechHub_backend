@@ -9,4 +9,5 @@ public interface IUserArticleReadRepository
     Task<List<UserArticleRead>?> GetUserReadHistories(int userId);
 
     Task<UserArticleRead?> GetUserArticleRead(int userId, int articleId);
+    
 }

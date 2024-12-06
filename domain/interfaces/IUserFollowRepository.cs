@@ -11,4 +11,6 @@ public interface IUserFollowRepository
     void RemoveUserFollowRecord(UserFollow userFollow);
     
     Task<UserFollow?> GetUserFollow(int followerId, int followingId);
+
+    Task<UserFollowInfoDto> GetUserFollowInfo(int userId);
 }

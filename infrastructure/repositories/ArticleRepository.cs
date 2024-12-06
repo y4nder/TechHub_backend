@@ -116,7 +116,38 @@ public class ArticleRepository : IArticleRepository
         
         return await GetPaginatedArticleCardExecutor(baseQuery, authorId, pageNumber, pageSize);
     }
-    
+
+    public async Task<PaginatedResult<ArticleResponseDto>> GetPaginatedUpVotedArticles(int userId, int pageNumber, int pageSize)
+    {
+        var baseQuery = _context.Articles
+            .AsNoTracking()
+            .Where(article => article.UserArticleVotes.Any(vote => vote.UserId == userId && vote.VoteType == 1))
+            .OrderByDescending(article => article.CreatedDateTime);
+        
+        return await GetPaginatedArticleCardExecutor(baseQuery, userId, pageNumber, pageSize);
+    }
+
+    public async Task<PaginatedResult<ArticleResponseDto>> GetPaginatedBookmarkedArticles(int userId, int pageNumber, int pageSize)
+    {
+        var baseQuery = _context.Articles
+            .AsNoTracking()
+            .Where(article => article.UserArticleBookmarks.Any(bookmark => bookmark.UserId == userId))
+            .OrderByDescending(article => article.CreatedDateTime);
+        
+        return await GetPaginatedArticleCardExecutor(baseQuery, userId, pageNumber, pageSize); 
+    }
+
+    public async Task<PaginatedResult<ArticleResponseDto>> GetPaginatedReadArticles(int userId, int pageNumber, int pageSize)
+    {
+        var baseQuery = _context.Articles
+            .AsNoTracking()
+            .Where(article => article.UserArticleReads.Any(read => read.UserId == userId) && !article.Archived)
+            .OrderByDescending(article => article.CreatedDateTime);
+        
+        return await GetPaginatedArticleCardExecutor(baseQuery, userId, pageNumber, pageSize);
+    }
+
+
     private async Task<PaginatedResult<ArticleResponseDto>> GetPaginatedArticleCardExecutor(
         IQueryable<Article> baseQuery, int userId, int pageNumber, int pageSize)
     {
@@ -132,8 +163,9 @@ public class ArticleRepository : IArticleRepository
             {
                 ArticleId = article.ArticleId,
                 ClubImageUrl = article.Club!.ClubImageUrl ?? string.Empty,
-                UserImageUrl = article.ArticleAuthor!.UserProfilePicUrl ?? string.Empty,
-                ArticleTitle = article.ArticleTitle ?? "Untitled",
+                UserImageUrl = article.ArticleAuthor!.UserProfilePicUrl,
+                ClubName = article.Club.ClubName?? string.Empty,
+                ArticleTitle = article.ArticleTitle,
                 Tags = article.Tags
                     .Select(tag => new TagDto
                     {

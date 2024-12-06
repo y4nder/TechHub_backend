@@ -257,7 +257,7 @@ public class CommentRepository : ICommentRepository
     {
         var baseQuery = _context.Comments
             .AsNoTracking()
-            .Where(c => c.CommentCreatorId == userId && c.ParentCommentId == null)
+            .Where(c => c.CommentCreatorId == userId && c.ParentCommentId != null)
             .Include(c => c.CommentCreator.UserAdditionalInfo);
         
         var totalCount = await baseQuery.CountAsync();

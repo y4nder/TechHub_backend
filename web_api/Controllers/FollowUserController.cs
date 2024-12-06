@@ -1,4 +1,5 @@
 ﻿using application.useCases.userInteractions.followUser;
+using application.useCases.userInteractions.Queries.UserFollowInfoQuery;
 using application.useCases.userInteractions.unfollowUser;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -40,6 +41,20 @@ public class FollowUserController : Controller
         catch (Exception ex)
         {
             return ErrorFactory.CreateErrorResponse(ex);
+        }
+    }
+
+    [HttpGet("getFollowerInfo")]
+    public async Task<IActionResult> GetFollowerInfo([FromQuery] UserFollowInfoQuery query)
+    {
+        try
+        {
+            var response = await _sender.Send(query);
+            return Ok(response);
+        }
+        catch (Exception e)
+        {
+            return ErrorFactory.CreateErrorResponse(e);
         }
     }
 }

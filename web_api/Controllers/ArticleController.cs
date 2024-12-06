@@ -2,11 +2,14 @@
 using application.useCases.articleInteractions.BookmarkArticle;
 using application.useCases.articleInteractions.CreateArticle;
 using application.useCases.articleInteractions.DownVoteArticle;
+using application.useCases.articleInteractions.QueryArticles.BookmarkedArticles;
 using application.useCases.articleInteractions.QueryArticles.ClubArticles;
 using application.useCases.articleInteractions.QueryArticles.DiscoverArticles;
 using application.useCases.articleInteractions.QueryArticles.HomeArticles;
+using application.useCases.articleInteractions.QueryArticles.ReadArticles;
 using application.useCases.articleInteractions.QueryArticles.SearchedArticles;
 using application.useCases.articleInteractions.QueryArticles.SingleArticle;
+using application.useCases.articleInteractions.QueryArticles.UpvotedArticles;
 using application.useCases.articleInteractions.QueryArticles.UserArticles;
 using application.useCases.articleInteractions.RemoveArticleVote;
 using application.useCases.articleInteractions.UnBookmarkArticle;
@@ -191,6 +194,49 @@ public class ArticleController : Controller
 
     [HttpGet("getUserArticles")]
     public async Task<IActionResult> GetUserArticles([FromQuery] GetUserArticlesQuery query)
+    {
+        try
+        {
+            var response = await _mediator.Send(query);
+            return Ok(response);
+        }
+        catch (Exception ex)
+        {
+            return ErrorFactory.CreateErrorResponse(ex);
+        }
+    }
+    
+    [HttpGet("getUpVotedArticles")]
+    public async Task<IActionResult> GetUpVotedArticles([FromQuery] UpVotedArticlesQuery query)
+    {
+        try
+        {
+            var response = await _mediator.Send(query);
+            return Ok(response);
+        }
+        catch (Exception ex)
+        {
+            return ErrorFactory.CreateErrorResponse(ex);
+        }
+    }
+    
+        
+    [HttpGet("getBookmarkedArticles")]
+    public async Task<IActionResult> GetBookmarkedArticles([FromQuery] BookmarkedArticlesQuery query)
+    {
+        try
+        {
+            var response = await _mediator.Send(query);
+            return Ok(response);
+        }
+        catch (Exception ex)
+        {
+            return ErrorFactory.CreateErrorResponse(ex);
+        }
+    }
+    
+    [HttpGet("getReadArticles")]
+    public async Task<IActionResult> GetReadArticles([FromQuery] UserReadArticlesQuery query)
     {
         try
         {

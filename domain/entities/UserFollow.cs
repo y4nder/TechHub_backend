@@ -20,5 +20,11 @@ public partial class UserFollow
             FollowingId = followingId,
             FollowedDate = DateTime.Now
         };
-    } 
+    }
+}
+
+public class UserFollowInfoDto
+{
+    public int FollowerCount { get; set; } 
+    public int FollowingCount { get; set; } 
 }

@@ -32,4 +32,19 @@ public class UserFollowRepository : IUserFollowRepository
     {
         return await _context.UserFollows.FirstOrDefaultAsync(u => u.FollowerId == followerId && u.FollowingId == followingId); 
     }
+
+    public async Task<UserFollowInfoDto> GetUserFollowInfo(int userId)
+    {
+        var followerCount = await _context.UserFollows
+            .CountAsync(f => f.FollowerId == userId);
+        
+        var followingCount = await _context.UserFollows
+            .CountAsync(f => f.FollowingId == userId);
+
+        return new UserFollowInfoDto
+        {
+            FollowerCount = followerCount,
+            FollowingCount = followingCount
+        };
+    }
 }
