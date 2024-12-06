@@ -8,6 +8,9 @@ builder.Services.AddServices(builder.Configuration);
 // Add CORS services
 builder.Services.AddCorsConfigurations(builder.Configuration);
 
+// Add Auth services
+//builder.Services.AddAuthExtensions(builder.Configuration);
+
 builder.Services.AddControllers()
     .ConfigureJsonOptions(); 
 
@@ -15,6 +18,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
+
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -28,6 +33,7 @@ app.UseHttpsRedirection();
 // testing cors
 app.UseCors(CorsConstants.AllowAll);
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

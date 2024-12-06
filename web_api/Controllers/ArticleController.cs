@@ -15,6 +15,7 @@ using application.useCases.articleInteractions.RemoveArticleVote;
 using application.useCases.articleInteractions.UnBookmarkArticle;
 using application.useCases.articleInteractions.UpvoteArticle;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using web_api.utils;
 
@@ -59,6 +60,7 @@ public class ArticleController : Controller
         }
     }
 
+    [Authorize]
     [HttpGet("getHomeArticles")]
     public async Task<IActionResult> GetHomeArticles([FromQuery] GetHomeArticlesQuery query)
     {

@@ -1,4 +1,6 @@
-﻿namespace domain.entities;
+﻿using domain.shared;
+
+namespace domain.entities;
 
 public partial class UserAdditionalInfo
 {
@@ -41,19 +43,18 @@ public partial class UserAdditionalInfo
 
     public void Update(UserAdditionalInfoDto dto)
     {
-        //todo validate null values
-        Bio = dto.Bio;
-        Company = dto.Company;
-        ContactNumber = dto.ContactNumber;
-        Job = dto.Job;
-        GithubLink = dto.GithubLink;
-        LinkedInLink = dto.LinkedInLink;
-        XLink = dto.XLink;
-        PersonalWebsiteLink = dto.PersonalWebsiteLink;
-        YoutubeLink = dto.YoutubeLink;
-        StackOverflowLink = dto.StackOverflowLink;
-        RedditLink = dto.RedditLink;
-        ThreadsLink = dto.ThreadsLink;
+        Bio = Updater.UpdateProperty(Bio, dto.Bio);
+        Company = Updater.UpdateProperty(Company, dto.Company);
+        ContactNumber = Updater.UpdateProperty(ContactNumber, dto.ContactNumber);
+        Job = Updater.UpdateProperty(Job, dto.Job);
+        GithubLink = Updater.UpdateProperty(GithubLink, dto.GithubLink);
+        LinkedInLink = Updater.UpdateProperty(LinkedInLink, dto.LinkedInLink);
+        XLink = Updater.UpdateProperty(XLink, dto.XLink);
+        PersonalWebsiteLink = Updater.UpdateProperty(PersonalWebsiteLink, dto.PersonalWebsiteLink);
+        YoutubeLink = Updater.UpdateProperty(YoutubeLink, dto.YoutubeLink);
+        StackOverflowLink = Updater.UpdateProperty(StackOverflowLink, dto.StackOverflowLink);
+        RedditLink = Updater.UpdateProperty(RedditLink, dto.RedditLink);
+        ThreadsLink = Updater.UpdateProperty(ThreadsLink, dto.ThreadsLink);
     }
 }
 

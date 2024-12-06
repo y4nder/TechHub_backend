@@ -1,37 +1,39 @@
-﻿using domain.entities;
+﻿using application.utilities.UserContext;
+using domain.entities;
 using domain.interfaces;
 using domain.pagination;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 
 namespace application.useCases.articleInteractions.QueryArticles.HomeArticles;
 
 public class GetHomeArticlesQueryHandler : IRequestHandler<GetHomeArticlesQuery, HomeArticleResponse>
 {
+    private readonly IUserContext _userContext;
     private readonly IArticleRepository _articleRepository;
-    private readonly IUserRepository _userRepository;
     private readonly IUserAdditionalInfoRepository _userAdditionalInfoRepository;
     private readonly IUserTagFollowRepository _userTagFollowRepository;
 
-    public GetHomeArticlesQueryHandler(
-        IArticleRepository articleRepository,
-        IUserRepository userRepository,
-        IUserTagFollowRepository userTagFollowRepository, IUserAdditionalInfoRepository userAdditionalInfoRepository)
+    public GetHomeArticlesQueryHandler(IArticleRepository articleRepository,
+                                       IUserTagFollowRepository userTagFollowRepository,
+                                       IUserAdditionalInfoRepository userAdditionalInfoRepository,
+                                       IUserContext userContext)
     {
         _articleRepository = articleRepository;
-        _userRepository = userRepository;
         _userTagFollowRepository = userTagFollowRepository;
         _userAdditionalInfoRepository = userAdditionalInfoRepository;
+        _userContext = userContext;
     }
 
     public async Task<HomeArticleResponse> Handle(GetHomeArticlesQuery request, CancellationToken cancellationToken)
     {
         if(request.PageNumber > request.PageSize || request.PageNumber <= 0)
             throw new InvalidOperationException("Invalid page number");
-        
-        if(! await _userRepository.CheckIdExists(request.UserId))
-            throw new UnauthorizedAccessException("You do not have permission to access the resource");
-        
-        var userTagFollowRecords = await _userTagFollowRepository.GetFollowedTags(request.UserId);
+
+        var userId = _userContext.GetUserId();
+
+       
+        var userTagFollowRecords = await _userTagFollowRepository.GetFollowedTags(userId);
         
         if(userTagFollowRecords == null || userTagFollowRecords.Count == 0)
             throw new InvalidOperationException("user doesn't have followed tags");
@@ -39,7 +41,7 @@ public class GetHomeArticlesQueryHandler : IRequestHandler<GetHomeArticlesQuery,
         var tagIds = userTagFollowRecords.Select(t => t.TagId);
         
         var paginatedArticles = await _articleRepository
-            .GetPaginatedHomeArticlesByTagIdsAsync(request.UserId, tagIds.ToList(), request.PageNumber, request.PageSize);
+            .GetPaginatedHomeArticlesByTagIdsAsync(userId, tagIds.ToList(), request.PageNumber, request.PageSize);
         
         return new HomeArticleResponse
         {
