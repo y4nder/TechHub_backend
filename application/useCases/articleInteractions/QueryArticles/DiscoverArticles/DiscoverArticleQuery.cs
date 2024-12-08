@@ -6,7 +6,6 @@ namespace application.useCases.articleInteractions.QueryArticles.DiscoverArticle
 
 public class DiscoverArticleQuery : IRequest<DiscoverArticleResponse>
 {
-    public int UserId { get; set; }
     public int PageNumber { get; set; }
     public int PageSize { get; set; }
 }

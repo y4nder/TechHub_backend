@@ -1,4 +1,5 @@
 ﻿using infrastructure.services.cloudinary;
+using infrastructure.services.httpImgInterceptor;
 using infrastructure.services.jwt;
 using infrastructure.services.passwordService;
 using infrastructure.services.worker;
@@ -30,6 +31,8 @@ public static class InfrastructureConfigurations
         services.AddSingleton<IJwtTokenProvider, JwtTokenProvider>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddScoped<IImageUploader, ImageUploader>();
+        services.AddScoped<IHtmlImageProcessor, HtmlImageProcessor>();
+        services.AddScoped<IContentImageProcessor, ContentImageProcessor>();
         
         return services;
     }

@@ -22,6 +22,8 @@ public partial class Club
 
     public bool Featured { get; set; } = false;
 
+    public bool Private { get; set; } = false;
+
     public virtual ICollection<Article> Articles { get; set; } = new List<Article>();
 
     public virtual ClubCategory? ClubCategory { get; set; }
@@ -44,6 +46,7 @@ public partial class Club
             ClubCategoryId = dto.ClubCategoryId,
             PostPermission = (short)PermissionType.AllMembers,
             InvitePermission = (short)PermissionType.AllMembers,
+            Private = dto.IsPrivate,
         };
     }
     
@@ -70,6 +73,7 @@ public partial class Club
             ClubCategoryId = dto.ClubCategoryId,
             PostPermission = (short)(PermissionType)postPermission,
             InvitePermission = (short)(PermissionType)invitePermission,
+            Private = dto.IsPrivate,
         };
     }
 
@@ -86,7 +90,8 @@ public class ClubDto
     public string ImageUrl { get; set; } = null!;
     public string ClubName { get; set; } = null!;
     public string? ClubIntroduction { get; set; }
-    public int ClubCategoryId { get; set; }
+    public int? ClubCategoryId { get; set; }
+    public bool IsPrivate { get; set; }
 }
 
 public class ClubMinimalDto
@@ -149,6 +154,7 @@ public class SingleClubResponseDto
     public int MemberCount { get; set; } = -1;
     public ClubUserRoleDto ClubCreator { get; set; } = null!;
     public List<ClubUserRoleDto> Moderators { get; set; } = null!;
+    public bool Joined { get; set; }
 }
 
 

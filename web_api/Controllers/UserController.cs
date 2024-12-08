@@ -1,8 +1,11 @@
 ﻿using application.useCases.userInteractions.Queries.SelfMinimalQuery;
 using application.useCases.userInteractions.Queries.UserAdditionalInfoQuery;
+using application.useCases.userInteractions.updateUserInfo;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using web_api.utils;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace web_api.Controllers;
 
@@ -41,5 +44,20 @@ public class UserController : Controller
         {
             return ErrorFactory.CreateErrorResponse(ex);
         }
-    } 
+    }
+
+    [Authorize]
+    [HttpPatch("/me/profile/update")]
+    public async Task<IActionResult> UpdateUserAdditinalInfo([FromBody] UpdateUserCommand command)
+    {
+        try
+        {
+            var response = await _mediator.Send(command);
+            return Ok(response);
+        }
+        catch (Exception ex)
+        {
+            return ErrorFactory.CreateErrorResponse(ex);
+        }
+    }
 }

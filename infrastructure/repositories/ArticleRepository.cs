@@ -58,7 +58,8 @@ public class ArticleRepository : IArticleRepository
     {
         var baseQuery = _context.Articles
             .AsNoTracking()
-            .Where(a => a.Tags.Any(tag => tagIds.Contains(tag.TagId)) && !a.Archived && a.ArticleAuthorId != userId)
+            .Include(a => a.Club)
+            .Where(a => a.Tags.Any(tag => tagIds.Contains(tag.TagId)) && !a.Archived && a.ArticleAuthorId != userId && !a.Club!.Private)
             .OrderBy(a => a.CreatedDateTime); 
         
         return await GetPaginatedArticleCardExecutor(baseQuery, userId, pageNumber, pageSize);
@@ -79,7 +80,8 @@ public class ArticleRepository : IArticleRepository
     {
         var baseQuery = _context.Articles
             .AsNoTracking()
-            .Where(a => a.Archived == false)
+            .Include(a => a.Club)
+            .Where(a => a.Archived == false && !a.Club!.Private)
             .OrderBy(a => a.CreatedDateTime);
         
         return await GetPaginatedArticleCardExecutor(baseQuery, userId, pageNumber, pageSize);

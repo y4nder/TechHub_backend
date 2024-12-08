@@ -39,4 +39,14 @@ public class UserAdditionalInfoRepository : IUserAdditionalInfoRepository
                 ThreadsLink = info.ThreadsLink
             }).FirstOrDefaultAsync();
     }
+
+    public async Task<UserAdditionalInfo?> GetUserAdditionalInfoForUpdateAsync(int userId)
+    {
+        return await _context.UserAdditionalInfos.FindAsync(userId);
+    }
+
+    public void UpdateAdditionalInfo(UserAdditionalInfo userAdditionalInfo)
+    {
+        _context.UserAdditionalInfos.Update(userAdditionalInfo);
+    }
 }

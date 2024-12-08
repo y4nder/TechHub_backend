@@ -1,6 +1,7 @@
 ﻿using application.Events.ArticleEvents;
 using application.Exceptions.TagExceptions;
 using application.utilities.ImageUploads.Article;
+using application.utilities.UserContext;
 using domain.entities;
 using domain.interfaces;
 using FluentValidation;
@@ -12,7 +13,7 @@ namespace application.useCases.articleInteractions.CreateArticle;
 public class CreateArticleCommandHandler : IRequestHandler<CreateArticleCommand, CreateArticleResponse>
 {
     private readonly IValidator<CreateArticleCommand> _validator;
-    private readonly IUserRepository _userRepository;
+    private readonly IUserContext _userContext;
     private readonly IClubRepository _clubRepository;
     private readonly IArticleImageService _articleImageService;
     private readonly IArticleRepository _articleRepository;
@@ -23,17 +24,16 @@ public class CreateArticleCommandHandler : IRequestHandler<CreateArticleCommand,
 
     public CreateArticleCommandHandler(
         IValidator<CreateArticleCommand> validator,
-        IUserRepository userRepository,
         IUnitOfWork unitOfWork,
         IClubRepository clubRepository,
         IArticleImageService articleImageService,
         ITagRepository tagRepository,
         IArticleRepository articleRepository,
         IMediator mediator,
-        IClubUserRepository clubUserRepository)
+        IClubUserRepository clubUserRepository, 
+        IUserContext userContext)
     {
         _validator = validator;
-        _userRepository = userRepository;
         _unitOfWork = unitOfWork;
         _clubRepository = clubRepository;
         _articleImageService = articleImageService;
@@ -41,6 +41,7 @@ public class CreateArticleCommandHandler : IRequestHandler<CreateArticleCommand,
         _articleRepository = articleRepository;
         _mediator = mediator;
         _clubUserRepository = clubUserRepository;
+        _userContext = userContext;
     }
 
     public async Task<CreateArticleResponse> Handle(CreateArticleCommand request, CancellationToken cancellationToken)
@@ -50,29 +51,27 @@ public class CreateArticleCommandHandler : IRequestHandler<CreateArticleCommand,
         {
             throw new ValidationException(validationResult.Errors);
         }
-
-        // validate author id
-        if (!await _userRepository.CheckIdExists(request.AuthorId))
-            throw new KeyNotFoundException("User does not exist");
-
+        
+        var userId = _userContext.GetUserId();
+        
         // validate club id
         var club = await _clubRepository.GetClubByIdNoTracking(request.ClubId) ??
                    throw new KeyNotFoundException("Club does not exist");
 
         //check if joined
-        if (!await _clubUserRepository.ClubJoined(request.ClubId, request.AuthorId))
+        if (!await _clubUserRepository.ClubJoined(request.ClubId, userId))
             throw new UnauthorizedAccessException("You do not have permission to access this club");
 
         // resolve permissions 
-        await ValidateClubPermissions(club, request.AuthorId);
+        await ValidateClubPermissions(club, userId);
 
         // validate tags
-        await ValidateTags(request.TagIds);
+        if(request.TagIds != null)
+            await ValidateTags(request.TagIds);
 
         if (request.NewTags != null)
             await EnsureNewTagsAreUnique(request.NewTags);
         
-
         // upload article thumbnail
         var articleUploadResponse = await _articleImageService.UploadThumbnail(request.ArticleThumbnail!) ??
                                     throw new Exception("Thumbnail upload failed");
@@ -83,7 +82,7 @@ public class CreateArticleCommandHandler : IRequestHandler<CreateArticleCommand,
         // create dto
         var articleDto = new ArticleDto
         {
-            AuthorId = request.AuthorId,
+            AuthorId = userId,
             ClubId = request.ClubId,
             ArticleTitle = request.ArticleTitle,
             ArticleThumbnailUrl = articleUploadResponse.ImageSecureUrl,
@@ -104,6 +103,7 @@ public class CreateArticleCommandHandler : IRequestHandler<CreateArticleCommand,
         {
             Article = article,
             ArticleContent = request.ArticleContent,
+            ArticleHtmlContent = request.ArticleHtmlContent,
             NewTagNotification = request.NewTags != null 
                 ? NewTagNotification.CreateHasNewTags(request.NewTags) 
                 : NewTagNotification.CreateHasNoNewTags(),
@@ -115,6 +115,7 @@ public class CreateArticleCommandHandler : IRequestHandler<CreateArticleCommand,
         return new CreateArticleResponse
         {
             Message = "Article created",
+            ArticleId = article.ArticleId,
         };
     }
 

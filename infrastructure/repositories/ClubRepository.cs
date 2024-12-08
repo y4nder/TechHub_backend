@@ -57,7 +57,7 @@ public class ClubRepository : IClubRepository
                 CategoryName = category.ClubCategoryName,
                 Clubs = _context.Clubs
                     .AsNoTracking()
-                    .Where(c => c.ClubCategoryId == category.ClubCategoryId)
+                    .Where(c => c.ClubCategoryId == category.ClubCategoryId && c.Private != true)
                     .Select(club => new ClubStandardResponseDto
                     {
                         ClubId = club.ClubId,
@@ -106,7 +106,7 @@ public class ClubRepository : IClubRepository
         return result;
     }
 
-    public async Task<SingleClubResponseDto?> GetSingleClubByIdAsync(int clubId)
+    public async Task<SingleClubResponseDto?> GetSingleClubByIdAsync(int userId, int clubId)
     {
         var query = _context.Clubs
             .AsNoTracking()
@@ -153,7 +153,9 @@ public class ClubRepository : IClubRepository
                             Username = cu.User.Username!,
                             RoleName = cu.Role!.RoleName!
                         })
-                        .ToList()
+                        .ToList(),
+                    Joined = club.ClubUsers
+                        .Any(cu => cu.UserId == userId)
                 });
         
         var result = await query.FirstOrDefaultAsync();
@@ -180,7 +182,7 @@ public class ClubRepository : IClubRepository
     {
         var categoryClub =  await _context.Clubs
             .AsNoTracking()
-            .Where(c => c.ClubCategoryId == clubCategoryId)
+            .Where(c => c.ClubCategoryId == clubCategoryId && c.Private != true)
             .Select(club => new SingleCategoryClubStandardResponseDto
             {
                 CategoryId = club.ClubCategoryId,

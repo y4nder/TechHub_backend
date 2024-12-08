@@ -77,3 +77,13 @@ public class UserProfileDto
     public string Username { get; set; } = null!;
     public string UserProfilePicUrl { get; set; } = null!;
 }
+
+public class UserFollowsListDto
+{
+    public int UserId { get; set; }
+    public string Username { get; set; } = null!;
+    public string UserProfilePicUrl { get; set; } = null!;
+    public string Email { get; set; } = null!;
+    public int ReputationPoints { get; set; }
+    public bool Followed { get; set; }
+}

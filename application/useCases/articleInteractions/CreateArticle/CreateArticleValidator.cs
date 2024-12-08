@@ -16,11 +16,16 @@ public class CreateArticleValidator : AbstractValidator<CreateArticleCommand>
             .Must(HaveValidExtension!).WithMessage("Article thumbnail must be a valid extension");
 
         RuleFor(a => a.TagIds)
-            .NotEmpty().WithMessage("TagIds is required")
-            .NotNull().WithMessage("TagIds is required");
+            .Must((a, tags) => AtLeastOneTag(tags, a.NewTags))
+            .WithMessage("At least one TagId or NewTag is required.");
 
         RuleFor(a => a.ArticleContent)
             .NotEmpty().WithMessage("Body is required");
+    }
+
+    private bool AtLeastOneTag(List<int>? tagIds, List<string>? newTags)
+    {
+        return tagIds is { Count: > 0 } || newTags is { Count: > 0 };
     }
     
     private bool BeAValidSize(IFormFile? file)
@@ -30,6 +35,8 @@ public class CreateArticleValidator : AbstractValidator<CreateArticleCommand>
             throw new NullReferenceException("File is null.");
         return file.Length is > 0 and <= maxFileSize;
     }
+    
+   
 
     private bool HaveValidExtension(IFormFile file)
     {

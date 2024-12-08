@@ -1,4 +1,5 @@
-﻿using domain.interfaces;
+﻿using application.utilities.UserContext;
+using domain.interfaces;
 using MediatR;
 
 namespace application.useCases.articleInteractions.QueryArticles.DiscoverArticles;
@@ -6,21 +7,20 @@ namespace application.useCases.articleInteractions.QueryArticles.DiscoverArticle
 public class DiscoverArticleQueryHandler : IRequestHandler<DiscoverArticleQuery, DiscoverArticleResponse>
 {
     private readonly IArticleRepository _articleRepository;
-    private readonly IUserRepository _userRepository;
+    private readonly IUserContext _userContext;
 
-    public DiscoverArticleQueryHandler(IArticleRepository articleRepository, IUserRepository userRepository)
+    public DiscoverArticleQueryHandler(IArticleRepository articleRepository, IUserContext userContext)
     {
         _articleRepository = articleRepository;
-        _userRepository = userRepository;
+        _userContext = userContext;
     }
 
     public async Task<DiscoverArticleResponse> Handle(DiscoverArticleQuery request, CancellationToken cancellationToken)
     {
-        if(! await _userRepository.CheckIdExists(request.UserId))
-            throw new KeyNotFoundException("User not found");
+        var userId = _userContext.GetUserId();
         
         var articles = await _articleRepository
-            .GetPaginatedDiscoverArticlesAsync(request.UserId, request.PageNumber, request.PageSize);
+            .GetPaginatedDiscoverArticlesAsync(userId, request.PageNumber, request.PageSize);
 
         return new DiscoverArticleResponse
         {
