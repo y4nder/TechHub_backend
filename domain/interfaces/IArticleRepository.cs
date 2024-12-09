@@ -35,4 +35,7 @@ public interface IArticleRepository
     Task<PaginatedResult<ArticleResponseDto>> GetPaginatedBookmarkedArticles(int userId, int pageNumber, int pageSize);
     
     Task<PaginatedResult<ArticleResponseDto>> GetPaginatedReadArticles(int userId, int pageNumber, int pageSize);
+    
+    Task<bool> IsAuthor(int userId, int articleId);
+    Task<ArticleResponseForEditDto> GetArticleForEditByIdAsync(int articleId);
 }

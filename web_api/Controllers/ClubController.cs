@@ -1,5 +1,6 @@
 ﻿using application.useCases.clubInteractions.CreateClub;
 using application.useCases.clubInteractions.JoinClub;
+using application.useCases.clubInteractions.LeaveClub;
 using application.useCases.clubInteractions.QueryClub.CategorizedClubsQuery;
 using application.useCases.clubInteractions.QueryClub.CategoryQuery;
 using application.useCases.clubInteractions.QueryClub.FeaturedClubsQuery;
@@ -36,7 +37,21 @@ public class ClubController : Controller
     }
 
     [HttpPost("joinClub")]
-    public async Task<IActionResult> JoinClub(JoinClubCommand command)
+    public async Task<IActionResult> JoinClub([FromBody] JoinClubCommand command)
+    {
+        try
+        {
+            var response = await _sender.Send(command);
+            return Ok(response);
+        }
+        catch (Exception e)
+        {
+            return ErrorFactory.CreateErrorResponse(e);
+        }
+    }
+    
+    [HttpPost("leaveClub")]
+    public async Task<IActionResult> JoinClub([FromBody] LeaveClubCommand command)
     {
         try
         {

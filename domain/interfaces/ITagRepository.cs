@@ -14,4 +14,7 @@ public interface ITagRepository
     
     void BatchAddTags(List<Tag> tags);
     Task<List<TagDto>> GetAllTagsAsync();
+    
+    Task<List<Tag>> GetArticleTagsAsync(int articleId);
+    Task RemoveTagsAsync(int articleId);
 }

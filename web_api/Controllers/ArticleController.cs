@@ -6,6 +6,7 @@ using application.useCases.articleInteractions.QueryArticles.BookmarkedArticles;
 using application.useCases.articleInteractions.QueryArticles.ClubArticles;
 using application.useCases.articleInteractions.QueryArticles.DiscoverArticles;
 using application.useCases.articleInteractions.QueryArticles.HomeArticles;
+using application.useCases.articleInteractions.QueryArticles.QueryArticleForEdit;
 using application.useCases.articleInteractions.QueryArticles.ReadArticles;
 using application.useCases.articleInteractions.QueryArticles.SearchedArticles;
 using application.useCases.articleInteractions.QueryArticles.SingleArticle;
@@ -13,6 +14,7 @@ using application.useCases.articleInteractions.QueryArticles.UpvotedArticles;
 using application.useCases.articleInteractions.QueryArticles.UserArticles;
 using application.useCases.articleInteractions.RemoveArticleVote;
 using application.useCases.articleInteractions.UnBookmarkArticle;
+using application.useCases.articleInteractions.UpdateArticle;
 using application.useCases.articleInteractions.UpvoteArticle;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -34,6 +36,22 @@ public class ArticleController : Controller
     public async Task<IActionResult> AddArticle(
         [FromForm]CreateArticleCommand command
         )
+    {
+        try
+        {
+            var response = await _mediator.Send(command);
+            return Ok(response);
+        }
+        catch (Exception ex)
+        {
+            return ErrorFactory.CreateErrorResponse(ex);
+        }
+    }
+    
+    [HttpPut("updateArticle")]
+    public async Task<IActionResult> UpdateArticle(
+        [FromForm]UpdateArticleCommand command
+    )
     {
         try
         {
@@ -239,6 +257,20 @@ public class ArticleController : Controller
     
     [HttpGet("getReadArticles")]
     public async Task<IActionResult> GetReadArticles([FromQuery] UserReadArticlesQuery query)
+    {
+        try
+        {
+            var response = await _mediator.Send(query);
+            return Ok(response);
+        }
+        catch (Exception ex)
+        {
+            return ErrorFactory.CreateErrorResponse(ex);
+        }
+    }
+    
+    [HttpGet("getArticleForEdit")]
+    public async Task<IActionResult> GetReadArticles([FromQuery] ArticleForEditQuery query)
     {
         try
         {

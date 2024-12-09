@@ -39,7 +39,7 @@ public class ClubUserRepository : IClubUserRepository
         return await _context.ClubUsers.AsNoTracking().AnyAsync(c => c.ClubId == clubId && c.UserId == userId);
     }
 
-    public async Task<List<ClubUser>?> GetClubUserRecord(int clubId, int userId)
+    public async Task<List<ClubUser>?> GetClubUserRecords(int clubId, int userId)
     {
         return await _context.ClubUsers
             .AsNoTracking()
@@ -67,4 +67,13 @@ public class ClubUserRepository : IClubUserRepository
         
         return clubs;
     }
+
+    public async Task<List<ClubUser>?> GetClubUserRecordWithTracking(int clubId, int userId)
+    {
+        return await _context.ClubUsers
+            .Where(cu => cu.ClubId == clubId && cu.UserId == userId)
+            .ToListAsync();
+    }
+
+    public void RemoveClubUserRange(List<ClubUser> clubUsers) => _context.RemoveRange(clubUsers);
 }

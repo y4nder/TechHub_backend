@@ -149,6 +149,35 @@ public class ArticleRepository : IArticleRepository
         return await GetPaginatedArticleCardExecutor(baseQuery, userId, pageNumber, pageSize);
     }
 
+    public async Task<bool> IsAuthor(int userId, int articleId)
+    {
+        return await _context
+            .Articles
+            .AnyAsync(article => 
+                article.ArticleId == articleId 
+                && article.ArticleAuthorId == userId);  ; 
+    }
+
+    public async Task<ArticleResponseForEditDto> GetArticleForEditByIdAsync(int articleId)
+    {
+        return await _context.Articles
+            .Where(article => article.ArticleId == articleId)
+            .Select(article => new ArticleResponseForEditDto
+            {
+                ArticleId = article.ArticleId,
+                ClubId = article.ClubId,
+                ArticleTitle = article.ArticleTitle,
+                ArticleThumbnail = article.ArticleThumbnailUrl!,
+                ArticleContent = _context.ArticleBodies.Where(body => body.ArticleId == article.ArticleId)
+                    .Select(body => body.ArticleContent).FirstOrDefault()!,
+                Tags = article.Tags.Select(t => new TagDto
+                {
+                    TagId = t.TagId,
+                    TagName = t.TagName
+                }).ToList(),
+            }).FirstAsync();
+    }
+
 
     private async Task<PaginatedResult<ArticleResponseDto>> GetPaginatedArticleCardExecutor(
         IQueryable<Article> baseQuery, int userId, int pageNumber, int pageSize)

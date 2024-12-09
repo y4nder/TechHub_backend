@@ -106,3 +106,12 @@ public class ArticleResponseDto
     
 }
 
+public class ArticleResponseForEditDto
+{
+    public int ArticleId { get; set; }
+    public int ClubId { get; set; }
+    public string ArticleTitle { get; set; } = null!;
+    public string ArticleThumbnail { get; set; } = null!;
+    public string ArticleContent { get; set; } = null!;
+    public List<TagDto> Tags { get; set; } = new();
+}

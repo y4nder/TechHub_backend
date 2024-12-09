@@ -121,7 +121,7 @@ public class CreateArticleCommandHandler : IRequestHandler<CreateArticleCommand,
 
     private async Task ValidateClubPermissions(Club club, int authorId)
     {
-        var clubUserRecords = await _clubUserRepository.GetClubUserRecord(club.ClubId, authorId);
+        var clubUserRecords = await _clubUserRepository.GetClubUserRecords(club.ClubId, authorId);
         var roles = clubUserRecords!.Select(x => x.Role).Distinct();
 
         if (club.PostPermission == (short)PermissionType.Moderators)
