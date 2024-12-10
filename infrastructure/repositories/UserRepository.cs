@@ -76,4 +76,41 @@ public class UserRepository : IUserRepository
                 UserProfilePicUrl = u.UserProfilePicUrl
             }).FirstOrDefaultAsync();
     }
+
+    public async Task<UserDetailsDto?> GetUserDetailsByIdAsync(int userId)
+    {
+        return await _context.Users
+            .AsNoTracking()
+            .Where(u => u.UserId == userId)
+            .Select(u => new UserDetailsDto
+            {
+                UserProfilePicUrl = u.UserProfilePicUrl,
+                Username = u.Username!,
+                UserAdditionalInfo = _context.UserAdditionalInfos
+                    .Where(ua => ua.UserId == u.UserId)
+                    .Select(ua => new UserAdditionalInfoDto
+                    {
+                        Bio = ua.Bio,
+                        Company = ua.Company,
+                        ContactNumber = ua.ContactNumber,
+                        Job = ua.Job,
+                        GithubLink = ua.GithubLink,
+                        LinkedInLink = ua.LinkedInLink,
+                        FacebookLink = ua.FacebookLink,
+                        XLink = ua.XLink,
+                        PersonalWebsiteLink = ua.PersonalWebsiteLink,
+                        YoutubeLink = ua.YoutubeLink,
+                        StackOverflowLink = ua.StackOverflowLink,
+                        RedditLink = ua.RedditLink,
+                        ThreadsLink = ua.ThreadsLink,
+                    })
+                    .First()
+            })
+            .FirstOrDefaultAsync();
+    }
+
+    public async Task<string?> GetUserNameByIdAsync(int userId)
+    {
+        return await _context.Users.Where(u => u.UserId == userId).Select(u => u.Username!).FirstOrDefaultAsync();
+    }
 }

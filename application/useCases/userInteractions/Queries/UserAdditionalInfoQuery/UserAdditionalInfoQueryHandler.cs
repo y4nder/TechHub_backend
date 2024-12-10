@@ -1,27 +1,30 @@
-﻿using domain.interfaces;
+﻿using application.utilities.UserContext;
+using domain.interfaces;
 using MediatR;
 
 namespace application.useCases.userInteractions.Queries.UserAdditionalInfoQuery;
 
 public class UserAdditionalInfoQueryHandler : IRequestHandler<SelfUserAdditionalInfoQuery, UserAdditionalInfoResponse>
 {
+    
+    private readonly IUserContext _userContext;
     private readonly IUserRepository _userRepository;
     private readonly IUserAdditionalInfoRepository _userAdditionalInfoRepository;
 
-    public UserAdditionalInfoQueryHandler(IUserRepository userRepository, IUserAdditionalInfoRepository userAdditionalInfoRepository)
+    public UserAdditionalInfoQueryHandler(IUserAdditionalInfoRepository userAdditionalInfoRepository, IUserContext userContext, IUserRepository userRepository)
     {
-        _userRepository = userRepository;
         _userAdditionalInfoRepository = userAdditionalInfoRepository;
+        _userContext = userContext;
+        _userRepository = userRepository;
     }
 
     public async Task<UserAdditionalInfoResponse> Handle(SelfUserAdditionalInfoQuery request, CancellationToken cancellationToken)
     {
-        if (!await _userRepository.CheckIdExists(request.UserId))
-            throw new KeyNotFoundException("User not found");
+        var userId = _userContext.GetUserId();
 
-        var profile = await _userRepository.GetUserProfileByIdAsync(request.UserId) ??
+        var profile = await _userRepository.GetUserProfileByIdAsync(userId) ??
                       throw new KeyNotFoundException("User not found");
-        var info = await _userAdditionalInfoRepository.GetAdditionalInfoAsync(request.UserId) ??
+        var info = await _userAdditionalInfoRepository.GetAdditionalInfoAsync(userId) ??
                    throw new KeyNotFoundException("User not found");
         
         return new UserAdditionalInfoResponse

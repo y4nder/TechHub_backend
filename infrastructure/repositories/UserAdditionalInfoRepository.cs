@@ -31,6 +31,7 @@ public class UserAdditionalInfoRepository : IUserAdditionalInfoRepository
                 Job = info.Job,
                 GithubLink = info.GithubLink,
                 LinkedInLink = info.LinkedInLink,
+                FacebookLink = info.FacebookLink,
                 XLink = info.XLink,
                 PersonalWebsiteLink = info.PersonalWebsiteLink,
                 YoutubeLink = info.YoutubeLink,

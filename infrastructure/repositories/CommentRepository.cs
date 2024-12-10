@@ -304,7 +304,7 @@ public class CommentRepository : ICommentRepository
             .Include(c => c.CommentCreator.UserAdditionalInfo);
 
         return await PaginatedQueriedCommentResult(userId, pageNumber, pageSize, baseQuery);
-    }
+    }   
 
     private async Task<PaginatedResult<CommentItemDto>> PaginatedQueriedCommentResult(int userId, int pageNumber, int pageSize,
         IIncludableQueryable<Comment, UserAdditionalInfo?> baseQuery)

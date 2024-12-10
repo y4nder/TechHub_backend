@@ -5,6 +5,8 @@ namespace application.useCases.userInteractions.updateUserInfo;
 
 public class UpdateUserCommand : IRequest<UpdateUserCommandResponse>
 {
+    public string UserProfilePicUrl { get; set; } = null!;
+    public string Username { get; set; } = null!;
     public UserAdditionalInfoDto UserInfo { get; set; } = new UserAdditionalInfoDto();
 }
 

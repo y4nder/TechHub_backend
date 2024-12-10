@@ -197,6 +197,7 @@ public class ArticleRepository : IArticleRepository
                 AuthorId = article.ArticleAuthorId,
                 AuthorName = article.ArticleAuthor!.Username!,
                 UserImageUrl = article.ArticleAuthor!.UserProfilePicUrl,
+                ClubId = article.ClubId,
                 ClubName = article.Club.ClubName?? string.Empty,
                 ArticleTitle = article.ArticleTitle,
                 Tags = article.Tags

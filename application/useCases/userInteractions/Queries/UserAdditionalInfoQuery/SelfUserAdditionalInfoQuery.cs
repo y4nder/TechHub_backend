@@ -4,9 +4,7 @@ using MediatR;
 namespace application.useCases.userInteractions.Queries.UserAdditionalInfoQuery;
 
 public class SelfUserAdditionalInfoQuery : IRequest<UserAdditionalInfoResponse>
-{
-    public int UserId { get; set; }
-}
+{ }
 
 public class UserAdditionalInfoResponse
 {
