@@ -44,4 +44,5 @@ public class ClubUserRoleDto
     public int UserId { get; set; }
     public string Username { get; set; } = null!;
     public string RoleName { get; set; } = null!;
+    public string UserProfilePicUrl { get; set; } = null!;
 }

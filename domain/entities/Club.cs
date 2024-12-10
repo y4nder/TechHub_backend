@@ -22,6 +22,8 @@ public partial class Club
 
     public bool Featured { get; set; } = false;
 
+    public bool Private { get; set; } = false;
+
     public virtual ICollection<Article> Articles { get; set; } = new List<Article>();
 
     public virtual ClubCategory? ClubCategory { get; set; }
@@ -44,6 +46,7 @@ public partial class Club
             ClubCategoryId = dto.ClubCategoryId,
             PostPermission = (short)PermissionType.AllMembers,
             InvitePermission = (short)PermissionType.AllMembers,
+            Private = dto.IsPrivate,
         };
     }
     
@@ -70,6 +73,7 @@ public partial class Club
             ClubCategoryId = dto.ClubCategoryId,
             PostPermission = (short)(PermissionType)postPermission,
             InvitePermission = (short)(PermissionType)invitePermission,
+            Private = dto.IsPrivate,
         };
     }
 
@@ -86,7 +90,8 @@ public class ClubDto
     public string ImageUrl { get; set; } = null!;
     public string ClubName { get; set; } = null!;
     public string? ClubIntroduction { get; set; }
-    public int ClubCategoryId { get; set; }
+    public int? ClubCategoryId { get; set; }
+    public bool IsPrivate { get; set; }
 }
 
 public class ClubMinimalDto
@@ -117,7 +122,15 @@ public class ClubFeaturedResponseDto
     public string ClubName { get; set; } = null!;
     public string ClubDescription { get; set; } = null!;
     public int ClubMembersCount { get; set; }   
-    public List<string> RecentMembersProfilePics { get; set; } = new List<string>();
+    public List<RecentMembersProfileResponseDto> RecentMembersProfilePics { get; set; } = new ();
+}
+
+public class RecentMembersProfileResponseDto
+{
+    public int UserId { get; set; }
+    public string Username { get; set; } = null!;
+    public string UserProfilePicUrl { get; set; } = null!;
+
 }
 
 public class ClubCategoryStandardResponseDto
@@ -127,19 +140,29 @@ public class ClubCategoryStandardResponseDto
     public List<ClubStandardResponseDto> Clubs { get; set; } = new List<ClubStandardResponseDto>();
 }
 
+public class SingleCategoryClubStandardResponseDto
+{
+    public int? CategoryId { get; set; }
+    public string CategoryName { get; set; } = null!;
+    public List<ClubStandardResponseDto> Clubs { get; set; } = new();
+}
+
 public class SingleClubResponseDto
 {
     public int ClubId { get; set; }
     public string ClubName { get; set; } = null!;
+    public string ClubProfilePicUrl { get; set; } = null!;
     public DateTime? ClubCreatedDateTime { get; set; }
     public int PostCount { get; set; } = -1;
     public int ClubViews { get; set; } = -1;
     public int ClubUpVoteCount { get; set; } = -1;
     public bool Featured { get; set; } = false;
-    public List<string> RecentMemberProfilePics { get; set; } = new List<string>();
+    public List<RecentMembersProfileResponseDto> RecentMemberProfilePics { get; set; } = new();
+    public string ClubIntroduction { get; set; } = null!;
     public int MemberCount { get; set; } = -1;
     public ClubUserRoleDto ClubCreator { get; set; } = null!;
     public List<ClubUserRoleDto> Moderators { get; set; } = null!;
+    public bool Joined { get; set; }
 }
 
 

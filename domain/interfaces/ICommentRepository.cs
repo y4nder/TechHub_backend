@@ -9,10 +9,16 @@ public interface ICommentRepository
     
     Task<bool> ParentCommentIdExists(int parentCommentId);
     
-    Task<PaginatedResult<ArticleCommentDto>> GetPaginatedCommentsByArticleId(int articleId, int pageNumber,
+    Task<PaginatedResult<ArticleCommentDto>> GetPaginatedCommentsByArticleId(int userId, int articleId, int pageNumber,
         int pageSize);
     
     Task<int> GetTotalCommentsByArticleId(int articleId);
     
     Task<bool> CheckCommentIdExists(int commentId);
+    
+    Task<PaginatedResult<UserReplyDto>> GetUserReplies(int userId, int pageNumber, int pageSize);
+
+    Task<PaginatedResult<CommentItemDto>> GetParentComments(int userId, int articleId, int pageNumber, int pageSize);
+    
+    Task<PaginatedResult<CommentItemDto>> GetArticleCommentReplies(int userId, int parentCommentId, int pageNumber, int pageSize);
 }

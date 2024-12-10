@@ -1,6 +1,10 @@
 ﻿using application.useCases.commentInteractions.CreateAComment;
 using application.useCases.commentInteractions.DownVoteComment;
+using application.useCases.commentInteractions.QueryComments.QueryCommentsForArticleNew;
 using application.useCases.commentInteractions.QueryComments.QueryCommentsForSingleArticle;
+using application.useCases.commentInteractions.QueryComments.QueryRepliesForComment;
+using application.useCases.commentInteractions.QueryComments.QueryUserReplies;
+using application.useCases.commentInteractions.RemoveVoteComment;
 using application.useCases.commentInteractions.ReplyAComment;
 using application.useCases.commentInteractions.UpvoteComment;
 using MediatR;
@@ -59,6 +63,35 @@ public class CommentController : Controller
             return ErrorFactory.CreateErrorResponse(ex);
         }
     }
+    
+    
+    [HttpGet("getParentComments")]
+    public async Task<IActionResult> GetParentComments([FromQuery] GetSingleArticleCommentsQuery query)
+    {
+        try
+        {
+            var response = await _mediator.Send(query);
+            return Ok(response);
+        }
+        catch (Exception ex)
+        {
+            return ErrorFactory.CreateErrorResponse(ex);
+        }
+    }
+    
+    [HttpGet("getArticleReplies")]
+    public async Task<IActionResult> GetArticleReplies([FromQuery] GetCommentRepliesQuery query)
+    {
+        try
+        {
+            var response = await _mediator.Send(query);
+            return Ok(response);
+        }
+        catch (Exception ex)
+        {
+            return ErrorFactory.CreateErrorResponse(ex);
+        }
+    }
 
     [HttpPost("upvoteComment")]
     public async Task<IActionResult> UpvoteComment([FromBody] UpvoteCommentCommand command)
@@ -80,6 +113,34 @@ public class CommentController : Controller
         try
         {
             var response = await _mediator.Send(command);
+            return Ok(response);
+        }
+        catch (Exception ex)
+        {
+            return ErrorFactory.CreateErrorResponse(ex);
+        }
+    }
+    
+    [HttpDelete("removeCommentVote")]
+    public async Task<IActionResult> RemoveCommentVote([FromBody] RemoveVoteCommentCommand command)
+    {
+        try
+        {
+            var response = await _mediator.Send(command);
+            return Ok(response);
+        }
+        catch (Exception ex)
+        {
+            return ErrorFactory.CreateErrorResponse(ex);
+        }
+    }
+    
+    [HttpGet("getUserReplies")]
+    public async Task<IActionResult> GetComments([FromQuery] UserRepliesQuery query)
+    {
+        try
+        {
+            var response = await _mediator.Send(query);
             return Ok(response);
         }
         catch (Exception ex)

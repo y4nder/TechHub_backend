@@ -25,7 +25,9 @@ public class GetArticleCommentsQueryHandler : IRequestHandler<GetArticleComments
             throw new InvalidOperationException("Invalid page number or page size");
         
         var comments = await _commentRepository
-            .GetPaginatedCommentsByArticleId(request.ArticleId, request.PageNumber, request.PageSize);
+            .GetPaginatedCommentsByArticleId(request.UserId, request.ArticleId, request.PageNumber, request.PageSize);
+        
+        
         
         return new ArticleCommentsResponse
         {

@@ -55,11 +55,11 @@ public class UserArticleVoteRepository : IUserArticleVoteRepository
         _context.UserArticleVotes.Remove(userArticleVote);
     }
 
-    public Task<short> GetArticleVoteType(int articleId)
+    public Task<short> GetArticleVoteType(int articleId, int userId)
     {
         var voteType = _context.UserArticleVotes
             .AsNoTracking()
-            .Where(v => v.ArticleId == articleId)
+            .Where(v => v.ArticleId == articleId && v.UserId == userId)
             .Select(v => v.VoteType).FirstOrDefaultAsync();
         
         return voteType;

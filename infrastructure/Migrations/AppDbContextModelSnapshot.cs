@@ -115,6 +115,10 @@ namespace infrastructure.Migrations
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("articleContent");
 
+                    b.Property<string>("ArticleHtmlContent")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("ArticleId")
                         .HasName("PK_ArticleBody");
 
@@ -172,6 +176,9 @@ namespace infrastructure.Migrations
                         .HasColumnType("smallint")
                         .HasDefaultValue((short)0)
                         .HasColumnName("postPermission");
+
+                    b.Property<bool>("Private")
+                        .HasColumnType("bit");
 
                     b.HasKey("ClubId")
                         .HasName("PK__Club__DF4AEAB285DE4451");
@@ -440,6 +447,10 @@ namespace infrastructure.Migrations
                         .HasDefaultValue(0)
                         .HasColumnName("tagCount");
 
+                    b.Property<string>("TagDescription")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("TagName")
                         .IsRequired()
                         .HasMaxLength(50)
@@ -457,120 +468,140 @@ namespace infrastructure.Migrations
                         {
                             TagId = 1,
                             TagCount = 0,
+                            TagDescription = "",
                             TagName = "C#"
                         },
                         new
                         {
                             TagId = 2,
                             TagCount = 0,
+                            TagDescription = "",
                             TagName = "Python"
                         },
                         new
                         {
                             TagId = 3,
                             TagCount = 0,
+                            TagDescription = "",
                             TagName = "JavaScript"
                         },
                         new
                         {
                             TagId = 4,
                             TagCount = 0,
+                            TagDescription = "",
                             TagName = "Java"
                         },
                         new
                         {
                             TagId = 5,
                             TagCount = 0,
+                            TagDescription = "",
                             TagName = "Ruby"
                         },
                         new
                         {
                             TagId = 6,
                             TagCount = 0,
+                            TagDescription = "",
                             TagName = "SQL"
                         },
                         new
                         {
                             TagId = 7,
                             TagCount = 0,
+                            TagDescription = "",
                             TagName = "C++"
                         },
                         new
                         {
                             TagId = 8,
                             TagCount = 0,
+                            TagDescription = "",
                             TagName = "TypeScript"
                         },
                         new
                         {
                             TagId = 9,
                             TagCount = 0,
+                            TagDescription = "",
                             TagName = "Go"
                         },
                         new
                         {
                             TagId = 10,
                             TagCount = 0,
+                            TagDescription = "",
                             TagName = "Kotlin"
                         },
                         new
                         {
                             TagId = 11,
                             TagCount = 0,
+                            TagDescription = "",
                             TagName = "Algorithms"
                         },
                         new
                         {
                             TagId = 12,
                             TagCount = 0,
+                            TagDescription = "",
                             TagName = "Data Structures"
                         },
                         new
                         {
                             TagId = 13,
                             TagCount = 0,
+                            TagDescription = "",
                             TagName = "Operating Systems"
                         },
                         new
                         {
                             TagId = 14,
                             TagCount = 0,
+                            TagDescription = "",
                             TagName = "Machine Learning"
                         },
                         new
                         {
                             TagId = 15,
                             TagCount = 0,
+                            TagDescription = "",
                             TagName = "Artificial Intelligence"
                         },
                         new
                         {
                             TagId = 16,
                             TagCount = 0,
+                            TagDescription = "",
                             TagName = "Networking"
                         },
                         new
                         {
                             TagId = 17,
                             TagCount = 0,
+                            TagDescription = "",
                             TagName = "Cybersecurity"
                         },
                         new
                         {
                             TagId = 18,
                             TagCount = 0,
+                            TagDescription = "",
                             TagName = "Databases"
                         },
                         new
                         {
                             TagId = 19,
                             TagCount = 0,
+                            TagDescription = "",
                             TagName = "Blockchain"
                         },
                         new
                         {
                             TagId = 20,
                             TagCount = 0,
+                            TagDescription = "",
                             TagName = "Cloud Computing"
                         });
                 });
@@ -617,6 +648,10 @@ namespace infrastructure.Migrations
                         .HasColumnType("int")
                         .HasColumnName("userId");
 
+                    b.Property<string>("Bio")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Company")
                         .HasMaxLength(50)
                         .IsUnicode(false)
@@ -628,6 +663,9 @@ namespace infrastructure.Migrations
                         .IsUnicode(false)
                         .HasColumnType("varchar(11)")
                         .HasColumnName("contactNumber");
+
+                    b.Property<string>("FacebookLink")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("GithubLink")
                         .HasMaxLength(255)

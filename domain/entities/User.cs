@@ -1,4 +1,6 @@
-﻿namespace domain.entities;
+﻿using domain.shared;
+
+namespace domain.entities;
 
 public partial class User
 {
@@ -48,6 +50,12 @@ public partial class User
             UserProfilePicUrl = userProfilePicUrl ?? UserDefaults.DefaultProfilePictureUrl,
         };
     }
+
+    public void ProfileUpdate(string userProfilePic, string username)
+    {
+        UserProfilePicUrl = Updater.UpdateProperty(UserProfilePicUrl, userProfilePic);
+        Username = Updater.UpdateProperty(Username, username);
+    }
 }
 
 public class UserMinimalDto
@@ -56,16 +64,41 @@ public class UserMinimalDto
     public string Username { get; set; }
     public string UserProfilePicUrl { get; set; }
     public int ReputationPoints { get; set; }
+    public string Email { get; set; }
     public UserMinimalDto(User user)
     {
         UserId = user.UserId;
         Username = user.Username!;   
         UserProfilePicUrl = user.UserProfilePicUrl!;
         ReputationPoints = user.UserAdditionalInfo!.ReputationPoints;
+        Email = user.Email!;
     }
 }
 
 public static class UserDefaults
 {
     public const string DefaultProfilePictureUrl = "NoProfilePic";
+}
+
+public class UserProfileDto
+{
+    public string Username { get; set; } = null!;
+    public string UserProfilePicUrl { get; set; } = null!;
+}
+
+public class UserFollowsListDto
+{
+    public int UserId { get; set; }
+    public string Username { get; set; } = null!;
+    public string UserProfilePicUrl { get; set; } = null!;
+    public string Email { get; set; } = null!;
+    public int ReputationPoints { get; set; }
+    public bool Followed { get; set; }
+}
+
+public class UserDetailsDto
+{
+    public string UserProfilePicUrl { get; set; } = null!;
+    public string Username { get; set; } = null!;
+    public UserAdditionalInfoDto UserAdditionalInfo { get; set; } = null!;
 }

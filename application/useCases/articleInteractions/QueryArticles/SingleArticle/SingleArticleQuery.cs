@@ -5,7 +5,6 @@ namespace application.useCases.articleInteractions.QueryArticles.SingleArticle;
 
 public class SingleArticleQuery : IRequest<SingleQueryDto>
 {
-    public int UserId { get; set; }
     public int ArticleId { get; set; }
 }
 
@@ -18,31 +17,32 @@ public class SingleQueryDto
     public DateTime? CreatedDateTime { get; set; }
     public DateTime? UpdatedDateTime { get; set; }
     public UserMinimalDto Author { get; set; } 
-    public string ArticleContent { get; set; }
+    
+    public string ArticleHtmlContent { get; set; }
     public int VoteCount { get; set; }
     public int CommentCount { get; set; }
     public int VoteType { get; set; }
     public bool Bookmarked { get; set; }
-    
-    // public static SingleQueryDto Create(int requestId, Article article, ArticleBody articleBody, int voteCount, int commentCount)
-    // {
-    //     return new SingleQueryDto(requestId, article, articleBody, voteCount);
-    // }
-    
-    public static SingleQueryDto Create(int requestId, Article article, ArticleBody articleBody, 
-        int voteCount, int commentCount, int voteType, bool bookmarked)
+    public bool Followed { get; set; }
+    public bool IsOwned { get; set; }
+
+
+    public static SingleQueryDto Create(int requestId, Article article, string articleHtmlContent, 
+        int voteCount, int commentCount, int voteType, bool bookmarked, bool followed, bool isOwned)
     {
-        return new SingleQueryDto(requestId, article, articleBody, voteCount, commentCount, voteType, bookmarked);
+        return new SingleQueryDto(requestId, article, articleHtmlContent, voteCount, commentCount, voteType, bookmarked, followed, isOwned);
     }
     
     public SingleQueryDto(
         int userId, 
         Article article, 
-        ArticleBody articleBody,
+        string articleHtmlContent,
         int voteCount,
         int commentCount,
         int voteType,
-        bool bookmarked
+        bool bookmarked,
+        bool followed,
+        bool isOwned
     )
     {
         UserId = userId;
@@ -56,11 +56,13 @@ public class SingleQueryDto
         CreatedDateTime = article.CreatedDateTime;
         UpdatedDateTime = article.UpdateDateTime;
         Author = new UserMinimalDto(article.ArticleAuthor!);
-        ArticleContent = articleBody.ArticleContent;
+        ArticleHtmlContent = articleHtmlContent;
         VoteCount = voteCount;
         CommentCount = commentCount;
         VoteType = voteType;
         Bookmarked = bookmarked;
+        Followed = followed;
+        IsOwned = isOwned;
     }
 }
 

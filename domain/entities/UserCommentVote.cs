@@ -33,4 +33,14 @@ public partial class UserCommentVote
             VoteType = VoteTypes.DownVote
         };
     }
+
+    public static UserCommentVote CreateRemovalRecord(int userId, int commentId)
+    {
+        return new UserCommentVote
+        {
+            UserId = userId,
+            CommentId = commentId,
+            VoteType = -1,
+        };
+    }
 }

@@ -7,4 +7,6 @@ public interface IUserCommentVoteRepository
     void AddUserCommentVote(UserCommentVote userCommentVote);
     
     Task<UserCommentVote?> GetUserCommentRecord(UserCommentVote userCommentVote);
+    
+    Task RemoveUserCommentVote(UserCommentVote userCommentVote);
 }

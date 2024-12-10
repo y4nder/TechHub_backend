@@ -7,4 +7,6 @@ public interface IArticleBookmarkRepository
     void AddBookmark(UserArticleBookmark bookmark);
     
     Task<bool> BookmarkExist(UserArticleBookmark bookmark);
+    
+    Task RemoveBookmark(UserArticleBookmark bookmark);
 }

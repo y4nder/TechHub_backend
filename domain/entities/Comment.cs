@@ -59,9 +59,13 @@ public class ArticleCommentDto
     public List<ArticleCommentDto> Replies { get; set; }
     public int VoteCount { get; set; }
 
-    public ArticleCommentDto(
-        Comment comment,
-        int voteCount)
+    public int VoteType { get; set; }
+
+   public ArticleCommentDto(
+    Comment comment, 
+    int voteCount,
+    int voteType,
+    List<ArticleCommentDto> replies = null)
     {
         CommentId = comment.CommentId;
         UserProfileImageUrl = comment.CommentCreator.UserProfilePicUrl;
@@ -69,9 +73,36 @@ public class ArticleCommentDto
         CreatedDateTime = comment.CreatedDateTime;
         UpdatedDateTime = comment.UpdateDateTime;
         CommentBody = comment.Content;
-        Replies = comment.InverseParentComment?
-            .Select(reply => new ArticleCommentDto(reply, voteCount))
-            .ToList() ?? new List<ArticleCommentDto>(); // Handle null case
+        Replies = replies ?? new (); 
         VoteCount = voteCount;
+        VoteType = voteType;
     }
 }
+
+public class UserReplyDto
+{
+    public int ArticleId { get; set; }
+    public int CommentId { get; set; }
+    public string ArticleTitle { get; set; } = null!;
+    public UserMinimalDto UserInfo { get; set; } = null!;
+    public DateTime? CreatedDateTime { get; set; }
+    public DateTime? UpdatedDateTime { get; set; }
+    public string CommentBody { get; set; } = null!;
+    public int VoteCount { get; set; }
+    public int VoteType { get; set; }
+    public int ReplyCount { get; set; }
+}
+
+public class CommentItemDto
+{
+    public int CommentId { get; set; }
+    public string UserProfileImageUrl { get; set; } = null!;
+    public UserMinimalDto UserInfo { get; set; } = null!;
+    public DateTime? CreatedDateTime { get; set; }
+    public DateTime? UpdatedDateTime { get; set; }
+    public string CommentBody { get; set; } = null!;
+    public int VoteCount { get; set; }
+    public int VoteType { get; set; }
+    public int ReplyCount { get; set; }
+}
+

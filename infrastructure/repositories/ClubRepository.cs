@@ -57,7 +57,7 @@ public class ClubRepository : IClubRepository
                 CategoryName = category.ClubCategoryName,
                 Clubs = _context.Clubs
                     .AsNoTracking()
-                    .Where(c => c.ClubCategoryId == category.ClubCategoryId)
+                    .Where(c => c.ClubCategoryId == category.ClubCategoryId && c.Private != true)
                     .Select(club => new ClubStandardResponseDto
                     {
                         ClubId = club.ClubId,
@@ -97,8 +97,15 @@ public class ClubRepository : IClubRepository
                     .Distinct().Count(),
                 RecentMembersProfilePics = club
                     .ClubUsers
-                    .Select( cu => 
-                    cu.User.UserProfilePicUrl).Distinct().ToList()
+                    .Select( cu => new RecentMembersProfileResponseDto
+                    {
+                        UserId = cu.UserId,
+                        UserProfilePicUrl = cu.User.UserProfilePicUrl,
+                        Username = cu.User.Username!
+                    })
+                    .Take(10)
+                    .Distinct()
+                    .ToList()
             });
         
         var result = await query.ToListAsync();
@@ -106,7 +113,7 @@ public class ClubRepository : IClubRepository
         return result;
     }
 
-    public async Task<SingleClubResponseDto?> GetSingleClubByIdAsync(int clubId)
+    public async Task<SingleClubResponseDto?> GetSingleClubByIdAsync(int userId, int clubId)
     {
         var query = _context.Clubs
             .AsNoTracking()
@@ -117,6 +124,7 @@ public class ClubRepository : IClubRepository
                 {
                     ClubId = club.ClubId,
                     ClubName = club.ClubName!,
+                    ClubProfilePicUrl = club.ClubImageUrl!,
                     PostCount = club.Articles.Count,
                     ClubViews = club.ClubViews,
                     ClubCreatedDateTime = club.ClubAdditionalInfo!.ClubCreatedDate,
@@ -125,10 +133,16 @@ public class ClubRepository : IClubRepository
                         .Sum(v => v.VoteType),
                     Featured = club.Featured,
                     RecentMemberProfilePics = club.ClubUsers
-                        .Select(cu => cu.User.UserProfilePicUrl)
+                        .Select( cu => new RecentMembersProfileResponseDto
+                        {
+                            UserId = cu.UserId,
+                            UserProfilePicUrl = cu.User.UserProfilePicUrl,
+                            Username = cu.User.Username!
+                        })
                         .Distinct()
                         .Take(5)
                         .ToList(),
+                    ClubIntroduction = club.ClubIntroduction!,
                     MemberCount =  club.ClubUsers
                         .GroupBy(cu => new {cu.ClubId, cu.UserId})
                         .Count(),
@@ -136,7 +150,8 @@ public class ClubRepository : IClubRepository
                     {
                         UserId = club.ClubCreator!.UserId,
                         Username = club.ClubCreator.Username!,
-                        RoleName = DefaultRoles.ClubCreator.ToString()
+                        RoleName = DefaultRoles.ClubCreator.ToString(),
+                        UserProfilePicUrl = club.ClubCreator.UserProfilePicUrl
                     },
                     Moderators = club.ClubUsers
                         .Where(cu => 
@@ -150,7 +165,9 @@ public class ClubRepository : IClubRepository
                             Username = cu.User.Username!,
                             RoleName = cu.Role!.RoleName!
                         })
-                        .ToList()
+                        .ToList(),
+                    Joined = club.ClubUsers
+                        .Any(cu => cu.UserId == userId)
                 });
         
         var result = await query.FirstOrDefaultAsync();
@@ -171,5 +188,45 @@ public class ClubRepository : IClubRepository
     public Task<List<ClubMinimalDto>?> GetJoinedClubsByIdAsync(int userId)
     {
         throw new NotImplementedException();
+    }
+
+    public async Task<SingleCategoryClubStandardResponseDto?> GetSingleCategoryClubByIdAsync(int clubCategoryId)
+    {
+        var categoryClub =  await _context.Clubs
+            .AsNoTracking()
+            .Where(c => c.ClubCategoryId == clubCategoryId && c.Private != true)
+            .Select(club => new SingleCategoryClubStandardResponseDto
+            {
+                CategoryId = club.ClubCategoryId,
+                CategoryName = club.ClubCategory!.ClubCategoryName,
+                Clubs = _context.Clubs
+                    .AsNoTracking()
+                    .Where(c => c.ClubCategoryId == club.ClubCategoryId)
+                    .Select(cl => new ClubStandardResponseDto
+                    {
+                        ClubId = cl.ClubId,
+                        ClubProfilePicUrl = cl.ClubImageUrl!,
+                        ClubName = cl.ClubName!,
+                        ClubDescription = cl.ClubIntroduction!,
+                        ClubMembersCount = cl.ClubUsers
+                            .Select(cu => new { cu.ClubId, cu.UserId })
+                            .Distinct().Count()
+                    }).ToList() ?? new()
+            }).FirstOrDefaultAsync();
+
+        if (categoryClub == null)
+        {
+            return new SingleCategoryClubStandardResponseDto
+            {
+                CategoryId = -1,
+                CategoryName = "",
+                Clubs = new List<ClubStandardResponseDto>()
+            };
+        }
+        else
+        {
+            return categoryClub;
+        } 
+            
     }
 }

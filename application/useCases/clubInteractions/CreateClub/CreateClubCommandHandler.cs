@@ -1,6 +1,7 @@
 ﻿using application.Events.ClubEvents;
 using application.Exceptions.ClubExceptions;
 using application.utilities.ImageUploads.Club;
+using application.utilities.UserContext;
 using domain.entities;
 using domain.interfaces;
 using FluentValidation;
@@ -12,7 +13,7 @@ namespace application.useCases.clubInteractions.CreateClub;
 public class CreateClubCommandHandler : IRequestHandler<CreateClubCommand, CreateClubResponse>
 {
     private readonly IValidator<CreateClubCommand> _validator;
-    private readonly IUserRepository _userRepository;
+    private readonly IUserContext _userContext;
     private readonly IClubCategoryRepository _clubCategoryRepository;
     private readonly IClubRepository _clubRepository;
     private readonly IClubImageService _clubImageService;
@@ -24,35 +25,42 @@ public class CreateClubCommandHandler : IRequestHandler<CreateClubCommand, Creat
         IUserRepository userRepository,
         IClubCategoryRepository clubCategoryRepository,
         IClubRepository clubRepository,
-        IUnitOfWork unitOfWork, IClubImageService clubImageService, IMediator mediator)
+        IUnitOfWork unitOfWork,
+        IClubImageService clubImageService,
+        IMediator mediator,
+        IUserContext userContext)
     {
         _validator = validator;
-        _userRepository = userRepository;
         _clubCategoryRepository = clubCategoryRepository;
         _clubRepository = clubRepository;
         _unitOfWork = unitOfWork;
         _clubImageService = clubImageService;
         _mediator = mediator;
+        _userContext = userContext;
     }
 
     public async Task<CreateClubResponse> Handle(CreateClubCommand request, CancellationToken cancellationToken)
     {
+        var userId = _userContext.GetUserId();
+        
         await EnsureClubValidated(request, cancellationToken);
 
         var clubProfileResponse = await _clubImageService.UploadClubProfileImage(request.ClubThumbnail);
 
         var clubDto = new ClubDto
         {
-            CreatorId = request.CreatorId,
+            CreatorId = userId,
             ImageUrl = clubProfileResponse.ImageSecureUrl,
             ClubName = request.ClubName,
             ClubIntroduction = request.ClubIntroduction,
-            ClubCategoryId = request.ClubCategoryId,
+            ClubCategoryId = request.IsPrivate? null : request.ClubCategoryId,
+            IsPrivate = request.IsPrivate,
         };
             
         var club = Club.IsDefault(request.PostPermission, request.InvitePermission) ? 
             Club.CreateDefault(clubDto) : 
             Club.CreateCustom(clubDto, request.PostPermission, request.InvitePermission);
+        
         
         _clubRepository.AddNewClub(club);
         
@@ -60,7 +68,7 @@ public class CreateClubCommandHandler : IRequestHandler<CreateClubCommand, Creat
 
         await _mediator.Publish(new ClubCreatedEvent(club), cancellationToken);
         
-        return new CreateClubResponse { Message = "new Club created"};
+        return new CreateClubResponse { Message = "new Club created", ClubId = club.ClubId };
     }   
 
     private async Task EnsureClubValidated(CreateClubCommand request,CancellationToken cancellationToken)
@@ -71,15 +79,20 @@ public class CreateClubCommandHandler : IRequestHandler<CreateClubCommand, Creat
             throw ClubException.ClubValidationError(validationResult.Errors);
         }
 
-        if (!await _userRepository.CheckIdExists(request.CreatorId))
+        //if (!await _userRepository.CheckIdExists(request.CreatorId))
+        //{
+        //    throw ClubException.CreatorIdNotFound(request.CreatorId);
+        //}
+
+        if(request is { IsPrivate: false, ClubCategoryId: not null })
         {
-            throw ClubException.CreatorIdNotFound(request.CreatorId);
+            var categoryId = Convert.ToInt32(request.ClubCategoryId);
+            if (!await _clubCategoryRepository.CheckClubCategoryExists(categoryId))
+            {
+                throw ClubException.ClubCategoryIdNotFound(categoryId);
+            }
         }
 
-        if (!await _clubCategoryRepository.CheckClubCategoryExists(request.ClubCategoryId))
-        {
-            throw ClubException.ClubCategoryIdNotFound(request.ClubCategoryId);
-        }
 
         if (await _clubRepository.CheckClubNameExists(request.ClubName))
         {

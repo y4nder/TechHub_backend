@@ -92,4 +92,25 @@ public class TagRepository : ITagRepository
                 TagName = tag.TagName
             }).ToListAsync();
     }
+
+    public async Task<List<Tag>> GetArticleTagsAsync(int articleId)
+    {
+        var article = await _context.Articles.Where(a => a.ArticleId == articleId)
+            .Include(a => a.Tags).FirstOrDefaultAsync();
+        
+        if(article == null)
+            throw new Exception($"Article with id {articleId} not found");
+        
+        return article.Tags.ToList();
+    }
+
+    public async Task RemoveTagsAsync(int articleId)
+    {
+        var rowsDeleted = await _context.Database.ExecuteSqlRawAsync("DELETE FROM [ArticleTag] WHERE ArticleId = {0}", articleId);
+
+        if (rowsDeleted == 0)
+        {
+            throw new InvalidOperationException("No tags were deleted.");
+        }
+    }
 }

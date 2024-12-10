@@ -58,10 +58,11 @@ public class ArticleRepository : IArticleRepository
     {
         var baseQuery = _context.Articles
             .AsNoTracking()
-            .Where(a => a.Tags.Any(tag => tagIds.Contains(tag.TagId)) && !a.Archived && a.ArticleAuthorId != userId)
+            .Include(a => a.Club)
+            .Where(a => a.Tags.Any(tag => tagIds.Contains(tag.TagId)) && !a.Archived && a.ArticleAuthorId != userId && !a.Club!.Private)
             .OrderBy(a => a.CreatedDateTime); 
         
-        return await GetPaginatedArticleCardExecutor(baseQuery, pageNumber, pageSize);
+        return await GetPaginatedArticleCardExecutor(baseQuery, userId, pageNumber, pageSize);
     }
 
     public async Task<Article?> QuerySingleArticleByIdAsync(int articleId)
@@ -74,20 +75,21 @@ public class ArticleRepository : IArticleRepository
             .Where(a => a.ArticleId == articleId).FirstOrDefaultAsync();
     }
 
-    public async Task<PaginatedResult<ArticleResponseDto>> GetPaginatedDiscoverArticlesAsync(int pageNumber,
+    public async Task<PaginatedResult<ArticleResponseDto>> GetPaginatedDiscoverArticlesAsync(int userId, int pageNumber,
         int pageSize)
     {
         var baseQuery = _context.Articles
             .AsNoTracking()
-            .Where(a => a.Archived == false)
+            .Include(a => a.Club)
+            .Where(a => a.Archived == false && !a.Club!.Private)
             .OrderBy(a => a.CreatedDateTime);
         
-        return await GetPaginatedArticleCardExecutor(baseQuery, pageNumber, pageSize);
+        return await GetPaginatedArticleCardExecutor(baseQuery, userId, pageNumber, pageSize);
     }
 
 
-    public async Task<PaginatedResult<ArticleResponseDto>> GetPaginatedArticlesBySearchQueryAsync(
-        string searchQuery, int pageNumber, int pageSize)
+    public async Task<PaginatedResult<ArticleResponseDto>> GetPaginatedArticlesBySearchQueryAsync(string searchQuery,
+        int userId, int pageNumber, int pageSize)
     {
         var normalizedQuery = searchQuery.ToUpper();
 
@@ -96,70 +98,89 @@ public class ArticleRepository : IArticleRepository
                 EF.Functions.Like(
                     article.NormalizedArticleTitle, $"%{normalizedQuery}%"));
 
-        return await GetPaginatedArticleCardExecutor(baseQuery, pageNumber, pageSize);
+        return await GetPaginatedArticleCardExecutor(baseQuery, userId, pageNumber, pageSize);
     }
 
-    public async Task<PaginatedResult<ArticleResponseDto>> GetPaginatedArticlesByClubIdAsync(
-        int clubId, int pageNumber, int pageSize)
+    public async Task<PaginatedResult<ArticleResponseDto>> GetPaginatedArticlesByClubIdAsync(int clubId, int pageNumber,
+        int pageSize, int userId)
     {
         var baseQuery = _context.Articles
-            .Where(article => article.ClubId == clubId);
+            .Where(article => article.ClubId == clubId && !article.Archived);
         
-        return await GetPaginatedArticleCardExecutor(baseQuery, pageNumber, pageSize);
+        return await GetPaginatedArticleCardExecutor(baseQuery, userId, pageNumber, pageSize);
     }
 
     public async Task<PaginatedResult<ArticleResponseDto>> GetPaginatedArticlesByUserId(
         int authorId, int pageNumber, int pageSize)
     {
         var baseQuery = _context.Articles
-            .Where(article => article.ArticleAuthorId == authorId);
+            .Where(article => article.ArticleAuthorId == authorId && !article.Archived);
         
-        return await GetPaginatedArticleCardExecutor(baseQuery, pageNumber, pageSize);
+        return await GetPaginatedArticleCardExecutor(baseQuery, authorId, pageNumber, pageSize);
     }
-    
-    // private async Task<PaginatedResult<ArticleResponseDto>> GetPaginatedArticleCardExecutor(
-    //     IQueryable<Article> baseQuery, int pageNumber, int pageSize)
-    // {
-    //     var projectedQuery = baseQuery
-    //         .OrderBy(article => article.CreatedDateTime)
-    //         .Skip((pageNumber - 1) * pageSize)
-    //         .Take(pageSize)
-    //         .Select(article => new ArticleResponseDto
-    //         {
-    //             ArticleId = article.ArticleId,
-    //             ClubImageUrl = article.Club != null ? article.Club.ClubImageUrl! : string.Empty,
-    //             UserImageUrl = article.ArticleAuthor != null ? article.ArticleAuthor.UserProfilePicUrl! : string.Empty,
-    //             ArticleTitle = article.ArticleTitle ?? "Untitled",
-    //             Tags = article.Tags.Select(tag => new TagDto
-    //             {
-    //                 TagId = tag.TagId,
-    //                 TagName = tag.TagName ?? "Unknown Tag"
-    //             }).ToList(),
-    //             CreatedDateTime = article.CreatedDateTime,
-    //             ArticleThumbnailUrl = article.ArticleThumbnailUrl ?? string.Empty,
-    //             VoteCount = _context.UserArticleVotes
-    //                 .Where(vote => vote.ArticleId == article.ArticleId)
-    //                 .Sum(vote => vote.VoteType),
-    //             CommentCount = _context.Comments.Count(comment => comment.ArticleId == article.ArticleId)
-    //         });
-    //
-    //     // Get paginated results and total count in parallel
-    //     var totalCountTask = baseQuery.CountAsync();
-    //     var articlesTask = projectedQuery.ToListAsync();
-    //
-    //     await Task.WhenAll(totalCountTask, articlesTask);
-    //
-    //     return new PaginatedResult<ArticleResponseDto>
-    //     {
-    //         Items = articlesTask.Result,
-    //         TotalCount = totalCountTask.Result,
-    //         PageNumber = pageNumber,
-    //         PageSize = pageSize,
-    //         TotalPages = (int)Math.Ceiling(totalCountTask.Result / (double)pageSize)
-    //     };
-    // }
+
+    public async Task<PaginatedResult<ArticleResponseDto>> GetPaginatedUpVotedArticles(int userId, int pageNumber, int pageSize)
+    {
+        var baseQuery = _context.Articles
+            .AsNoTracking()
+            .Where(article => article.UserArticleVotes.Any(vote => vote.UserId == userId && vote.VoteType == 1))
+            .OrderByDescending(article => article.CreatedDateTime);
+        
+        return await GetPaginatedArticleCardExecutor(baseQuery, userId, pageNumber, pageSize);
+    }
+
+    public async Task<PaginatedResult<ArticleResponseDto>> GetPaginatedBookmarkedArticles(int userId, int pageNumber, int pageSize)
+    {
+        var baseQuery = _context.Articles
+            .AsNoTracking()
+            .Where(article => article.UserArticleBookmarks.Any(bookmark => bookmark.UserId == userId))
+            .OrderByDescending(article => article.CreatedDateTime);
+        
+        return await GetPaginatedArticleCardExecutor(baseQuery, userId, pageNumber, pageSize); 
+    }
+
+    public async Task<PaginatedResult<ArticleResponseDto>> GetPaginatedReadArticles(int userId, int pageNumber, int pageSize)
+    {
+        var baseQuery = _context.Articles
+            .AsNoTracking()
+            .Where(article => article.UserArticleReads.Any(read => read.UserId == userId) && !article.Archived)
+            .OrderByDescending(article => article.CreatedDateTime);
+        
+        return await GetPaginatedArticleCardExecutor(baseQuery, userId, pageNumber, pageSize);
+    }
+
+    public async Task<bool> IsAuthor(int userId, int articleId)
+    {
+        return await _context
+            .Articles
+            .AnyAsync(article => 
+                article.ArticleId == articleId 
+                && article.ArticleAuthorId == userId);  ; 
+    }
+
+    public async Task<ArticleResponseForEditDto> GetArticleForEditByIdAsync(int articleId)
+    {
+        return await _context.Articles
+            .Where(article => article.ArticleId == articleId)
+            .Select(article => new ArticleResponseForEditDto
+            {
+                ArticleId = article.ArticleId,
+                ClubId = article.ClubId,
+                ArticleTitle = article.ArticleTitle,
+                ArticleThumbnail = article.ArticleThumbnailUrl!,
+                ArticleContent = _context.ArticleBodies.Where(body => body.ArticleId == article.ArticleId)
+                    .Select(body => body.ArticleContent).FirstOrDefault()!,
+                Tags = article.Tags.Select(t => new TagDto
+                {
+                    TagId = t.TagId,
+                    TagName = t.TagName
+                }).ToList(),
+            }).FirstAsync();
+    }
+
+
     private async Task<PaginatedResult<ArticleResponseDto>> GetPaginatedArticleCardExecutor(
-        IQueryable<Article> baseQuery, int pageNumber, int pageSize)
+        IQueryable<Article> baseQuery, int userId, int pageNumber, int pageSize)
     {
         // Calculate the total count for pagination
         var totalCount = await baseQuery.CountAsync();
@@ -173,8 +194,12 @@ public class ArticleRepository : IArticleRepository
             {
                 ArticleId = article.ArticleId,
                 ClubImageUrl = article.Club!.ClubImageUrl ?? string.Empty,
-                UserImageUrl = article.ArticleAuthor!.UserProfilePicUrl ?? string.Empty,
-                ArticleTitle = article.ArticleTitle ?? "Untitled",
+                AuthorId = article.ArticleAuthorId,
+                AuthorName = article.ArticleAuthor!.Username!,
+                UserImageUrl = article.ArticleAuthor!.UserProfilePicUrl,
+                ClubId = article.ClubId,
+                ClubName = article.Club.ClubName?? string.Empty,
+                ArticleTitle = article.ArticleTitle,
                 Tags = article.Tags
                     .Select(tag => new TagDto
                     {
@@ -185,7 +210,12 @@ public class ArticleRepository : IArticleRepository
                 CreatedDateTime = article.CreatedDateTime,
                 ArticleThumbnailUrl = article.ArticleThumbnailUrl ?? string.Empty,
                 VoteCount = article.UserArticleVotes.Sum(vote => vote.VoteType),
-                CommentCount = article.Comments.Count()
+                CommentCount = article.Comments.Count(),
+                VoteType = _context.UserArticleVotes
+                    .Where(v => v.UserId == userId && v.ArticleId == article.ArticleId)
+                    .Select(v => v.VoteType).FirstOrDefault(),
+                Bookmarked = _context.UserArticleBookmarks
+                    .Any(b => b.ArticleId == article.ArticleId && b.UserId == userId)
             })
             .ToListAsync();
 

@@ -7,6 +7,7 @@ public class ArticleCreatedEvent : INotification
 {
     public Article Article { get; set; } = null!;
     public string ArticleContent { get; set; } = null!;
+    public string ArticleHtmlContent { get; set; } = null!;
 
     public NewTagNotification NewTagNotification { get; set; } = null!;
 }

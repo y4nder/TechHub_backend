@@ -91,16 +91,30 @@ public static class ArticleStatusDefaults
 
 public class ArticleResponseDto
 {
-    
     public int ArticleId { get; set; }
     public string ClubImageUrl { get; set; } = null!;
+    public int AuthorId { get; set; }
+    public string AuthorName { get; set; } = null!;
     public string UserImageUrl { get; set; } = null!;
+    public int ClubId { get; set; }
+    public string ClubName { get; set; } = null!;
     public string ArticleTitle { get; set; } = null!;
     public List<TagDto> Tags { get; set; } = null!;
     public DateTime? CreatedDateTime { get; set; }
     public string ArticleThumbnailUrl { get; set; } = null!;
     public int VoteCount { get; set; } = -1;
     public int CommentCount { get; set; } = -1;
+    public int VoteType { get; set; }
+    public bool Bookmarked { get; set; }
     
 }
 
+public class ArticleResponseForEditDto
+{
+    public int ArticleId { get; set; }
+    public int ClubId { get; set; }
+    public string ArticleTitle { get; set; } = null!;
+    public string ArticleThumbnail { get; set; } = null!;
+    public string ArticleContent { get; set; } = null!;
+    public List<TagDto> Tags { get; set; } = new();
+}

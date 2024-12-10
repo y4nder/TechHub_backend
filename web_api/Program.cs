@@ -25,9 +25,9 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-// testing cors
 app.UseCors(CorsConstants.AllowAll);
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
