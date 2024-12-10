@@ -2,6 +2,7 @@
 using domain.interfaces;
 using domain.pagination;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
 
 namespace infrastructure.repositories;
 
@@ -293,5 +294,61 @@ public class CommentRepository : ICommentRepository
             PageSize = pageSize,
             TotalPages = (int)Math.Ceiling(totalCount / (double)pageSize)
         };
+    }
+
+    public async Task<PaginatedResult<CommentItemDto>> GetParentComments(int userId, int articleId, int pageNumber, int pageSize)
+    {
+        var baseQuery = _context.Comments
+            .AsNoTracking()
+            .Where(c => c.ArticleId == articleId && c.ParentCommentId == null)
+            .Include(c => c.CommentCreator.UserAdditionalInfo);
+
+        return await PaginatedQueriedCommentResult(userId, pageNumber, pageSize, baseQuery);
+    }
+
+    private async Task<PaginatedResult<CommentItemDto>> PaginatedQueriedCommentResult(int userId, int pageNumber, int pageSize,
+        IIncludableQueryable<Comment, UserAdditionalInfo?> baseQuery)
+    {
+        var totalCount = await baseQuery.CountAsync();
+
+        var comments = await baseQuery
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
+            .Select(c => new CommentItemDto
+            {
+                CommentId = c.CommentId,
+                UserProfileImageUrl = c.CommentCreator.UserProfilePicUrl!,
+                UserInfo = new UserMinimalDto(c.CommentCreator),
+                CreatedDateTime = c.CreatedDateTime,
+                UpdatedDateTime = c.CreatedDateTime,
+                CommentBody = c.Content,
+                VoteCount = _context.UserCommentVotes
+                    .Where(v => v.CommentId == c.CommentId)    
+                    .Sum(v => v.VoteType),
+                VoteType = _context.UserCommentVotes
+                    .Where(v => v.CommentId == c.CommentId && v.UserId == userId)
+                    .Select(v => v.VoteType).FirstOrDefault(),
+                ReplyCount = _context.Comments
+                    .Count(comment => comment.ParentCommentId == c.CommentId)
+            }).ToListAsync();
+
+        return new PaginatedResult<CommentItemDto>
+        {
+            Items = comments,
+            TotalCount = totalCount,
+            PageNumber = pageNumber,
+            PageSize = pageSize,
+            TotalPages = (int)Math.Ceiling(totalCount / (double)pageSize)
+        };
+    }
+
+    public async Task<PaginatedResult<CommentItemDto>> GetArticleCommentReplies(int userId, int parentCommentId, int pageNumber, int pageSize)
+    {
+        var baseQuery = _context.Comments
+            .AsNoTracking()
+            .Where(c => c.ParentCommentId == parentCommentId)
+            .Include(c => c.CommentCreator.UserAdditionalInfo);
+        
+        return await PaginatedQueriedCommentResult(userId, pageNumber, pageSize, baseQuery);
     }
 }

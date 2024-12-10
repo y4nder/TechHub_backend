@@ -97,8 +97,15 @@ public class ClubRepository : IClubRepository
                     .Distinct().Count(),
                 RecentMembersProfilePics = club
                     .ClubUsers
-                    .Select( cu => 
-                    cu.User.UserProfilePicUrl).Distinct().ToList()
+                    .Select( cu => new RecentMembersProfileResponseDto
+                    {
+                        UserId = cu.UserId,
+                        UserProfilePicUrl = cu.User.UserProfilePicUrl,
+                        Username = cu.User.Username!
+                    })
+                    .Take(10)
+                    .Distinct()
+                    .ToList()
             });
         
         var result = await query.ToListAsync();
@@ -126,7 +133,12 @@ public class ClubRepository : IClubRepository
                         .Sum(v => v.VoteType),
                     Featured = club.Featured,
                     RecentMemberProfilePics = club.ClubUsers
-                        .Select(cu => cu.User.UserProfilePicUrl)
+                        .Select( cu => new RecentMembersProfileResponseDto
+                        {
+                            UserId = cu.UserId,
+                            UserProfilePicUrl = cu.User.UserProfilePicUrl,
+                            Username = cu.User.Username!
+                        })
                         .Distinct()
                         .Take(5)
                         .ToList(),

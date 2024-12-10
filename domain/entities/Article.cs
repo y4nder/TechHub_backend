@@ -93,6 +93,8 @@ public class ArticleResponseDto
 {
     public int ArticleId { get; set; }
     public string ClubImageUrl { get; set; } = null!;
+    public int AuthorId { get; set; }
+    public string AuthorName { get; set; } = null!;
     public string UserImageUrl { get; set; } = null!;
     public string ClubName { get; set; } = null!;
     public string ArticleTitle { get; set; } = null!;

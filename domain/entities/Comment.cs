@@ -92,3 +92,17 @@ public class UserReplyDto
     public int VoteType { get; set; }
     public int ReplyCount { get; set; }
 }
+
+public class CommentItemDto
+{
+    public int CommentId { get; set; }
+    public string UserProfileImageUrl { get; set; } = null!;
+    public UserMinimalDto UserInfo { get; set; } = null!;
+    public DateTime? CreatedDateTime { get; set; }
+    public DateTime? UpdatedDateTime { get; set; }
+    public string CommentBody { get; set; } = null!;
+    public int VoteCount { get; set; }
+    public int VoteType { get; set; }
+    public int ReplyCount { get; set; }
+}
+

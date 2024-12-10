@@ -122,7 +122,15 @@ public class ClubFeaturedResponseDto
     public string ClubName { get; set; } = null!;
     public string ClubDescription { get; set; } = null!;
     public int ClubMembersCount { get; set; }   
-    public List<string> RecentMembersProfilePics { get; set; } = new List<string>();
+    public List<RecentMembersProfileResponseDto> RecentMembersProfilePics { get; set; } = new ();
+}
+
+public class RecentMembersProfileResponseDto
+{
+    public int UserId { get; set; }
+    public string Username { get; set; } = null!;
+    public string UserProfilePicUrl { get; set; } = null!;
+
 }
 
 public class ClubCategoryStandardResponseDto
@@ -149,7 +157,7 @@ public class SingleClubResponseDto
     public int ClubViews { get; set; } = -1;
     public int ClubUpVoteCount { get; set; } = -1;
     public bool Featured { get; set; } = false;
-    public List<string> RecentMemberProfilePics { get; set; } = new List<string>();
+    public List<RecentMembersProfileResponseDto> RecentMemberProfilePics { get; set; } = new();
     public string ClubIntroduction { get; set; } = null!;
     public int MemberCount { get; set; } = -1;
     public ClubUserRoleDto ClubCreator { get; set; } = null!;

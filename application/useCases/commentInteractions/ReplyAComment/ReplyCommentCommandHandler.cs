@@ -1,4 +1,5 @@
-﻿using domain.entities;
+﻿using application.utilities.UserContext;
+using domain.entities;
 using domain.interfaces;
 using FluentValidation;
 using infrastructure.services.worker;
@@ -10,7 +11,8 @@ public class ReplyCommentCommandHandler : IRequestHandler<ReplyCommentCommand, R
 {
     private readonly IValidator<ReplyCommentCommand> _validator;
     private readonly IArticleRepository _articleRepository;
-    private readonly IUserRepository _userRepository;
+    private readonly IUserContext _userContext;
+    
     private readonly ICommentRepository _commentRepository;
     private readonly IUnitOfWork _unitOfWork;
 
@@ -18,14 +20,13 @@ public class ReplyCommentCommandHandler : IRequestHandler<ReplyCommentCommand, R
         IValidator<ReplyCommentCommand> validator,
         ICommentRepository commentRepository,
         IUnitOfWork unitOfWork,
-        IUserRepository userRepository,
-        IArticleRepository articleRepository)
+        IArticleRepository articleRepository, IUserContext userContext)
     {
         _validator = validator;
         _commentRepository = commentRepository;
         _unitOfWork = unitOfWork;
-        _userRepository = userRepository;
         _articleRepository = articleRepository;
+        _userContext = userContext;
     }
 
     public async Task<ReplyCommentResponse> Handle(ReplyCommentCommand request, CancellationToken cancellationToken)
@@ -34,8 +35,7 @@ public class ReplyCommentCommandHandler : IRequestHandler<ReplyCommentCommand, R
         if(!validationResult.IsValid)
             throw new ValidationException(validationResult.Errors);
         
-        if (! await _userRepository.CheckIdExists(request.CommentCreatorId))
-            throw new UnauthorizedAccessException("User not found");
+        var userId = _userContext.GetUserId(); 
         
         var article = await _articleRepository.GetArticleByIdNoTracking(request.ArticleId)??
                       throw new UnauthorizedAccessException("Article not found");
@@ -49,7 +49,7 @@ public class ReplyCommentCommandHandler : IRequestHandler<ReplyCommentCommand, R
         
         var commentDto = new CommentDto
         {
-            CommentCreatorId = request.CommentCreatorId,
+            CommentCreatorId = userId,
             ArticleId = request.ArticleId,
             ParentCommentId = request.ParentCommentId,
             Content = request.Content,
