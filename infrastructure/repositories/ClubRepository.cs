@@ -123,7 +123,7 @@ public class ClubRepository : IClubRepository
                 new SingleClubResponseDto
                 {
                     ClubId = club.ClubId,
-                    ClubName = club.ClubName!,
+                    ClubName = club.ClubName!, 
                     ClubProfilePicUrl = club.ClubImageUrl!,
                     PostCount = club.Articles.Count,
                     ClubViews = club.ClubViews,
@@ -132,6 +132,7 @@ public class ClubRepository : IClubRepository
                         .SelectMany(a => a.UserArticleVotes)
                         .Sum(v => v.VoteType),
                     Featured = club.Featured,
+                    Private = club.Private,
                     RecentMemberProfilePics = club.ClubUsers
                         .Select( cu => new RecentMembersProfileResponseDto
                         {
@@ -228,5 +229,25 @@ public class ClubRepository : IClubRepository
             return categoryClub;
         } 
             
+    }
+
+    public async Task<List<SuggestedClubDto>> GetSuggestedClubs(string searchTerm)
+    {
+        if (string.IsNullOrWhiteSpace(searchTerm))
+            return new ();
+        
+        searchTerm = searchTerm.ToUpper();
+
+        return await _context.Clubs
+            .AsNoTracking()
+            .Where(club => EF.Functions.Like(club.ClubName!.ToUpper(), $"{searchTerm}%") && !club.Private)
+            .Take(3)
+            .Select(t => new SuggestedClubDto
+            {
+                ClubId = t.ClubId,
+                ClubName = t.ClubName!,
+                ClubProfilePicUrl = t.ClubImageUrl!
+            })
+            .ToListAsync();
     }
 }

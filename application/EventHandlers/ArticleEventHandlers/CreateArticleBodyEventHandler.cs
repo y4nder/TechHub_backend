@@ -42,7 +42,7 @@ public class CreateArticleBodyEventHandler : INotificationHandler<ArticleCreated
             processedContent = notification.ArticleContent;
         }
 
-        var articleBody = ArticleBody.Create(notification.Article.ArticleId, notification.ArticleContent, processedHtml);
+        var articleBody = ArticleBody.Create(notification.Article.ArticleId, processedContent, processedHtml);
         _articleBodyRepository.AddArticleBody(articleBody);
         await _unitOfWork.CommitAsync(cancellationToken); 
     }

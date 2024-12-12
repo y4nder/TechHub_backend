@@ -14,4 +14,7 @@ public interface IClubUserRepository
     Task<List<ClubMinimalDto>?> GetJoinedClubsByIdAsync(int userId);
     Task<List<ClubUser>?> GetClubUserRecordWithTracking(int clubId, int userId);
     void RemoveClubUserRange(List<ClubUser> clubUsers);
+
+    Task<ClubUser?> TryRetrieveModeratorRole(int moderatorId);
+
 }

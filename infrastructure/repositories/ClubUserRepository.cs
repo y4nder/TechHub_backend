@@ -1,4 +1,5 @@
-﻿using domain.entities;
+﻿using CloudinaryDotNet.Actions;
+using domain.entities;
 using domain.interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -76,4 +77,10 @@ public class ClubUserRepository : IClubUserRepository
     }
 
     public void RemoveClubUserRange(List<ClubUser> clubUsers) => _context.RemoveRange(clubUsers);
+    public async Task<ClubUser?> TryRetrieveModeratorRole(int moderatorId)
+    {
+        return await _context.ClubUsers
+            .Where(cu => cu.UserId == moderatorId && cu.RoleId == (int)DefaultRoles.Moderator)
+            .FirstOrDefaultAsync();
+    }
 }

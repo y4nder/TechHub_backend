@@ -17,4 +17,12 @@ public interface ITagRepository
     
     Task<List<Tag>> GetArticleTagsAsync(int articleId);
     Task RemoveTagsAsync(int articleId);
+    
+    Task<List<TrendingTagDto>> GetTrendingTagsAsync();
+    
+    Task<List<GroupedTagList>> GetGroupedTagsAsync();
+    
+    Task<TagPageDto?> GetTagPageAsync(int tagId, int userId);
+    
+    Task<List<TagDto>> GetSuggestedTagsAsync(string searchQuery);
 }

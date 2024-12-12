@@ -34,6 +34,21 @@ public enum DefaultRoles
    Admin = 4
 }
 
+public static class DefaultRolesExtensions
+{
+    public static string ToStringFormat(this DefaultRoles role)
+    {
+        return role switch
+        {
+            DefaultRoles.RegularUser => "Regular User",
+            DefaultRoles.ClubCreator => "Club Creator",
+            DefaultRoles.Moderator => "Moderator",
+            DefaultRoles.Admin => "Administrator",
+            _ => role.ToString()
+        };
+    }
+}
+
 // new ClubUserRole { RoleId = 1, RoleName= "Regular User"},
 // new ClubUserRole { RoleId = 2, RoleName= "Club Creator"},
 // new ClubUserRole { RoleId = 3, RoleName= "Moderator"},

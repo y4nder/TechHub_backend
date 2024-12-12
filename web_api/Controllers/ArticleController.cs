@@ -10,6 +10,8 @@ using application.useCases.articleInteractions.QueryArticles.QueryArticleForEdit
 using application.useCases.articleInteractions.QueryArticles.ReadArticles;
 using application.useCases.articleInteractions.QueryArticles.SearchedArticles;
 using application.useCases.articleInteractions.QueryArticles.SingleArticle;
+using application.useCases.articleInteractions.QueryArticles.SuggestedArticles;
+using application.useCases.articleInteractions.QueryArticles.TagArticles;
 using application.useCases.articleInteractions.QueryArticles.UpvotedArticles;
 using application.useCases.articleInteractions.QueryArticles.UserArticles;
 using application.useCases.articleInteractions.RemoveArticleVote;
@@ -271,6 +273,34 @@ public class ArticleController : Controller
     
     [HttpGet("getArticleForEdit")]
     public async Task<IActionResult> GetReadArticles([FromQuery] ArticleForEditQuery query)
+    {
+        try
+        {
+            var response = await _mediator.Send(query);
+            return Ok(response);
+        }
+        catch (Exception ex)
+        {
+            return ErrorFactory.CreateErrorResponse(ex);
+        }
+    }
+    
+    [HttpGet("getTagArticles")]
+    public async Task<IActionResult> GetReadArticles([FromQuery] TagArticlesQuery query)
+    {
+        try
+        {
+            var response = await _mediator.Send(query);
+            return Ok(response);
+        }
+        catch (Exception ex)
+        {
+            return ErrorFactory.CreateErrorResponse(ex);
+        }
+    }
+    
+    [HttpGet("getSuggestedArticles")]
+    public async Task<IActionResult> GetSuggestedArticles([FromQuery] SuggestedArticlesQuery query)
     {
         try
         {

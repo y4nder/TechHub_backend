@@ -236,7 +236,6 @@ public static class SchemaConfiguration
         modelBuilder.Entity<Tag>(entity =>
         {
             entity.HasKey(e => e.TagId).HasName("PK__Tag__50FC01574E1148B3");
-
             entity.ToTable("Tag");
 
             entity.Property(e => e.TagId).HasColumnName("tagId");
@@ -253,7 +252,7 @@ public static class SchemaConfiguration
                     "ArticleTag",
                     r => r.HasOne<Article>().WithMany()
                         .HasForeignKey("ArticleId")
-                        .OnDelete(DeleteBehavior.ClientSetNull)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .HasConstraintName("FK__ArticleTa__artic__76969D2E"),
                     l => l.HasOne<Tag>().WithMany()
                         .HasForeignKey("TagId")
@@ -383,7 +382,7 @@ public static class SchemaConfiguration
 
             entity.HasOne(d => d.Article).WithMany(p => p.UserArticleReads)
                 .HasForeignKey(d => d.ArticleId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
+                .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("FK__User_Arti__artic__70DDC3D8");
 
             entity.HasOne(d => d.User).WithMany(p => p.UserArticleReads)

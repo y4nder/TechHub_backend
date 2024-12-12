@@ -157,6 +157,7 @@ public class SingleClubResponseDto
     public int ClubViews { get; set; } = -1;
     public int ClubUpVoteCount { get; set; } = -1;
     public bool Featured { get; set; } = false;
+    public bool Private { get; set; } = false;
     public List<RecentMembersProfileResponseDto> RecentMemberProfilePics { get; set; } = new();
     public string ClubIntroduction { get; set; } = null!;
     public int MemberCount { get; set; } = -1;
@@ -165,4 +166,9 @@ public class SingleClubResponseDto
     public bool Joined { get; set; }
 }
 
-
+public class SuggestedClubDto
+{
+    public int ClubId { get; set; }
+    public string ClubName { get; set; } = null!;
+    public string ClubProfilePicUrl { get; set; } = null!;
+}

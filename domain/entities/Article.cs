@@ -118,3 +118,9 @@ public class ArticleResponseForEditDto
     public string ArticleContent { get; set; } = null!;
     public List<TagDto> Tags { get; set; } = new();
 }
+
+public class ArticleSuggestionDto
+{
+    public int ArticleId { get; set; }
+    public string ArticleTitle { get; set; } = null!;
+}

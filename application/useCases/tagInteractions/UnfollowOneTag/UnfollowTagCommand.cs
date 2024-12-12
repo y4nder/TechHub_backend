@@ -4,7 +4,6 @@ namespace application.useCases.tagInteractions.UnfollowOneTag;
 
 public class UnfollowTagCommand : IRequest<UnfollowTagResponse>
 {
-    public int UserId { get; set; }
     public int TagId { get; set; }
 }
 
