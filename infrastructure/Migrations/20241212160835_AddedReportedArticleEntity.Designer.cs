@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using infrastructure;
 
@@ -11,9 +12,11 @@ using infrastructure;
 namespace infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241212160835_AddedReportedArticleEntity")]
+    partial class AddedReportedArticleEntity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -416,9 +419,6 @@ namespace infrastructure.Migrations
                     b.Property<int>("ArticleId")
                         .HasColumnType("int");
 
-                    b.Property<bool>("Evaluated")
-                        .HasColumnType("bit");
-
                     b.Property<DateTime>("ReportDateTime")
                         .HasColumnType("datetime2");
 
@@ -435,7 +435,7 @@ namespace infrastructure.Migrations
 
                     b.HasIndex("ReporterId");
 
-                    b.ToTable("ReportedArticles");
+                    b.ToTable("ReportedArticle");
                 });
 
             modelBuilder.Entity("domain.entities.SearchHistory", b =>

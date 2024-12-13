@@ -478,5 +478,22 @@ public static class SchemaConfiguration
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK__UserTagFo__userI__5FB337D6");
         });
+
+        modelBuilder.Entity<ReportedArticle>(entity =>
+        {
+            entity.HasKey(r => r.ReportId);
+            
+            entity.HasOne(r => r.Article)
+                .WithMany(a => a.Reports)
+                .HasForeignKey(r => r.ArticleId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(r => r.Reporter)
+                .WithMany(u => u.ReportedArticles)
+                .HasForeignKey(r => r.ReporterId)
+                .OnDelete(DeleteBehavior.ClientSetNull);
+
+        });
+
     }
 }

@@ -61,3 +61,9 @@ public class ClubUserRoleDto
     public string RoleName { get; set; } = null!;
     public string UserProfilePicUrl { get; set; } = null!;
 }
+
+public class ClubUserRoleMinimalDto
+{
+    public int RoleId { get; set; }
+    public string RoleName { get; set; } = null!;
+}

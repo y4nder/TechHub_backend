@@ -35,7 +35,7 @@ public class AssignModeratorCommandHandler : IRequestHandler<AssignModeratorComm
         var userId = _userContext.GetUserId();
         
         //check if userId is a club creator
-        var invokerRecords = await _clubUserRepository.GetClubUserRecords(request.ClubId, userId);
+        var invokerRecords  = await _clubUserRepository.GetClubUserRecords(request.ClubId, userId);
 
         if (invokerRecords is null || !invokerRecords.Any())
         {

@@ -51,6 +51,8 @@ public partial class AppDbContext : DbContext
     public virtual DbSet<UserFollow> UserFollows { get; set; }
 
     public virtual DbSet<UserTagFollow> UserTagFollows { get; set; }
+
+    public virtual DbSet<ReportedArticle> ReportedArticles { get; set; }
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

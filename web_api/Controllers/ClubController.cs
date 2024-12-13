@@ -10,6 +10,7 @@ using application.useCases.clubInteractions.QueryClub.SingleCategoryClubsQuery;
 using application.useCases.clubInteractions.QueryClub.SingleClubQuery;
 using application.useCases.clubInteractions.QueryClub.SuggestedClubs;
 using application.useCases.clubInteractions.RemoveModerator;
+using application.useCases.ModeratorInteractions.UpdateClub;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using web_api.utils;
@@ -192,6 +193,21 @@ public class ClubController : Controller
             return ErrorFactory.CreateErrorResponse(e);
         }
     }
+    
+    [HttpPut("updateClub")]
+    public async Task<IActionResult> UpdateClub([FromBody] UpdateClubCommand command)
+    {
+        try
+        {
+            var response = await _sender.Send(command);
+            return Ok(response);
+        }
+        catch (Exception e)
+        {
+            return ErrorFactory.CreateErrorResponse(e);
+        }
+    }
+    
 }
 
 

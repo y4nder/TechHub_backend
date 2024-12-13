@@ -38,6 +38,9 @@ public partial class Article
 
     public virtual ICollection<Tag> Tags { get; set; } = new List<Tag>();
 
+    public ICollection<ReportedArticle> Reports { get; set; } = new List<ReportedArticle>();
+    
+    
     public static Article CreateDraft(ArticleDto dto)
     {
         return new Article

@@ -65,9 +65,28 @@ public class ClubUserRepository : IClubUserRepository
                 ClubProfilePicUrl = cu.Club.ClubImageUrl!,
                 ClubName = cu.Club.ClubName!
             }).ToListAsync();
+
+        foreach (var club in clubs)
+        {
+            club.Roles = await _context.ClubUsers
+                .AsNoTracking()
+                .Where(c => c.ClubId == club.ClubId && c.UserId == userId)
+                .Include(c => c.Role)
+                .Select(r => new ClubUserRoleMinimalDto
+                {
+                    RoleId = r.RoleId,
+                    RoleName = r.Role!.RoleName!
+                }).ToListAsync();
+        }
         
         return clubs;
     }
+
+    public Task<List<ClubMinimalDto>?> GetJoinedClubsByIdAsyncVer2(int userId)
+    {
+        throw new NotImplementedException();
+    }
+
 
     public async Task<List<ClubUser>?> GetClubUserRecordWithTracking(int clubId, int userId)
     {
