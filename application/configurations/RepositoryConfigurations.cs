@@ -34,6 +34,8 @@ public static class RepositoryConfigurations
         services.AddScoped<IUserCommentVoteRepository, UserCommentVoteRepository>();
 
         services.AddScoped<IArticleBookmarkRepository, ArticleBookmarkRepository>();
+
+        services.AddScoped<IReportedArticleRepository, ReportedArticleRepository>();
         
         return services;
     }

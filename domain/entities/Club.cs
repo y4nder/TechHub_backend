@@ -1,4 +1,6 @@
-﻿namespace domain.entities;
+﻿using domain.shared;
+
+namespace domain.entities;
 
 public partial class Club
 {
@@ -82,6 +84,28 @@ public partial class Club
         return postPermission == invitePermission 
                && invitePermission == 0;
     }
+
+    public void Update(ClubUpdateDto dto)
+    {
+        ClubImageUrl = Updater.UpdateProperty(ClubImageUrl, dto.ClubImageUrl);
+        ClubName = Updater.UpdateProperty(ClubName, dto.ClubName);
+        ClubIntroduction = Updater.UpdateProperty(ClubIntroduction, dto.ClubIntroduction);
+        ClubCategoryId = Updater.UpdateProperty(ClubCategoryId, dto.ClubCategoryId);
+        PostPermission = Updater.UpdateProperty(PostPermission, dto.PostPermission);
+        InvitePermission = Updater.UpdateProperty(InvitePermission, dto.InvitePermission);        
+        Private = Updater.UpdateProperty(Private, dto.IsPrivate);
+    }
+}
+
+public class ClubUpdateDto
+{
+    public string? ClubImageUrl { get; set; }
+    public string? ClubName { get; set; }
+    public string? ClubIntroduction { get; set; } 
+    public int? ClubCategoryId { get; set; }
+    public short PostPermission { get; set; } = -1;
+    public short InvitePermission { get; set; } = -1;
+    public bool IsPrivate { get; set; }
 }
 
 public class ClubDto
@@ -99,6 +123,7 @@ public class ClubMinimalDto
     public int ClubId { get; set; }
     public string ClubProfilePicUrl { get; set; } = null!;
     public string ClubName { get; set; } = null!;
+    public List<ClubUserRoleMinimalDto> Roles { get; set; } = new();
 }
 
 public enum PermissionType
@@ -157,6 +182,7 @@ public class SingleClubResponseDto
     public int ClubViews { get; set; } = -1;
     public int ClubUpVoteCount { get; set; } = -1;
     public bool Featured { get; set; } = false;
+    public bool Private { get; set; } = false;
     public List<RecentMembersProfileResponseDto> RecentMemberProfilePics { get; set; } = new();
     public string ClubIntroduction { get; set; } = null!;
     public int MemberCount { get; set; } = -1;
@@ -165,4 +191,9 @@ public class SingleClubResponseDto
     public bool Joined { get; set; }
 }
 
-
+public class SuggestedClubDto
+{
+    public int ClubId { get; set; }
+    public string ClubName { get; set; } = null!;
+    public string ClubProfilePicUrl { get; set; } = null!;
+}

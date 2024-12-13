@@ -36,6 +36,10 @@ public interface IArticleRepository
     
     Task<PaginatedResult<ArticleResponseDto>> GetPaginatedReadArticles(int userId, int pageNumber, int pageSize);
     
+    Task<PaginatedResult<ArticleResponseDto>> GetPaginatedArticlesByTagId(int userId, int tagId, int pageNumber, int pageSize);
+    
     Task<bool> IsAuthor(int userId, int articleId);
     Task<ArticleResponseForEditDto> GetArticleForEditByIdAsync(int articleId);
+    
+    Task<List<ArticleSuggestionDto>> GetArticleSuggestions(string searchQuery);
 }

@@ -1,4 +1,5 @@
-﻿using application.utilities.ImageUploads.Article;
+﻿using application.useCases.ModeratorInteractions.Shared;
+using application.utilities.ImageUploads.Article;
 using application.utilities.ImageUploads.Club;
 using application.utilities.ImageUploads.Profile;
 using application.utilities.UserContext;
@@ -14,6 +15,7 @@ public static class UtilityConfigurations
         services.AddScoped<IClubImageService, ClubImageService>();
         services.AddScoped<IProfileImageService, ProfileImageService>();
         services.AddScoped<IUserContext, UserContext>();
+        services.AddScoped<RoleChecker>();
         
         return services;
     }

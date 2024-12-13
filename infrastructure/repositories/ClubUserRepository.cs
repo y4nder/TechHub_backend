@@ -1,4 +1,5 @@
-﻿using domain.entities;
+﻿using CloudinaryDotNet.Actions;
+using domain.entities;
 using domain.interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -64,9 +65,28 @@ public class ClubUserRepository : IClubUserRepository
                 ClubProfilePicUrl = cu.Club.ClubImageUrl!,
                 ClubName = cu.Club.ClubName!
             }).ToListAsync();
+
+        foreach (var club in clubs)
+        {
+            club.Roles = await _context.ClubUsers
+                .AsNoTracking()
+                .Where(c => c.ClubId == club.ClubId && c.UserId == userId)
+                .Include(c => c.Role)
+                .Select(r => new ClubUserRoleMinimalDto
+                {
+                    RoleId = r.RoleId,
+                    RoleName = r.Role!.RoleName!
+                }).ToListAsync();
+        }
         
         return clubs;
     }
+
+    public Task<List<ClubMinimalDto>?> GetJoinedClubsByIdAsyncVer2(int userId)
+    {
+        throw new NotImplementedException();
+    }
+
 
     public async Task<List<ClubUser>?> GetClubUserRecordWithTracking(int clubId, int userId)
     {
@@ -76,4 +96,10 @@ public class ClubUserRepository : IClubUserRepository
     }
 
     public void RemoveClubUserRange(List<ClubUser> clubUsers) => _context.RemoveRange(clubUsers);
+    public async Task<ClubUser?> TryRetrieveModeratorRole(int moderatorId)
+    {
+        return await _context.ClubUsers
+            .Where(cu => cu.UserId == moderatorId && cu.RoleId == (int)DefaultRoles.Moderator)
+            .FirstOrDefaultAsync();
+    }
 }

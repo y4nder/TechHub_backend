@@ -1,4 +1,5 @@
-﻿using application.useCases.clubInteractions.CreateClub;
+﻿using application.useCases.clubInteractions.AssignModerator;
+using application.useCases.clubInteractions.CreateClub;
 using application.useCases.clubInteractions.JoinClub;
 using application.useCases.clubInteractions.LeaveClub;
 using application.useCases.clubInteractions.QueryClub.CategorizedClubsQuery;
@@ -7,6 +8,9 @@ using application.useCases.clubInteractions.QueryClub.FeaturedClubsQuery;
 using application.useCases.clubInteractions.QueryClub.JoinedClubsQuery;
 using application.useCases.clubInteractions.QueryClub.SingleCategoryClubsQuery;
 using application.useCases.clubInteractions.QueryClub.SingleClubQuery;
+using application.useCases.clubInteractions.QueryClub.SuggestedClubs;
+using application.useCases.clubInteractions.RemoveModerator;
+using application.useCases.ModeratorInteractions.UpdateClub;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using web_api.utils;
@@ -148,6 +152,62 @@ public class ClubController : Controller
         }
     }
 
+    [HttpGet("GetSuggestedClubs")]
+    public async Task<IActionResult> GetSuggestedClubs([FromQuery] SuggestedClubsQuery query)
+    {
+        try
+        {
+            var response = await _sender.Send(query);
+            return Ok(response);
+        }
+        catch (Exception e)
+        {
+            return ErrorFactory.CreateErrorResponse(e);
+        }
+    }
+
+    [HttpPost("assignModerator")]
+    public async Task<IActionResult> AssignModerator([FromBody] AssignModeratorCommand command)
+    {
+        try
+        {
+            var response = await _sender.Send(command);
+            return Ok(response);
+        }
+        catch (Exception e)
+        {
+            return ErrorFactory.CreateErrorResponse(e);
+        }
+    }
+    
+    [HttpDelete("removeModerator")]
+    public async Task<IActionResult> RemoveModerator([FromBody] RemoveModeratorCommand command)
+    {
+        try
+        {
+            var response = await _sender.Send(command);
+            return Ok(response);
+        }
+        catch (Exception e)
+        {
+            return ErrorFactory.CreateErrorResponse(e);
+        }
+    }
+    
+    [HttpPut("updateClub")]
+    public async Task<IActionResult> UpdateClub([FromBody] UpdateClubCommand command)
+    {
+        try
+        {
+            var response = await _sender.Send(command);
+            return Ok(response);
+        }
+        catch (Exception e)
+        {
+            return ErrorFactory.CreateErrorResponse(e);
+        }
+    }
+    
 }
 
 

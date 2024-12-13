@@ -17,4 +17,8 @@
       <ProjectReference Include="..\infrastructure\infrastructure.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="useCases\ModeratorInteractions\EvaluateArticle\" />
+    </ItemGroup>
+
 </Project>

@@ -401,6 +401,43 @@ namespace infrastructure.Migrations
                     b.ToTable("Comment", (string)null);
                 });
 
+            modelBuilder.Entity("domain.entities.ReportedArticle", b =>
+                {
+                    b.Property<int>("ReportId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ReportId"));
+
+                    b.Property<string>("AdditionalNotes")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ArticleId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("Evaluated")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("ReportDateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ReportReason")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ReporterId")
+                        .HasColumnType("int");
+
+                    b.HasKey("ReportId");
+
+                    b.HasIndex("ArticleId");
+
+                    b.HasIndex("ReporterId");
+
+                    b.ToTable("ReportedArticles");
+                });
+
             modelBuilder.Entity("domain.entities.SearchHistory", b =>
                 {
                     b.Property<int>("SearchId")
@@ -862,6 +899,7 @@ namespace infrastructure.Migrations
                     b.HasOne("domain.entities.Article", null)
                         .WithMany()
                         .HasForeignKey("ArticleId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("FK__ArticleTa__artic__76969D2E");
 
@@ -994,6 +1032,24 @@ namespace infrastructure.Migrations
                     b.Navigation("ParentComment");
                 });
 
+            modelBuilder.Entity("domain.entities.ReportedArticle", b =>
+                {
+                    b.HasOne("domain.entities.Article", "Article")
+                        .WithMany("Reports")
+                        .HasForeignKey("ArticleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("domain.entities.User", "Reporter")
+                        .WithMany("ReportedArticles")
+                        .HasForeignKey("ReporterId")
+                        .IsRequired();
+
+                    b.Navigation("Article");
+
+                    b.Navigation("Reporter");
+                });
+
             modelBuilder.Entity("domain.entities.SearchHistory", b =>
                 {
                     b.HasOne("domain.entities.User", "User")
@@ -1040,6 +1096,7 @@ namespace infrastructure.Migrations
                     b.HasOne("domain.entities.Article", "Article")
                         .WithMany("UserArticleReads")
                         .HasForeignKey("ArticleId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("FK__User_Arti__artic__70DDC3D8");
 
@@ -1134,6 +1191,8 @@ namespace infrastructure.Migrations
                 {
                     b.Navigation("Comments");
 
+                    b.Navigation("Reports");
+
                     b.Navigation("UserArticleBookmarks");
 
                     b.Navigation("UserArticleReads");
@@ -1181,6 +1240,8 @@ namespace infrastructure.Migrations
                     b.Navigation("Clubs");
 
                     b.Navigation("Comments");
+
+                    b.Navigation("ReportedArticles");
 
                     b.Navigation("SearchHistories");
 

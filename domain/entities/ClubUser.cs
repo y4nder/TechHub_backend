@@ -54,3 +54,5 @@ public partial class ClubUser
         };
     }
 }
+
+

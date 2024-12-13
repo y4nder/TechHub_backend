@@ -1,11 +1,14 @@
 ﻿using infrastructure.services.cloudinary;
 using infrastructure.services.httpImgInterceptor;
+using infrastructure.services.jobs;
 using infrastructure.services.jwt;
 using infrastructure.services.passwordService;
 using infrastructure.services.worker;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
+using Quartz;
 
 namespace infrastructure.configurations;
 
@@ -25,6 +28,20 @@ public static class InfrastructureConfigurations
         
         //add cloudinary settings
         services.Configure<CloudinarySettings>(configuration.GetSection("CloudinarySettings"));
+        
+        // add quartz
+        
+        // services.AddQuartz(options =>
+        // {
+        //     options.UseMicrosoftDependencyInjectionJobFactory();
+        // });
+        //
+        // services.AddQuartzHostedService(options =>
+        // {
+        //     options.WaitForJobsToComplete = true;
+        // });
+        //
+        // services.ConfigureOptions<LoggingBackgroundJobSetup>();
 
         //add services
         services.AddSingleton<IPasswordHasherService, PasswordHasherService>();

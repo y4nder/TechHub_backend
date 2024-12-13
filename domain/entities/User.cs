@@ -40,6 +40,8 @@ public partial class User
 
     public virtual ICollection<UserTagFollow> UserTagFollows { get; set; } = new List<UserTagFollow>();
 
+    public ICollection<ReportedArticle> ReportedArticles { get; set; } = new List<ReportedArticle>();
+
     public static User Create(string username, string email, string password, string? userProfilePicUrl)
     {
         return new User

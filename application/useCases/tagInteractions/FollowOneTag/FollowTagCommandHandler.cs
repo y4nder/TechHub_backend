@@ -1,4 +1,5 @@
 ﻿using application.Exceptions.TagExceptions;
+using application.utilities.UserContext;
 using domain.entities;
 using domain.interfaces;
 using infrastructure.services.worker;
@@ -9,35 +10,31 @@ namespace application.useCases.tagInteractions.FollowOneTag;
 public class FollowTagCommandHandler : IRequestHandler<FollowTagCommand, FollowTagResponse>
 {
     private readonly IUserTagFollowRepository _userTagFollowRepository;
-    private readonly IUserRepository _userRepository;
+    private readonly IUserContext _userContext;
     private readonly ITagRepository _tagRepository;
     private readonly IUnitOfWork _unitOfWork;
 
     public FollowTagCommandHandler(IUserTagFollowRepository userTagFollowRepository, 
-        IUserRepository userRepository,
-        IUnitOfWork unitOfWork, ITagRepository tagRepository)
+        IUnitOfWork unitOfWork, ITagRepository tagRepository, IUserContext userContext)
     {
         _userTagFollowRepository = userTagFollowRepository;
-        _userRepository = userRepository;
         _unitOfWork = unitOfWork;
         _tagRepository = tagRepository;
+        _userContext = userContext;
     }
 
     public async Task<FollowTagResponse> Handle(FollowTagCommand request, CancellationToken cancellationToken)
     {
-        if (!await _userRepository.CheckIdExists(request.UserId))
-        {
-            throw TagException.UserIdNotFound(request.UserId);
-        }
+        var userId = _userContext.GetUserId();
 
         if (!await _tagRepository.TagIdExistsAsync(request.TagId))
         {
             throw TagException.TagIdNotFound(request.TagId);
         }
         
-        await EnsureTagNotFollowed(request.UserId, request.TagId);
+        await EnsureTagNotFollowed(userId, request.TagId);
         
-        var userTagFollow = UserTagFollow.Create(request.UserId, request.TagId);
+        var userTagFollow = UserTagFollow.Create(userId, request.TagId);
         
         _userTagFollowRepository.AddUserFollow(userTagFollow);
         

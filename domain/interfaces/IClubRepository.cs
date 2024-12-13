@@ -20,4 +20,6 @@ public interface IClubRepository
     Task<List<ClubMinimalDto>?> GetJoinedClubsByIdAsync(int userId);  
     
     Task<SingleCategoryClubStandardResponseDto?> GetSingleCategoryClubByIdAsync(int clubCategoryId);
+    
+    Task<List<SuggestedClubDto>> GetSuggestedClubs(string searchTerm);
 }

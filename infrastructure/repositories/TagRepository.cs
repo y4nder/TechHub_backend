@@ -113,4 +113,70 @@ public class TagRepository : ITagRepository
             throw new InvalidOperationException("No tags were deleted.");
         }
     }
+
+    public async Task<List<TrendingTagDto>> GetTrendingTagsAsync()
+    {
+        return await _context.Tags
+            .OrderByDescending(tag => tag.TagCount)
+            .Take(10)
+            .Select(t => new TrendingTagDto
+            {
+                TagId = t.TagId,
+                TagName = t.TagName,
+                TagCount = t.TagCount
+            }).ToListAsync();
+    }
+
+    public async Task<List<GroupedTagList>> GetGroupedTagsAsync()
+    {
+        var groupedTags = await _context.Tags
+            .OrderBy(tag => tag.TagName)
+            .GroupBy(tag => tag.TagName.Substring(0, 1).ToUpper()) // Group by the first letter
+            .Select(group => new GroupedTagList
+            {
+                Group = group.Key,
+                Tags = group.Select(tag => new TagDto
+                {
+                    TagId = tag.TagId,
+                    TagName = tag.TagName
+                }).ToList()
+            })
+            .ToListAsync();
+
+        return groupedTags;
+    }
+
+    public async Task<TagPageDto?> GetTagPageAsync(int tagId, int userId)
+    {
+        return await _context.Tags
+            .Where(t => tagId == t.TagId)
+            .Select(t => new TagPageDto
+            {
+                TagId = t.TagId,
+                TagName = t.TagName,
+                TagDescription = t.TagDescription,
+                Followed = _context.UserTagFollows
+                    .Any(ft => ft.TagId == t.TagId && ft.UserId == userId)
+            })
+            .FirstOrDefaultAsync();
+    }
+
+    public async Task<List<TagDto>> GetSuggestedTagsAsync(string searchQuery)
+    {
+        if (string.IsNullOrWhiteSpace(searchQuery))
+            return new();
+        
+        searchQuery = searchQuery.ToLower(); // Ensure case-insensitivity
+
+        return await _context.Tags
+            .AsNoTracking()
+            .Where(tag => EF.Functions.Like(tag.TagName.ToLower(), $"{searchQuery}%"))
+            .Take(5)
+            .Select(t => new TagDto
+            {
+                TagId = t.TagId,
+                TagName = t.TagName
+            })
+            .ToListAsync();
+    }
 }
