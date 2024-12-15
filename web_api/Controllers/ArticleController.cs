@@ -15,6 +15,7 @@ using application.useCases.articleInteractions.QueryArticles.TagArticles;
 using application.useCases.articleInteractions.QueryArticles.UpvotedArticles;
 using application.useCases.articleInteractions.QueryArticles.UserArticles;
 using application.useCases.articleInteractions.RemoveArticleVote;
+using application.useCases.articleInteractions.ReportArticle;
 using application.useCases.articleInteractions.UnBookmarkArticle;
 using application.useCases.articleInteractions.UpdateArticle;
 using application.useCases.articleInteractions.UpvoteArticle;
@@ -305,6 +306,20 @@ public class ArticleController : Controller
         try
         {
             var response = await _mediator.Send(query);
+            return Ok(response);
+        }
+        catch (Exception ex)
+        {
+            return ErrorFactory.CreateErrorResponse(ex);
+        }
+    }
+    
+    [HttpPost("reportArticle")]
+    public async Task<IActionResult> ReportArticle([FromBody] ReportArticleCommand command)
+    {
+        try
+        {
+            var response = await _mediator.Send(command);
             return Ok(response);
         }
         catch (Exception ex)

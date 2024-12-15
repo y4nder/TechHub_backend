@@ -22,4 +22,9 @@ public interface IClubRepository
     Task<SingleCategoryClubStandardResponseDto?> GetSingleCategoryClubByIdAsync(int clubCategoryId);
     
     Task<List<SuggestedClubDto>> GetSuggestedClubs(string searchTerm);
+    
+    Task<List<ClubUserMinimalDto>> GetClubUsers(int clubId, string searchTerm);
+    Task<int> GetClubUsersCount(int clubId);
+
+    Task UpdateUserRolesTransaction(List<ClubUser> userRoles, int clubId, int userId);
 }

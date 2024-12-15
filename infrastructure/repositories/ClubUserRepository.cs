@@ -102,4 +102,55 @@ public class ClubUserRepository : IClubUserRepository
             .Where(cu => cu.UserId == moderatorId && cu.RoleId == (int)DefaultRoles.Moderator)
             .FirstOrDefaultAsync();
     }
+
+    public async Task<List<ClubUserRoleDto>> GetModerators(int clubId)
+    {
+        return await _context.ClubUsers
+            .Where(cu => cu.ClubId == clubId &&
+                         cu.RoleId == (int)DefaultRoles.Moderator)
+            .Include(c => c.Role)
+            .Select(cu => new ClubUserRoleDto
+            {
+                RoleName = cu.Role!.RoleName!,
+                Username = cu.User.Username!,
+                UserId = cu.UserId,
+                UserProfilePicUrl = cu.User.UserProfilePicUrl
+            }).ToListAsync();
+    }
+
+    public async Task<List<UserDetailsDto>> GetModeratorsFull(int clubId)
+    {
+         return await _context.ClubUsers
+            .AsNoTracking()
+            .Where(cu => cu.ClubId == clubId &&
+                         cu.RoleId == (int)DefaultRoles.Moderator)
+            .Include(c => c.User)
+            .ThenInclude(u => u.UserAdditionalInfo)
+            .Select(u => new UserDetailsDto
+            {
+                UserProfilePicUrl = u.User.UserProfilePicUrl,
+                Username =  u.User.Username!,
+                ReputationPoints = u.User.UserAdditionalInfo!.ReputationPoints,
+                UserAdditionalInfo = _context.UserAdditionalInfos
+                    .Where(ua => ua.UserId == u.UserId)
+                    .Select(ua => new UserAdditionalInfoDto
+                    {
+                        Bio = ua.Bio,
+                        Company = ua.Company,
+                        ContactNumber = ua.ContactNumber,
+                        Job = ua.Job,
+                        GithubLink = ua.GithubLink,
+                        LinkedInLink = ua.LinkedInLink,
+                        FacebookLink = ua.FacebookLink,
+                        XLink = ua.XLink,
+                        PersonalWebsiteLink = ua.PersonalWebsiteLink,
+                        YoutubeLink = ua.YoutubeLink,
+                        StackOverflowLink = ua.StackOverflowLink,
+                        RedditLink = ua.RedditLink,
+                        ThreadsLink = ua.ThreadsLink,
+                    })
+                    .First()
+            })
+            .ToListAsync();
+    }
 }

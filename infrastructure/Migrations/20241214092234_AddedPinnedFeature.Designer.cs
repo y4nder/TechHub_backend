@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using infrastructure;
 
@@ -11,9 +12,11 @@ using infrastructure;
 namespace infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241214092234_AddedPinnedFeature")]
+    partial class AddedPinnedFeature
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -303,9 +306,6 @@ namespace infrastructure.Migrations
                         .HasColumnType("int")
                         .HasColumnName("roleId");
 
-                    b.Property<DateTime>("DateJoined")
-                        .HasColumnType("datetime2");
-
                     b.HasKey("ClubId", "UserId", "RoleId")
                         .HasName("PK_ClubUserRole");
 
@@ -409,18 +409,15 @@ namespace infrastructure.Migrations
 
             modelBuilder.Entity("domain.entities.ReportedArticle", b =>
                 {
-                    b.Property<int>("ReportId")
-                        .ValueGeneratedOnAdd()
+                    b.Property<int>("ReporterId")
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ReportId"));
+                    b.Property<int>("ArticleId")
+                        .HasColumnType("int");
 
                     b.Property<string>("AdditionalNotes")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("ArticleId")
-                        .HasColumnType("int");
 
                     b.Property<bool>("Evaluated")
                         .HasColumnType("bit");
@@ -436,14 +433,9 @@ namespace infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("ReporterId")
-                        .HasColumnType("int");
-
-                    b.HasKey("ReportId");
+                    b.HasKey("ReporterId", "ArticleId");
 
                     b.HasIndex("ArticleId");
-
-                    b.HasIndex("ReporterId");
 
                     b.ToTable("ReportedArticles");
                 });

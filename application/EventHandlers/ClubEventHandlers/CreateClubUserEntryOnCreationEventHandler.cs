@@ -23,8 +23,9 @@ public class CreateClubUserEntryOnCreationEventHandler : INotificationHandler<Cl
 
         var clubModerator = ClubUser.CreateClubModerator(createdClub.ClubId, createdClub.ClubCreatorId);
         var clubCreator = ClubUser.CreateClubCreator(createdClub.ClubId, createdClub.ClubCreatorId);
+        var clubRegularUser = ClubUser.CreateClubRegularUser(createdClub.ClubId, createdClub.ClubCreatorId);
         
-        await _clubUserRepository.AddClubUserRange([clubModerator, clubCreator]);
+        await _clubUserRepository.AddClubUserRange([clubModerator, clubCreator, clubRegularUser]);
         
         await _unitOfWork.CommitAsync(cancellationToken);            
     }

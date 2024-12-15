@@ -28,6 +28,9 @@ public interface IArticleRepository
     Task<PaginatedResult<ArticleResponseDto>> GetPaginatedArticlesByClubIdAsync(int clubId, int pageNumber,
         int pageSize, int userId);
     
+    Task<PaginatedResult<ArticleResponseDto>> GetPaginatedArticlesByClubIdForModeratorAsync(int clubId, int pageNumber,
+        int pageSize, int userId);
+    
     Task<PaginatedResult<ArticleResponseDto>> GetPaginatedArticlesByUserId(int authorId, int pageNumber, int pageSize);
     
     Task<PaginatedResult<ArticleResponseDto>> GetPaginatedUpVotedArticles(int userId, int pageNumber, int pageSize);

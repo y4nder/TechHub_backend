@@ -37,19 +37,22 @@ public class ReportArticleCommandHandler : IRequestHandler<ReportArticleCommand,
         
         if(string.IsNullOrEmpty(request.Reason))
             throw new InvalidOperationException("Invalid request reason");
+        
+        if(await _reportedArticleRepository.HasReportedRecord(request.ArticleId, reporterId))
+            throw new InvalidOperationException("The article is already reported by this user"); 
 
         var reportRecord = ReportedArticle.Create(new ReportArticleDto
         {
+            ReporterId = reporterId,
+            ArticleId = request.ArticleId,
             ReportReason = request.Reason,
             AdditionalNotes = request.AdditionalNotes,
-            ReporterId = reporterId,
-            ArticleId = request.ArticleId
         });
         
         _reportedArticleRepository.AddReportedArticle(reportRecord);
-        
-        await _unitOfWork.CommitAsync(cancellationToken);
 
+        await _unitOfWork.CommitAsync(cancellationToken);
+        
         return new ReportArticleCommandResponse
         {
             Message = "Reported article successfully."

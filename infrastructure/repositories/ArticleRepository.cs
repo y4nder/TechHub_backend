@@ -112,7 +112,21 @@ public class ArticleRepository : IArticleRepository
         int pageSize, int userId)
     {
         var baseQuery = _context.Articles
-            .Where(article => article.ClubId == clubId && !article.Archived && !article.IsDrafted);
+            .Where(article => article.ClubId == clubId && 
+                              !article.Archived && 
+                              !article.IsDrafted &&
+                              article.Status != ArticleStatusDefaults.Removed);
+        
+        return await GetPaginatedArticleCardExecutor(baseQuery, userId, pageNumber, pageSize);
+    }
+
+    public async Task<PaginatedResult<ArticleResponseDto>> GetPaginatedArticlesByClubIdForModeratorAsync(int clubId, int pageNumber, int pageSize, int userId)
+    {
+        var baseQuery = _context.Articles
+            .Where(article => 
+                article.ClubId == clubId && 
+                !article.Archived && 
+                !article.IsDrafted);
         
         return await GetPaginatedArticleCardExecutor(baseQuery, userId, pageNumber, pageSize);
     }
@@ -213,59 +227,7 @@ public class ArticleRepository : IArticleRepository
             })
             .ToListAsync();
     }
-
-
-    // private async Task<PaginatedResult<ArticleResponseDto>> GetPaginatedArticleCardExecutor(
-    //     IQueryable<Article> baseQuery, int userId, int pageNumber, int pageSize)
-    // {
-    //     // Calculate the total count for pagination
-    //     var totalCount = await baseQuery.CountAsync();
-    //
-    //     // Project and paginate the base query
-    //     var articles = await baseQuery
-    //         .OrderByDescending(article => article.CreatedDateTime)
-    //         .Skip((pageNumber - 1) * pageSize)
-    //         .Take(pageSize)
-    //         .Select(article => new ArticleResponseDto
-    //         {
-    //             ArticleId = article.ArticleId,
-    //             ClubImageUrl = article.Club!.ClubImageUrl ?? string.Empty,
-    //             AuthorId = article.ArticleAuthorId,
-    //             AuthorName = article.ArticleAuthor!.Username!,
-    //             UserImageUrl = article.ArticleAuthor!.UserProfilePicUrl,
-    //             ClubId = article.ClubId,
-    //             ClubName = article.Club.ClubName?? string.Empty,
-    //             ArticleTitle = article.ArticleTitle,
-    //             Tags = article.Tags
-    //                 .Select(tag => new TagDto
-    //                 {
-    //                     TagId = tag.TagId,
-    //                     TagName = tag.TagName ?? "Unknown Tag"
-    //                 })
-    //                 .ToList(),
-    //             CreatedDateTime = article.CreatedDateTime,
-    //             ArticleThumbnailUrl = article.ArticleThumbnailUrl ?? string.Empty,
-    //             VoteCount = article.UserArticleVotes.Sum(vote => vote.VoteType),
-    //             CommentCount = article.Comments.Count(),
-    //             VoteType = _context.UserArticleVotes
-    //                 .Where(v => v.UserId == userId && v.ArticleId == article.ArticleId)
-    //                 .Select(v => v.VoteType).FirstOrDefault(),
-    //             Bookmarked = _context.UserArticleBookmarks
-    //                 .Any(b => b.ArticleId == article.ArticleId && b.UserId == userId)
-    //         })
-    //         .ToListAsync();
-    //
-    //     // Return the paginated result
-    //     return new PaginatedResult<ArticleResponseDto>
-    //     {
-    //         Items = articles,
-    //         TotalCount = totalCount,
-    //         PageNumber = pageNumber,
-    //         PageSize = pageSize,
-    //         TotalPages = (int)Math.Ceiling(totalCount / (double)pageSize)
-    //     };
-    // }
-    //
+    
     private async Task<PaginatedResult<ArticleResponseDto>> GetPaginatedArticleCardExecutor(
     IQueryable<Article> baseQuery, int userId, int pageNumber, int pageSize)
 {
@@ -307,7 +269,9 @@ public class ArticleRepository : IArticleRepository
                 .Select(v => v.VoteType)
                 .FirstOrDefault(),
             Bookmarked = article.UserArticleBookmarks
-                .Any(b => b.UserId == userId)
+                .Any(b => b.UserId == userId),
+            Status = article.Status,
+            Pinned = article.Pinned
         })
         .ToListAsync();
 

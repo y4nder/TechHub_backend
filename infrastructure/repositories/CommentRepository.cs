@@ -277,6 +277,7 @@ public class CommentRepository : ICommentRepository
                 UpdatedDateTime = c.CreatedDateTime,
                 CommentBody = c.Content,
                 VoteCount = _context.UserCommentVotes
+                    .Where(v => v.CommentId == c.CommentId)
                     .Sum(v => v.VoteType),
                 VoteType = _context.UserCommentVotes
                     .Where(v => v.CommentId == c.CommentId && v.UserId == userId)

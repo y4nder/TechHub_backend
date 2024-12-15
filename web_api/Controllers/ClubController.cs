@@ -169,7 +169,7 @@ public class ClubController : Controller
     [HttpPost("assignModerator")]
     public async Task<IActionResult> AssignModerator([FromBody] AssignModeratorCommand command)
     {
-        try
+        try 
         {
             var response = await _sender.Send(command);
             return Ok(response);

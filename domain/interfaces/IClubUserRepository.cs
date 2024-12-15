@@ -17,5 +17,8 @@ public interface IClubUserRepository
     void RemoveClubUserRange(List<ClubUser> clubUsers);
 
     Task<ClubUser?> TryRetrieveModeratorRole(int moderatorId);
+    
+    Task<List<ClubUserRoleDto>> GetModerators(int clubId);
+    Task<List<UserDetailsDto>> GetModeratorsFull(int clubId);
 
 }

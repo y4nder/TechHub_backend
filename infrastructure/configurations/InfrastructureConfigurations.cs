@@ -1,4 +1,5 @@
-﻿using infrastructure.services.cloudinary;
+﻿using infrastructure.services.analytics;
+using infrastructure.services.cloudinary;
 using infrastructure.services.httpImgInterceptor;
 using infrastructure.services.jobs;
 using infrastructure.services.jwt;
@@ -50,6 +51,7 @@ public static class InfrastructureConfigurations
         services.AddScoped<IImageUploader, ImageUploader>();
         services.AddScoped<IHtmlImageProcessor, HtmlImageProcessor>();
         services.AddScoped<IContentImageProcessor, ContentImageProcessor>();
+        services.AddScoped<IAnalyticsProcessor, AnalyticsProcessor>();        
         
         return services;
     }
