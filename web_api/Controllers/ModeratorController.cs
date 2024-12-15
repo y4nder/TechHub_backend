@@ -1,11 +1,14 @@
 ﻿using application.useCases.articleInteractions.QueryArticles.ClubArticles;
+using application.useCases.clubInteractions.QueryClub.ClubForEditQuery;
 using application.useCases.clubInteractions.QueryClub.GetClubModerators;
+using application.useCases.clubInteractions.UpdateClub;
 using application.useCases.ModeratorInteractions.ClubAnalytics;
 using application.useCases.ModeratorInteractions.ClubMembers;
 using application.useCases.ModeratorInteractions.EvaluateArticle;
 using application.useCases.ModeratorInteractions.GetReportedArticles;
 using application.useCases.ModeratorInteractions.PinActions;
 using application.useCases.ModeratorInteractions.UpdateArticleStatus;
+using application.useCases.ModeratorInteractions.UpdateClub;
 using application.useCases.ModeratorInteractions.UpdateUserRoles;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -203,5 +206,32 @@ public class ModeratorController : Controller
             return ErrorFactory.CreateErrorResponse(e);
         }
     }
+    
+    [HttpGet("getClubForEdit")]
+    public async Task<IActionResult> ClubUsers([FromQuery] ClubForEditQuery query)
+    {
+        try
+        {
+            var response = await _sender.Send(query);
+            return Ok(response);
+        }
+        catch (Exception e)
+        {
+            return ErrorFactory.CreateErrorResponse(e);
+        }
+    }
 
+    [HttpPost("updateClubForMod")]
+    public async Task<IActionResult> UpdateClub([FromForm] UpdateClubCommandVersion2 command)
+    {
+        try
+        {
+            var response = await _sender.Send(command);
+            return Ok(response);
+        }
+        catch (Exception e)
+        {
+            return ErrorFactory.CreateErrorResponse(e);
+        }
+    }
 }

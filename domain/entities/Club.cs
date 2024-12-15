@@ -197,3 +197,15 @@ public class SuggestedClubDto
     public string ClubName { get; set; } = null!;
     public string ClubProfilePicUrl { get; set; } = null!;
 }
+
+public class ClubForEditDto
+{
+    public int ClubId { get; set; }
+    public string ClubThumbnailUrl { get; set; } = null!;
+    public string ClubName { get; set; } = null!;
+    public string? ClubIntroduction { get; set; } = null!;
+    public int? ClubCategoryId { get; set; }
+    public short? PostPermission { get; set; } = -1;
+    public short? InvitePermission { get; set; } = -1;
+    public bool IsPrivate { get; set; }
+}

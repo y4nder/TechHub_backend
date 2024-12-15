@@ -27,4 +27,6 @@ public interface IClubRepository
     Task<int> GetClubUsersCount(int clubId);
 
     Task UpdateUserRolesTransaction(List<ClubUser> userRoles, int clubId, int userId);
+    
+    Task<ClubForEditDto?> GetClubForEdit(int clubId);
 }

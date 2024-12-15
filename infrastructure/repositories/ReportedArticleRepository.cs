@@ -95,7 +95,7 @@ public class ReportedArticleRepository : IReportedArticleRepository
     public async Task<List<ReportResponseMinimal>> GetReportsForArticle(int articleId)
     {
         return await _context.ReportedArticles
-            .Where(r => r.ArticleId == articleId)
+            .Where(r => r.ArticleId == articleId && !r.Evaluated)
             .AsNoTracking()
             .Select(r => new ReportResponseMinimal
             {

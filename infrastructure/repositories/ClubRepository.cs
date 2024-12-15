@@ -328,4 +328,22 @@ public class ClubRepository : IClubRepository
             throw;
         }
     }
+
+    public async Task<ClubForEditDto?> GetClubForEdit(int clubId)
+    {
+        return await _context.Clubs
+            .AsNoTracking()
+            .Where(c => c.ClubId == clubId)
+            .Select(c => new ClubForEditDto
+            {
+                ClubId = c.ClubId,
+                ClubCategoryId = c.ClubCategoryId,
+                ClubIntroduction = c.ClubIntroduction,
+                ClubName = c.ClubName!,
+                ClubThumbnailUrl = c.ClubImageUrl!,
+                InvitePermission = c.InvitePermission,
+                PostPermission = c.PostPermission,
+                IsPrivate = c.Private,
+            }).FirstOrDefaultAsync();
+    }
 }
