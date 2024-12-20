@@ -42,6 +42,8 @@ public partial class User
 
     public ICollection<ReportedArticle> ReportedArticles { get; set; } = new List<ReportedArticle>();
 
+    public ICollection<UserNotification> UserNotifications { get; set; } = new List<UserNotification>();
+
     public static User Create(string username, string email, string password, string? userProfilePicUrl)
     {
         return new User
@@ -77,6 +79,17 @@ public class UserMinimalDto
     }
 }
 
+public class ClubUserMinimalDto
+{
+    public int UserId { get; set; }
+    public string Username { get; set; } = null!;
+    public string UserProfilePicUrl { get; set; } = null!;
+    public int ReputationPoints { get; set; }
+    public string Email { get; set; } = null!;
+    public DateTime? DateJoined { get; set; }
+    public List<ClubUserRoleMinimalDto> Roles { get; set; } = new();
+}
+
 public static class UserDefaults
 {
     public const string DefaultProfilePictureUrl = "NoProfilePic";
@@ -102,5 +115,7 @@ public class UserDetailsDto
 {
     public string UserProfilePicUrl { get; set; } = null!;
     public string Username { get; set; } = null!;
+    public int ReputationPoints { get; set; }
     public UserAdditionalInfoDto UserAdditionalInfo { get; set; } = null!;
 }
+

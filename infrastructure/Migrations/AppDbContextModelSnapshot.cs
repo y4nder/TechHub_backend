@@ -83,6 +83,9 @@ namespace infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<bool>("Pinned")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Status")
                         .IsRequired()
                         .HasMaxLength(10)
@@ -300,6 +303,9 @@ namespace infrastructure.Migrations
                         .HasColumnType("int")
                         .HasColumnName("roleId");
 
+                    b.Property<DateTime>("DateJoined")
+                        .HasColumnType("datetime2");
+
                     b.HasKey("ClubId", "UserId", "RoleId")
                         .HasName("PK_ClubUserRole");
 
@@ -401,6 +407,24 @@ namespace infrastructure.Migrations
                     b.ToTable("Comment", (string)null);
                 });
 
+            modelBuilder.Entity("domain.entities.Notification", b =>
+                {
+                    b.Property<Guid>("NotificationId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("NotificationId");
+
+                    b.ToTable("Notifications");
+                });
+
             modelBuilder.Entity("domain.entities.ReportedArticle", b =>
                 {
                     b.Property<int>("ReportId")
@@ -418,6 +442,10 @@ namespace infrastructure.Migrations
 
                     b.Property<bool>("Evaluated")
                         .HasColumnType("bit");
+
+                    b.Property<string>("EvaluationNotes")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("ReportDateTime")
                         .HasColumnType("datetime2");
@@ -872,6 +900,37 @@ namespace infrastructure.Migrations
                     b.ToTable("UserFollow", (string)null);
                 });
 
+            modelBuilder.Entity("domain.entities.UserNotification", b =>
+                {
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("NotificationId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int?>("ArticleId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("CommentId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsRead")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("ReadAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("UserId", "NotificationId");
+
+                    b.HasIndex("ArticleId");
+
+                    b.HasIndex("CommentId");
+
+                    b.HasIndex("NotificationId");
+
+                    b.ToTable("UserNotifications");
+                });
+
             modelBuilder.Entity("domain.entities.UserTagFollow", b =>
                 {
                     b.Property<int>("UserId")
@@ -1077,12 +1136,14 @@ namespace infrastructure.Migrations
                     b.HasOne("domain.entities.Article", "Article")
                         .WithMany("UserArticleBookmarks")
                         .HasForeignKey("ArticleId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("FK__UserArtic__artic__72C60C4A");
 
                     b.HasOne("domain.entities.User", "User")
                         .WithMany("UserArticleBookmarks")
                         .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired()
                         .HasConstraintName("FK__UserArtic__userI__71D1E811");
 
@@ -1103,6 +1164,7 @@ namespace infrastructure.Migrations
                     b.HasOne("domain.entities.User", "User")
                         .WithMany("UserArticleReads")
                         .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired()
                         .HasConstraintName("FK__User_Arti__userI__6FE99F9F");
 
@@ -1116,12 +1178,14 @@ namespace infrastructure.Migrations
                     b.HasOne("domain.entities.Article", "Article")
                         .WithMany("UserArticleVotes")
                         .HasForeignKey("ArticleId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("FK__UserArtic__artic__74AE54BC");
 
                     b.HasOne("domain.entities.User", "User")
                         .WithMany("UserArticleVotes")
                         .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired()
                         .HasConstraintName("FK__UserArtic__userI__73BA3083");
 
@@ -1135,12 +1199,14 @@ namespace infrastructure.Migrations
                     b.HasOne("domain.entities.Comment", "Comment")
                         .WithMany("UserCommentVotes")
                         .HasForeignKey("CommentId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("FK__UserComme__comme__6C190EBB");
 
                     b.HasOne("domain.entities.User", "User")
                         .WithMany("UserCommentVotes")
                         .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired()
                         .HasConstraintName("FK__UserComme__userI__6B24EA82");
 
@@ -1166,6 +1232,37 @@ namespace infrastructure.Migrations
                     b.Navigation("Follower");
 
                     b.Navigation("Following");
+                });
+
+            modelBuilder.Entity("domain.entities.UserNotification", b =>
+                {
+                    b.HasOne("domain.entities.Article", "Article")
+                        .WithMany()
+                        .HasForeignKey("ArticleId");
+
+                    b.HasOne("domain.entities.Comment", "Comment")
+                        .WithMany()
+                        .HasForeignKey("CommentId");
+
+                    b.HasOne("domain.entities.Notification", "Notification")
+                        .WithMany()
+                        .HasForeignKey("NotificationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("domain.entities.User", "User")
+                        .WithMany("UserNotifications")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Article");
+
+                    b.Navigation("Comment");
+
+                    b.Navigation("Notification");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("domain.entities.UserTagFollow", b =>
@@ -1258,6 +1355,8 @@ namespace infrastructure.Migrations
                     b.Navigation("UserFollowFollowers");
 
                     b.Navigation("UserFollowFollowings");
+
+                    b.Navigation("UserNotifications");
 
                     b.Navigation("UserTagFollows");
                 });

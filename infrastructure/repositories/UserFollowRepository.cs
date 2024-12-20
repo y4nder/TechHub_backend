@@ -94,6 +94,33 @@ public class UserFollowRepository : IUserFollowRepository
         return await GetPaginatedFollowingByIdAsync(baseQuery, userId, pageNumber, pageSize);
     }
 
+    public async Task<List<UserFollowsListDto>> GetRecommendedUserFollowersByIdAsync(int userId)
+    {
+        // Retrieve IDs of users the current user is already following
+        var followedUserIds = await _context.UserFollows
+            .AsNoTracking()
+            .Where(uf => uf.FollowerId == userId)
+            .Select(uf => uf.FollowingId)
+            .ToListAsync();
+
+        // Retrieve users not followed by the current user
+        return await _context.Users
+            .AsNoTracking()
+            .Where(u => u.UserId != userId && !followedUserIds.Contains(u.UserId)) // Exclude current user and followed users
+            .Select(u => new UserFollowsListDto
+            {
+                UserId = u.UserId,
+                Username = u.Username!,
+                UserProfilePicUrl = u.UserProfilePicUrl,
+                Email = u.Email!,
+                ReputationPoints = u.UserAdditionalInfo!.ReputationPoints,
+                Followed = false
+            })
+            .Take(5) // Limit the number of results
+            .ToListAsync();
+    }
+
+
     private async Task<PaginatedResult<UserFollowsListDto>> GetPaginatedFollowingByIdAsync(IQueryable<UserFollow> baseQuery, int userId, int pageNumber, int pageSize)
     {
         var totalCount = await baseQuery.CountAsync();

@@ -1,6 +1,6 @@
 ﻿using application.Events.ClubEvents;
-using application.utilities.UserContext;
 using domain.interfaces;
+using infrastructure.UserContext;
 using MediatR;
 
 namespace application.useCases.clubInteractions.QueryClub.SingleClubQuery;

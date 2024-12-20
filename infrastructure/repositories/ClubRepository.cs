@@ -164,7 +164,8 @@ public class ClubRepository : IClubRepository
                         {
                             UserId = cu.UserId,
                             Username = cu.User.Username!,
-                            RoleName = cu.Role!.RoleName!
+                            RoleName = cu.Role!.RoleName!,
+                            UserProfilePicUrl = cu.User.UserProfilePicUrl,
                         })
                         .ToList(),
                     Joined = club.ClubUsers
@@ -179,6 +180,19 @@ public class ClubRepository : IClubRepository
     public async Task<Club?> GetClubByIdNo(int clubId)
     {
         return await _context.Clubs.FindAsync(clubId);
+    }
+
+    public async Task<ClubInfoDto?> GetClubInfoByIdNoTracking(int clubId)
+    {
+        return await _context.Clubs.AsNoTracking()
+            .Where(c => c.ClubId == clubId)
+            .Select(c => new ClubInfoDto
+            {
+                ClubId = c.ClubId,
+                ClubName = c.ClubName!,
+                ClubProfilePicUrl = c.ClubImageUrl!,
+                ClubIntroduction = c.ClubIntroduction!,
+            }).FirstOrDefaultAsync();
     }
 
     public void UpdateClub(Club club)
@@ -249,5 +263,113 @@ public class ClubRepository : IClubRepository
                 ClubProfilePicUrl = t.ClubImageUrl!
             })
             .ToListAsync();
+    }
+
+    public async Task<List<ClubUserMinimalDto>> GetClubUsers(int clubId, string searchTerm)
+    {
+        return await _context.ClubUsers
+            .AsNoTracking()
+            .Include(c => c.User)
+            .ThenInclude(u => u.UserAdditionalInfo)
+            .Include(c => c.Role)
+            .Where(c => 
+                c.ClubId == clubId && 
+                c.RoleId == (int)DefaultRoles.RegularUser &&
+                (string.IsNullOrEmpty(searchTerm) || EF.Functions.Like(c.User.Username!.ToUpper(), $"{searchTerm}%")))
+            .Select(cu => new ClubUserMinimalDto
+            {
+                UserId = cu.UserId,
+                Username = cu.User.Username!,
+                UserProfilePicUrl = cu.User.UserProfilePicUrl,
+                Email = cu.User.Email!,
+                ReputationPoints = cu.User.UserAdditionalInfo!.ReputationPoints,
+                DateJoined = cu.DateJoined,
+                Roles = _context.ClubUsers.Where(c => c.ClubId == clubId && c.UserId == cu.UserId)
+                    .Select(cur => new ClubUserRoleMinimalDto
+                    {
+                        RoleId = cur.RoleId,
+                        RoleName = cur.Role!.RoleName!
+                    }).ToList()
+            })
+            .ToListAsync();
+    }
+
+    public async Task<int> GetClubUsersCount(int clubId)
+    {
+        var baseQuery = _context.ClubUsers
+            .AsNoTracking()
+            .Where(c => 
+                c.ClubId == clubId && 
+                c.RoleId != (int)DefaultRoles.ClubCreator &&
+                c.RoleId != (int)DefaultRoles.Moderator) ;
+        
+        var count = await baseQuery.CountAsync();
+            
+        return count;
+    }
+
+    public async Task UpdateUserRolesTransaction(List<ClubUser> userRoles, int clubId, int userId)
+    {
+        await using var transaction = await _context.Database.BeginTransactionAsync();
+        try
+        {
+            // Fetch existing records
+            var existingRecords = await _context.ClubUsers
+                .Where(cu => cu.ClubId == clubId && cu.UserId == userId && cu.RoleId != (int)DefaultRoles.ClubCreator)
+                .ToListAsync();
+
+            // Find records to remove
+            var recordsToRemove = existingRecords
+                .Where(er => !userRoles.Any(ur => ur.RoleId == er.RoleId))
+                .ToList();
+
+            // Find records to add
+            var recordsToAdd = userRoles
+                .Where(ur => !existingRecords.Any(er => er.RoleId == ur.RoleId))
+                .ToList();
+
+            // Apply changes
+            _context.ClubUsers.RemoveRange(recordsToRemove);
+            _context.ClubUsers.AddRange(recordsToAdd);
+
+            await _context.SaveChangesAsync();
+            await transaction.CommitAsync();
+        }
+        catch
+        {
+            await transaction.RollbackAsync();
+            throw;
+        }
+    }
+
+    public async Task<ClubForEditDto?> GetClubForEdit(int clubId)
+    {
+        return await _context.Clubs
+            .AsNoTracking()
+            .Where(c => c.ClubId == clubId)
+            .Select(c => new ClubForEditDto
+            {
+                ClubId = c.ClubId,
+                ClubCategoryId = c.ClubCategoryId,
+                ClubIntroduction = c.ClubIntroduction,
+                ClubName = c.ClubName!,
+                ClubThumbnailUrl = c.ClubImageUrl!,
+                InvitePermission = c.InvitePermission,
+                PostPermission = c.PostPermission,
+                IsPrivate = c.Private,
+            }).FirstOrDefaultAsync();
+    }
+
+    public async Task<ClubInfoDto?> GetArticleClub(int clubId)
+    {
+        return await _context.Clubs.AsNoTracking()
+            .Where(c => c.ClubId == clubId)
+            .Select(c => new ClubInfoDto
+            {
+                ClubId = c.ClubId,
+                ClubName = c.ClubName!,
+                ClubProfilePicUrl = c.ClubImageUrl!,
+                ClubIntroduction = c.ClubIntroduction!,
+            }).FirstOrDefaultAsync();
     }
 }

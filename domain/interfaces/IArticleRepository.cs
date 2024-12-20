@@ -8,6 +8,7 @@ public interface IArticleRepository
     void AddArticle(Article article);
     
     Task<Article?> GetArticleByIdAsync(int articleId);
+    
     void Update(Article article);
     
     Task<bool> ArticleExistsAsync(int articleId);
@@ -15,6 +16,7 @@ public interface IArticleRepository
     Task<bool> ArticleExistsByIdIgnoreArchived(int articleId);
 
     Task<Article?> GetArticleByIdNoTracking(int articleId);
+    
     Task<PaginatedResult<ArticleResponseDto>> GetPaginatedHomeArticlesByTagIdsAsync(int userId, List<int> tagIds,
         int pageNumber, int pageSize);
     Task<Article?> QuerySingleArticleByIdAsync(int articleId);
@@ -26,6 +28,9 @@ public interface IArticleRepository
         int pageNumber, int pageSize);
 
     Task<PaginatedResult<ArticleResponseDto>> GetPaginatedArticlesByClubIdAsync(int clubId, int pageNumber,
+        int pageSize, int userId);
+    
+    Task<PaginatedResult<ArticleResponseDto>> GetPaginatedArticlesByClubIdForModeratorAsync(int clubId, int pageNumber,
         int pageSize, int userId);
     
     Task<PaginatedResult<ArticleResponseDto>> GetPaginatedArticlesByUserId(int authorId, int pageNumber, int pageSize);

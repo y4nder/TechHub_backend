@@ -7,6 +7,7 @@ public partial class ClubUser
     public int UserId { get; set; }
 
     public int RoleId { get; set; }
+    public DateTime DateJoined { get; set; } = DateTime.Now;
 
     public virtual Club Club { get; set; } = null!;
 

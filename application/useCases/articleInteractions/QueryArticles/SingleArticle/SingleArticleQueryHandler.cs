@@ -1,7 +1,7 @@
 ﻿using application.Events.ArticleEvents;
-using application.utilities.UserContext;
 using domain.entities;
 using domain.interfaces;
+using infrastructure.UserContext;
 using MediatR;
 
 namespace application.useCases.articleInteractions.QueryArticles.SingleArticle;
@@ -73,7 +73,9 @@ public class SingleArticleQueryHandler : IRequestHandler<SingleArticleQuery, Sin
             voteType,
             bookMarked,
             followed,
-            isOwned
+            isOwned,
+            article.ClubId
+            
         );
         
         await _mediator.Publish(new SingleArticleQueriedEvent(userId, request.ArticleId), cancellationToken);

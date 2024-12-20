@@ -1,8 +1,8 @@
-﻿using application.utilities.UserContext;
-using domain.entities;
+﻿using domain.entities;
 using domain.interfaces;
 using FluentValidation;
 using infrastructure.services.worker;
+using infrastructure.UserContext;
 using MediatR;
 
 namespace application.useCases.commentInteractions.ReplyAComment;

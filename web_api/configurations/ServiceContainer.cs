@@ -10,8 +10,8 @@ public static class ServiceContainer
 {
     public static IServiceCollection AddServices(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddInfrastructureConfigurations(configuration);
         services.AddApplicationConfigurations();
+        services.AddInfrastructureConfigurations(configuration);
 
         //add swagger auth
 

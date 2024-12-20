@@ -2,11 +2,11 @@
 using application.Events.ArticleEvents;
 using application.Exceptions.TagExceptions;
 using application.utilities.ImageUploads.Article;
-using application.utilities.UserContext;
 using domain.interfaces;
 using FluentValidation;
 using infrastructure.services.httpImgInterceptor;
 using infrastructure.services.worker;
+using infrastructure.UserContext;
 using MediatR;
 
 namespace application.useCases.articleInteractions.UpdateArticle;

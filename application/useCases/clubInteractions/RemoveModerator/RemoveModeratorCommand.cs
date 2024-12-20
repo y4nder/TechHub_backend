@@ -1,7 +1,7 @@
-﻿using application.utilities.UserContext;
-using domain.entities;
+﻿using domain.entities;
 using domain.interfaces;
 using infrastructure.services.worker;
+using infrastructure.UserContext;
 using MediatR;
 
 namespace application.useCases.clubInteractions.RemoveModerator;

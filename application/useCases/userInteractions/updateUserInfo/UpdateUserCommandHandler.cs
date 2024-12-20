@@ -1,6 +1,6 @@
-﻿using application.utilities.UserContext;
-using domain.interfaces;
+﻿using domain.interfaces;
 using infrastructure.services.worker;
+using infrastructure.UserContext;
 using MediatR;
 
 namespace application.useCases.userInteractions.updateUserInfo;

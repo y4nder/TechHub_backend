@@ -6,6 +6,7 @@ using application.useCases.clubInteractions.QueryClub.CategorizedClubsQuery;
 using application.useCases.clubInteractions.QueryClub.CategoryQuery;
 using application.useCases.clubInteractions.QueryClub.FeaturedClubsQuery;
 using application.useCases.clubInteractions.QueryClub.JoinedClubsQuery;
+using application.useCases.clubInteractions.QueryClub.MinimalClubViewQuery;
 using application.useCases.clubInteractions.QueryClub.SingleCategoryClubsQuery;
 using application.useCases.clubInteractions.QueryClub.SingleClubQuery;
 using application.useCases.clubInteractions.QueryClub.SuggestedClubs;
@@ -169,7 +170,7 @@ public class ClubController : Controller
     [HttpPost("assignModerator")]
     public async Task<IActionResult> AssignModerator([FromBody] AssignModeratorCommand command)
     {
-        try
+        try 
         {
             var response = await _sender.Send(command);
             return Ok(response);
@@ -200,6 +201,20 @@ public class ClubController : Controller
         try
         {
             var response = await _sender.Send(command);
+            return Ok(response);
+        }
+        catch (Exception e)
+        {
+            return ErrorFactory.CreateErrorResponse(e);
+        }
+    }
+
+    [HttpGet("getClubMinimal")]
+    public async Task<IActionResult> GetClubInfoMinimal([FromQuery] MinimalClubViewQuery query)
+    {
+        try
+        {
+            var response = await _sender.Send(query);
             return Ok(response);
         }
         catch (Exception e)

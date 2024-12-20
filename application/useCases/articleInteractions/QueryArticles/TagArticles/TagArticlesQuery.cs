@@ -1,7 +1,7 @@
-﻿using application.utilities.UserContext;
-using domain.entities;
+﻿using domain.entities;
 using domain.interfaces;
 using domain.pagination;
+using infrastructure.UserContext;
 using MediatR;
 
 namespace application.useCases.articleInteractions.QueryArticles.TagArticles;

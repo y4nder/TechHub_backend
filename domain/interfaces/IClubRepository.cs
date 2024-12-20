@@ -14,6 +14,7 @@ public interface IClubRepository
     Task<List<ClubFeaturedResponseDto>> GetFeaturedClubsAsync();
     Task<SingleClubResponseDto?> GetSingleClubByIdAsync(int userId, int clubId);
     Task<Club?> GetClubByIdNo(int clubId);
+    Task<ClubInfoDto?> GetClubInfoByIdNoTracking(int clubId);
     
     void UpdateClub(Club club);
     
@@ -22,4 +23,13 @@ public interface IClubRepository
     Task<SingleCategoryClubStandardResponseDto?> GetSingleCategoryClubByIdAsync(int clubCategoryId);
     
     Task<List<SuggestedClubDto>> GetSuggestedClubs(string searchTerm);
+    
+    Task<List<ClubUserMinimalDto>> GetClubUsers(int clubId, string searchTerm);
+    Task<int> GetClubUsersCount(int clubId);
+
+    Task UpdateUserRolesTransaction(List<ClubUser> userRoles, int clubId, int userId);
+    
+    Task<ClubForEditDto?> GetClubForEdit(int clubId);
+    
+    Task<ClubInfoDto?> GetArticleClub(int clubId);
 }

@@ -23,6 +23,7 @@ public partial class Article
     public bool IsDrafted { get; set; }
 
     public bool Archived { get; set; }
+    public bool Pinned { get; set; } 
 
     public virtual User? ArticleAuthor { get; set; }
 
@@ -74,6 +75,18 @@ public partial class Article
             Tags = dto.Tags
         };
     }
+
+    public void UpdateToRemoved()
+    {
+        Status = ArticleStatusDefaults.Removed;
+    }
+
+    public void UpdateToPublished()
+    {
+        Status = ArticleStatusDefaults.Published;
+    }
+
+    public void UpdatePin(bool pinned) => Pinned = pinned;
 }
 
 public class ArticleDto
@@ -87,9 +100,10 @@ public class ArticleDto
 
 public static class ArticleStatusDefaults
 {
-    public const string Draft = "Draft";
+    public const string Draft = "Drafted";
     public const string Published = "Published";
     public const string Archived = "Archived";
+    public const string Removed = "Removed";
 }
 
 public class ArticleResponseDto
@@ -109,7 +123,9 @@ public class ArticleResponseDto
     public int CommentCount { get; set; } = -1;
     public int VoteType { get; set; }
     public bool Bookmarked { get; set; }
-    
+    public string Status { get; set; } = null!;
+    public bool Pinned { get; set; }
+
 }
 
 public class ArticleResponseForEditDto

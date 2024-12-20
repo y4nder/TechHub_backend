@@ -359,12 +359,12 @@ public static class SchemaConfiguration
 
             entity.HasOne(d => d.Article).WithMany(p => p.UserArticleBookmarks)
                 .HasForeignKey(d => d.ArticleId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
+                .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("FK__UserArtic__artic__72C60C4A");
 
             entity.HasOne(d => d.User).WithMany(p => p.UserArticleBookmarks)
                 .HasForeignKey(d => d.UserId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
+                .OnDelete(DeleteBehavior.NoAction)
                 .HasConstraintName("FK__UserArtic__userI__71D1E811");
         });
 
@@ -387,7 +387,7 @@ public static class SchemaConfiguration
 
             entity.HasOne(d => d.User).WithMany(p => p.UserArticleReads)
                 .HasForeignKey(d => d.UserId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
+                .OnDelete(DeleteBehavior.NoAction)
                 .HasConstraintName("FK__User_Arti__userI__6FE99F9F");
         });
 
@@ -403,12 +403,12 @@ public static class SchemaConfiguration
 
             entity.HasOne(d => d.Article).WithMany(p => p.UserArticleVotes)
                 .HasForeignKey(d => d.ArticleId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
+                .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("FK__UserArtic__artic__74AE54BC");
 
             entity.HasOne(d => d.User).WithMany(p => p.UserArticleVotes)
                 .HasForeignKey(d => d.UserId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
+                .OnDelete(DeleteBehavior.NoAction)
                 .HasConstraintName("FK__UserArtic__userI__73BA3083");
         });
 
@@ -424,12 +424,12 @@ public static class SchemaConfiguration
 
             entity.HasOne(d => d.Comment).WithMany(p => p.UserCommentVotes)
                 .HasForeignKey(d => d.CommentId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
+                .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("FK__UserComme__comme__6C190EBB");
 
             entity.HasOne(d => d.User).WithMany(p => p.UserCommentVotes)
                 .HasForeignKey(d => d.UserId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
+                .OnDelete(DeleteBehavior.NoAction)
                 .HasConstraintName("FK__UserComme__userI__6B24EA82");
         });
 
@@ -493,6 +493,16 @@ public static class SchemaConfiguration
                 .HasForeignKey(r => r.ReporterId)
                 .OnDelete(DeleteBehavior.ClientSetNull);
 
+        });
+
+        modelBuilder.Entity<Notification>(entity =>
+        {
+            entity.HasKey(n => n.NotificationId);
+        });
+
+        modelBuilder.Entity<UserNotification>(entity =>
+        {
+            entity.HasKey(un => new { un.UserId, un.NotificationId });
         });
 
     }

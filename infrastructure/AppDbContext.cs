@@ -54,6 +54,10 @@ public partial class AppDbContext : DbContext
 
     public virtual DbSet<ReportedArticle> ReportedArticles { get; set; }
     
+    public virtual DbSet<Notification> Notifications { get; set; }
+    
+    public virtual DbSet<UserNotification> UserNotifications { get; set; }
+    
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.AddSchemaConfiguration();

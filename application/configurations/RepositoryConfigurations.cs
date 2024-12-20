@@ -36,6 +36,10 @@ public static class RepositoryConfigurations
         services.AddScoped<IArticleBookmarkRepository, ArticleBookmarkRepository>();
 
         services.AddScoped<IReportedArticleRepository, ReportedArticleRepository>();
+
+        services.AddScoped<INotificationRepository, NotificationRepository>();
+        
+        services.AddScoped<IUserNotificationRepository, UserNotificationRepository>();
         
         return services;
     }
