@@ -1,3 +1,4 @@
+using infrastructure.configurations;
 using web_api.configurations;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -25,11 +26,13 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseCors(CorsConstants.AllowAll);
+app.UseCors(CorsConstants.AllowLocalReactApp);
 
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.AddNotificationHub();
 
 app.Run();

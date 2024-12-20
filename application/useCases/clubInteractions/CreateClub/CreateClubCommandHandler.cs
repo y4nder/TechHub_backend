@@ -1,11 +1,11 @@
 ﻿using application.Events.ClubEvents;
 using application.Exceptions.ClubExceptions;
 using application.utilities.ImageUploads.Club;
-using application.utilities.UserContext;
 using domain.entities;
 using domain.interfaces;
 using FluentValidation;
 using infrastructure.services.worker;
+using infrastructure.UserContext;
 using MediatR;
 
 namespace application.useCases.clubInteractions.CreateClub;

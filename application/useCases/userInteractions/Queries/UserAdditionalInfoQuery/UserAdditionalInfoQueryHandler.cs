@@ -1,5 +1,5 @@
-﻿using application.utilities.UserContext;
-using domain.interfaces;
+﻿using domain.interfaces;
+using infrastructure.UserContext;
 using MediatR;
 
 namespace application.useCases.userInteractions.Queries.UserAdditionalInfoQuery;

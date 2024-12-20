@@ -1,7 +1,7 @@
 ﻿using domain.interfaces;
 using MediatR;
 
-namespace application.utilities.UserContext;
+namespace application.utilities;
 
 public class UsernameChecker : IRequest<bool>
 {

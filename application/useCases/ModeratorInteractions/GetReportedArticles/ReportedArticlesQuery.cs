@@ -1,8 +1,8 @@
 ﻿using application.useCases.ModeratorInteractions.Shared;
-using application.utilities.UserContext;
 using domain.entities;
 using domain.interfaces;
 using domain.pagination;
+using infrastructure.UserContext;
 using MediatR;
 
 namespace application.useCases.ModeratorInteractions.GetReportedArticles;

@@ -95,6 +95,14 @@ public class ClubUserRepository : IClubUserRepository
             .ToListAsync();
     }
 
+    public async Task<List<string>> GetClubNamesByUserId(int userId)
+    {
+        return await _context.ClubUsers
+            .Where(cu => cu.UserId == userId && cu.RoleId == (int)DefaultRoles.RegularUser)
+            .Select(cu => cu.Club.ClubName!)
+            .ToListAsync();
+    }
+
     public void RemoveClubUserRange(List<ClubUser> clubUsers) => _context.RemoveRange(clubUsers);
     public async Task<ClubUser?> TryRetrieveModeratorRole(int moderatorId)
     {
@@ -151,6 +159,15 @@ public class ClubUserRepository : IClubUserRepository
                     })
                     .First()
             })
+            .ToListAsync();
+    }
+
+    public async Task<List<int>> GetMemberIds(int postedArticleClubId)
+    {
+        return await _context.ClubUsers
+            .AsNoTracking()
+            .Where(cu => cu.ClubId == postedArticleClubId && cu.RoleId == (int)DefaultRoles.RegularUser)
+            .Select(cu => cu.UserId)
             .ToListAsync();
     }
 }

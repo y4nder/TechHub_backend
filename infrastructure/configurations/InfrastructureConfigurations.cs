@@ -1,10 +1,14 @@
-﻿using infrastructure.services.analytics;
+﻿using System.Security.Claims;
+using infrastructure.services.analytics;
+using infrastructure.services.backgroundServices;
 using infrastructure.services.cloudinary;
 using infrastructure.services.httpImgInterceptor;
 using infrastructure.services.jobs;
 using infrastructure.services.jwt;
 using infrastructure.services.passwordService;
 using infrastructure.services.worker;
+using infrastructure.UserContext;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -52,7 +56,19 @@ public static class InfrastructureConfigurations
         services.AddScoped<IHtmlImageProcessor, HtmlImageProcessor>();
         services.AddScoped<IContentImageProcessor, ContentImageProcessor>();
         services.AddScoped<IAnalyticsProcessor, AnalyticsProcessor>();        
+        services.AddScoped<IUserContext, UserContext.UserContext>();
+        
+        //testing for background service
+        // services.AddHostedService<ServerTimeNotifier>();
         
         return services;
+    }
+    
+    public class MyCustomUserIdProvider : IUserIdProvider
+    {
+        public string? GetUserId(HubConnectionContext context)
+        {
+            return context.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value; // Ensure your UserId is stored in NameIdentifier
+        }
     }
 }

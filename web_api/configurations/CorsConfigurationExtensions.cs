@@ -32,6 +32,14 @@
                         .AllowAnyMethod()
                         .WithHeaders("Authorization", "Content-Type");
                 });
+                
+                options.AddPolicy(CorsConstants.AllowLocalReactApp, policy =>
+                {
+                    policy.WithOrigins("http://localhost:5173") // React app's origin
+                        .AllowCredentials() // Allow credentials such as cookies or HTTP authentication
+                        .AllowAnyHeader()  // Allow any headers
+                        .AllowAnyMethod(); // Allow any methods (GET, POST, etc.)
+                });
             });
 
             return services;
@@ -43,6 +51,7 @@
         public const string AllowAll = "AllowAll";
         public const string AllowSpecificOrigins = "AllowSpecificOrigins";
         public const string AllowSpecificHeaders = "AllowSpecificHeaders";
+        public const string AllowLocalReactApp = "AllowLocalReactApp";
     }
 
     public class CorsSettings

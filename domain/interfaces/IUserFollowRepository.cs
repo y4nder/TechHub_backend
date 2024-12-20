@@ -17,4 +17,6 @@ public interface IUserFollowRepository
 
     Task<PaginatedResult<UserFollowsListDto>> GetPaginatedFollowersByIdAsync(int userId, int PageNumber, int PageSize);
     Task<PaginatedResult<UserFollowsListDto>> GetPaginatedFollowingByIdAsync(int userId, int pageNumber, int pageSize);
+    
+    Task<List<UserFollowsListDto>> GetRecommendedUserFollowersByIdAsync(int userId);
 }

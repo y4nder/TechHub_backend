@@ -1,7 +1,7 @@
 ﻿using application.Exceptions.TagExceptions;
-using application.utilities.UserContext;
 using domain.interfaces;
 using infrastructure.services.worker;
+using infrastructure.UserContext;
 using MediatR;
 
 namespace application.useCases.tagInteractions.UnfollowOneTag;

@@ -1,7 +1,9 @@
-﻿using application.useCases.userInteractions.Queries.SelfMinimalQuery;
+﻿using application.useCases.notificationInteractions.notificationQueries;
+using application.useCases.userInteractions.Queries.SelfMinimalQuery;
 using application.useCases.userInteractions.Queries.UserAdditionalInfoQuery;
+using application.useCases.userInteractions.recommendedUsers;
 using application.useCases.userInteractions.updateUserInfo;
-using application.utilities.UserContext;
+using application.utilities;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -82,6 +84,34 @@ public class UserController : Controller
         try
         {
             var response = await _mediator.Send(query);
+            return Ok(response);
+        }
+        catch (Exception ex)
+        {
+            return ErrorFactory.CreateErrorResponse(ex);
+        }
+    }
+    
+    [HttpGet("/getAllNotifications")]
+    public async Task<IActionResult> CheckUsernameValidity([FromQuery] AllNotificationQuery query)
+    {
+        try
+        {
+            var response = await _mediator.Send(query);
+            return Ok(response);
+        }
+        catch (Exception ex)
+        {
+            return ErrorFactory.CreateErrorResponse(ex);
+        }
+    }
+
+    [HttpGet("getRecommendedUsers")]
+    public async Task<IActionResult> GetRecommendedUsers()
+    {
+        try
+        {
+            var response = await _mediator.Send(new RecommendedUsersQuery());
             return Ok(response);
         }
         catch (Exception ex)

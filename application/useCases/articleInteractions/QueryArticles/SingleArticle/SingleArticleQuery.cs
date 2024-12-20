@@ -25,12 +25,12 @@ public class SingleQueryDto
     public bool Bookmarked { get; set; }
     public bool Followed { get; set; }
     public bool IsOwned { get; set; }
-
+    public int ClubId { get; set; }
 
     public static SingleQueryDto Create(int requestId, Article article, string articleHtmlContent, 
-        int voteCount, int commentCount, int voteType, bool bookmarked, bool followed, bool isOwned)
+        int voteCount, int commentCount, int voteType, bool bookmarked, bool followed, bool isOwned, int clubId)
     {
-        return new SingleQueryDto(requestId, article, articleHtmlContent, voteCount, commentCount, voteType, bookmarked, followed, isOwned);
+        return new SingleQueryDto(requestId, article, articleHtmlContent, voteCount, commentCount, voteType, bookmarked, followed, isOwned, clubId);
     }
     
     public SingleQueryDto(
@@ -42,7 +42,8 @@ public class SingleQueryDto
         int voteType,
         bool bookmarked,
         bool followed,
-        bool isOwned
+        bool isOwned,
+        int clubId
     )
     {
         UserId = userId;
@@ -63,6 +64,7 @@ public class SingleQueryDto
         Bookmarked = bookmarked;
         Followed = followed;
         IsOwned = isOwned;
+        ClubId = clubId;
     }
 }
 

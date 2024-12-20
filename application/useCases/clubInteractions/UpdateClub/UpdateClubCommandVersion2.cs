@@ -1,9 +1,9 @@
 ﻿using application.utilities.ImageUploads.Club;
-using application.utilities.UserContext;
 using domain.interfaces;
 using FluentValidation;
 using infrastructure.Exceptions;
 using infrastructure.services.worker;
+using infrastructure.UserContext;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 

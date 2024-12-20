@@ -42,6 +42,8 @@ public partial class User
 
     public ICollection<ReportedArticle> ReportedArticles { get; set; } = new List<ReportedArticle>();
 
+    public ICollection<UserNotification> UserNotifications { get; set; } = new List<UserNotification>();
+
     public static User Create(string username, string email, string password, string? userProfilePicUrl)
     {
         return new User

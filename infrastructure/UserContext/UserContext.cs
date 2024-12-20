@@ -1,7 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
-using System.Security.Claims;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Http;
 
-namespace application.utilities.UserContext;
+namespace infrastructure.UserContext;
 
 public class UserContext : IUserContext
 {
@@ -13,6 +13,16 @@ public class UserContext : IUserContext
     }
 
     public int GetUserId()
+    {
+        return Convert.ToInt32(IdExtractor());
+    }
+
+    public string GetUserIdAsString()
+    {
+        return IdExtractor()!;
+    }
+
+    private string? IdExtractor()
     {
         var user = _httpContextAccessor.HttpContext?.User;
 
@@ -27,7 +37,7 @@ public class UserContext : IUserContext
         {
             throw new UnauthorizedAccessException("User ID not found in token.");
         }
-
-        return Convert.ToInt32(userId);
+        
+        return userId;
     }
 }

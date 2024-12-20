@@ -1,6 +1,6 @@
-﻿using application.utilities.UserContext;
-using domain.entities;
+﻿using domain.entities;
 using domain.interfaces;
+using infrastructure.UserContext;
 using MediatR;
 
 namespace application.useCases.tagInteractions.QueryTags.QueryTagPage;

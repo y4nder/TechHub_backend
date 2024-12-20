@@ -1,10 +1,10 @@
 ﻿using application.Exceptions.FollowInteractionExceptions;
-using application.utilities.UserContext;
 using domain.entities;
 using domain.interfaces;
 using infrastructure.services.worker;
 using MediatR;
 using System.Net.WebSockets;
+using infrastructure.UserContext;
 
 namespace application.useCases.userInteractions.followUser;
 

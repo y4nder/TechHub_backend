@@ -182,6 +182,19 @@ public class ClubRepository : IClubRepository
         return await _context.Clubs.FindAsync(clubId);
     }
 
+    public async Task<ClubInfoDto?> GetClubInfoByIdNoTracking(int clubId)
+    {
+        return await _context.Clubs.AsNoTracking()
+            .Where(c => c.ClubId == clubId)
+            .Select(c => new ClubInfoDto
+            {
+                ClubId = c.ClubId,
+                ClubName = c.ClubName!,
+                ClubProfilePicUrl = c.ClubImageUrl!,
+                ClubIntroduction = c.ClubIntroduction!,
+            }).FirstOrDefaultAsync();
+    }
+
     public void UpdateClub(Club club)
     {
         _context.Clubs.Update(club);
@@ -344,6 +357,19 @@ public class ClubRepository : IClubRepository
                 InvitePermission = c.InvitePermission,
                 PostPermission = c.PostPermission,
                 IsPrivate = c.Private,
+            }).FirstOrDefaultAsync();
+    }
+
+    public async Task<ClubInfoDto?> GetArticleClub(int clubId)
+    {
+        return await _context.Clubs.AsNoTracking()
+            .Where(c => c.ClubId == clubId)
+            .Select(c => new ClubInfoDto
+            {
+                ClubId = c.ClubId,
+                ClubName = c.ClubName!,
+                ClubProfilePicUrl = c.ClubImageUrl!,
+                ClubIntroduction = c.ClubIntroduction!,
             }).FirstOrDefaultAsync();
     }
 }
